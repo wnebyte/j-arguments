@@ -1,0 +1,42 @@
+import java.text.SimpleDateFormat
+
+plugins {
+    id 'java-library'
+    id 'com.github.johnrengelman.shadow' version '6.1.0'
+}
+
+def projectName = 'args'
+group 'com.github.wnebyte'
+version '0.0.1'
+
+sourceCompatibility = "1.8";
+targetCompatibility = "1.8";
+
+shadowJar {
+    archiveBaseName.set(projectName.concat('-fat'))
+    archiveClassifier.set('')
+    archiveVersion.set(project.version)
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
+
+jar{
+    manifest{
+        attributes(
+                "Name": projectName,
+                "Implementation-Title": projectName,
+                "Implementation-Version": project.version,
+                "Class-Path": configurations.runtimeClasspath.files.collect { it.getName() }.join(' '),
+                'Build-Timestamp': new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ").format(new Date()),
+                'Build-Jdk': "${System.properties['java.version']} (${System.properties['java.vendor']}) " +
+                        "${System.properties['java.vm.version']}"
+        )
+    }
+    archiveBaseName.set(projectName)
+}
