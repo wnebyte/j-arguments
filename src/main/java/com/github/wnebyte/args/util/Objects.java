@@ -21,4 +21,22 @@ public class Objects {
         }
         return t.hashCode();
     }
+
+    /**
+     * @param objects to be checked for <code>null</code> values.
+     * @return <code>true</code> if the specified <code>objects</code> is <code>null</code>, or if it contains
+     * at least one <code>null</code> value,
+     * else <code>false</code>.
+     */
+    public static boolean isNull(Object... objects) {
+        if (objects == null) {
+            return true;
+        }
+        for (Object o : objects) {
+            if (o == null) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

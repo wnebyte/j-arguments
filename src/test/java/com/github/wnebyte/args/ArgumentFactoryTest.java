@@ -1,5 +1,6 @@
 package com.github.wnebyte.args;
 
+import com.github.wnebyte.args.factory.ArgumentFactoryBuilder;
 import org.junit.Test;
 import java.util.List;
 
@@ -10,7 +11,7 @@ public class ArgumentFactoryTest {
         List<Argument> arguments = new ArgumentFactoryBuilder().build()
                 .setNames("-a", "--a")
                 .setDescription("test arg")
-                .setRequired()
+                .isRequired()
                 .setType(float.class)
                 .create()
                 .getArguments();
@@ -21,7 +22,7 @@ public class ArgumentFactoryTest {
         List<Argument> arguments = new ArgumentFactoryBuilder().build()
                 .setNames("-a")
                 .setType(String.class)
-                .setOptional()
+                .isOptional()
                 .setDefaultValue("def 0")
                 .create()
                 .getArguments();

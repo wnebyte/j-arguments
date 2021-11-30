@@ -1,5 +1,7 @@
 package com.github.wnebyte.args;
 
+import com.github.wnebyte.args.constraint.Constraint;
+import com.github.wnebyte.args.converter.TypeConverter;
 import com.github.wnebyte.args.exception.ConstraintException;
 import com.github.wnebyte.args.exception.ParseException;
 import com.github.wnebyte.args.util.Objects;
@@ -15,7 +17,7 @@ public class Optional extends Argument {
 
     private final String defaultValue;
 
-    protected Optional(
+    public Optional(
             final Set<String> name,
             final String description,
             final int index,
@@ -23,11 +25,11 @@ public class Optional extends Argument {
             final TypeConverter<?> typeConverter,
             final String defaultValue
     ) {
-        super(name, description, createRegExp(name, type), index, type, typeConverter);
+        super(name, description, index, type, typeConverter);
         this.defaultValue = defaultValue;
     }
 
-    protected <T> Optional(
+    public <T> Optional(
             final Set<String> name,
             final String description,
             final int index,
@@ -36,17 +38,17 @@ public class Optional extends Argument {
             final Collection<Constraint<T>> constraints,
             final String defaultValue
     ) {
-        super(name, description, createRegExp(name, type), index, type, typeConverter, constraints);
+        super(name, description, index, type, typeConverter, constraints);
         this.defaultValue = defaultValue;
     }
 
-    private static String createRegExp(final Set<String> name, final Class<?> cls) {
-        if (Reflections.isBoolean(cls)) {
+    protected String createRegExp(final Set<String> name, final Class<?> type) {
+        if (Reflections.isBoolean(type)) {
             return "(\\s" + "(" + String.join("|", name) + ")" + "|)";
         }
         else {
               return "(\\s" + "(" + String.join("|", name) + ")" +  "\\s" +
-                      (Reflections.isArray(cls) ? ARRAY_VALUE_PATTERN : DEFAULT_VALUE_PATTERN) + "|)";
+                      (Reflections.isArray(type) ? ARRAY_VALUE_PATTERN : DEFAULT_VALUE_PATTERN) + "|)";
         }
     }
 

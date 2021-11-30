@@ -1,13 +1,20 @@
-package com.github.wnebyte.args;
+package com.github.wnebyte.args.factory;
 
+import com.github.wnebyte.args.*;
+import com.github.wnebyte.args.Optional;
+import com.github.wnebyte.args.constraint.Constraint;
+import com.github.wnebyte.args.converter.AbstractTypeConverterMap;
+import com.github.wnebyte.args.converter.TypeConverter;
+import com.github.wnebyte.args.converter.TypeConverterMap;
 import com.github.wnebyte.args.util.Reflections;
 import com.github.wnebyte.args.util.Strings;
+
 import java.util.*;
 
 /**
  * This class declares methods for building multiple instances of subclasses of the {@link Argument} class.
  */
-public class ArgumentFactory {
+public class ArgumentFactory extends AbstractArgumentFactory {
 
     /*
     ###########################
@@ -28,7 +35,7 @@ public class ArgumentFactory {
         add('}');
     }};
 
-    private final AbstractTypeConverters typeConverters;
+    private final AbstractTypeConverterMap typeConverters;
 
     private final Set<String> allNames = new HashSet<>();
 
@@ -43,7 +50,7 @@ public class ArgumentFactory {
 
     private String description;
 
-    private Class<? extends Argument> cls;
+    private Class<? extends Argument> subClass;
 
     private Class<?> type;
 
@@ -57,20 +64,14 @@ public class ArgumentFactory {
 
     /**
      * Constructs a new instance using the specified <code>exclude</code> and <code>typeConverters</code>.
-     * @param exclude elements are added to an internal collection, contents will be used to exclude characters
-     * from being present in the name(s) of constructed argument(s).
-     * @param typeConverters will be used when constructing new arguments if no individual {@linkplain TypeConverter}
-     * has been set.
      */
     public ArgumentFactory(
-            final Collection<Character> exclude,
-            final AbstractTypeConverters typeConverters
+            Collection<Character> exclude,
+            AbstractTypeConverterMap typeConverters
     ) {
-        if (exclude != null) {
-            this.exclude.addAll(exclude);
-        }
+        this.exclude.addAll(exclude);
         this.typeConverters = (typeConverters != null) ?
-                typeConverters : TypeConverters.getInstance();
+                typeConverters : TypeConverterMap.getInstance();
     }
 
     /**
@@ -90,7 +91,7 @@ public class ArgumentFactory {
             boolean success = this.names.add(n) & allNames.add(n);
             if (!success) {
                 throw new IllegalArgumentException(
-                        "All names have to be distinct across all arguments created using this instance."
+                        "All names have to be distinct across all of the arguments created using this instance."
                 );
             }
         }
@@ -118,6 +119,21 @@ public class ArgumentFactory {
     }
 
     /**
+     * Sets the description property of the next argument to be created.
+     * @param description of the next argument.
+     * @return this.
+     */
+    public ArgumentFactory setDescription(final String description) {
+        this.description = description;
+        return this;
+    }
+
+    public ArgumentFactory setSubClass(final Class<? extends Argument> subClass) {
+        this.subClass = subClass;
+        return this;
+    }
+
+    /**
      * Sets the defaultValue property of the next argument to be created.
      * @param defaultValue of the next (optional) argument.
      * @return this.
@@ -128,21 +144,11 @@ public class ArgumentFactory {
     }
 
     /**
-     * Sets the description property of the next argument to be created.
-     * @param description of the next argument.
-     * @return this.
-     */
-    public ArgumentFactory setDescription(final String description) {
-        this.description = description;
-        return this;
-    }
-
-    /**
      * Specifies that the next argument to be created is to be a required argument.
      * @return this.
      */
-    public ArgumentFactory setRequired() {
-        this.cls = Required.class;
+    public ArgumentFactory isRequired() {
+        this.subClass = Required.class;
         return this;
     }
 
@@ -150,8 +156,8 @@ public class ArgumentFactory {
      * Specifies that the next argument to be created is to be an optional argument.
      * @return this.
      */
-    public ArgumentFactory setOptional() {
-        this.cls = Optional.class;
+    public ArgumentFactory isOptional() {
+        this.subClass = com.github.wnebyte.args.Optional.class;
         return this;
     }
 
@@ -159,8 +165,8 @@ public class ArgumentFactory {
      * Specifies that the next argument to be created is to be a positional argument.
      * @return this.
      */
-    public ArgumentFactory setPositional() {
-        this.cls = Positional.class;
+    public ArgumentFactory isPositional() {
+        this.subClass = Positional.class;
         return this;
     }
 
@@ -172,7 +178,6 @@ public class ArgumentFactory {
         TypeConverter<T> typeConverter = typeConverters.get(type);
         return create(type, typeConverter);
     }
-
     /**
      * Creates a new argument using the specified <code>type</code> and <code>typeConverter</code>.
      * @return this.
@@ -192,22 +197,22 @@ public class ArgumentFactory {
             final Collection<Constraint<T>> constraints
 
     ) {
-        if ((namesIsNull(names, cls)) || (type == null) || (typeConverter == null)) {
+        if ((namesIsNull(names, subClass)) || (type == null) || (typeConverter == null)) {
             throw new IllegalStateException(
                     "Names, Type & TypeConverter has to be set."
             );
         }
         Argument argument;
 
-        if ((Reflections.isBoolean(type)) || (Optional.class.equals(cls))) {
-            argument = new Optional(names, description, index++, type, typeConverter, constraints, defaultValue);
+        if ((Reflections.isBoolean(type)) || (com.github.wnebyte.args.Optional.class.equals(subClass))) {
+            argument = new com.github.wnebyte.args.Optional(names, description, index++, type, typeConverter, constraints, defaultValue);
             arguments.add(argument);
         }
-        else if (Required.class.equals(cls)) {
+        else if (Required.class.equals(subClass)) {
             argument = new Required(names, description, index++, type, typeConverter, constraints);
             arguments.add(argument);
         }
-        else if (Positional.class.equals(cls)) {
+        else if (Positional.class.equals(subClass)) {
             if (arguments.stream().anyMatch(arg -> !(arg instanceof Positional))) {
                 throw new IllegalStateException(
                         "Positional args if present must be positioned at the start."
@@ -216,7 +221,7 @@ public class ArgumentFactory {
             argument = new Positional(description, index++, type, typeConverter, constraints, position++);
             arguments.add(argument);
         }
-        reset();
+        resetOptionalVars();
         return this;
     }
 
@@ -229,23 +234,23 @@ public class ArgumentFactory {
         if (typeConverter == null) {
             typeConverter = typeConverters.get(type);
         }
-        if ((namesIsNull(names, cls)) || (type == null) || (typeConverter == null)) {
+        if ((namesIsNull(names, subClass)) || (type == null) || (typeConverter == null)) {
             throw new IllegalStateException(
                     "Names, Type & TypeConverter has to be set."
             );
         }
         Argument argument;
 
-        if ((Reflections.isBoolean(type)) || (Optional.class.equals(cls))) {
-            argument = new Optional(names, description, index++, type, typeConverter, defaultValue);
+        if ((Reflections.isBoolean(type)) || (com.github.wnebyte.args.Optional.class.equals(subClass))) {
+            argument = new com.github.wnebyte.args.Optional(names, description, index++, type, typeConverter, defaultValue);
             arguments.add(argument);
         }
-        else if (Required.class.equals(cls)) {
+        else if (Required.class.equals(subClass)) {
             argument = new Required(names, description, index++, type, typeConverter);
             arguments.add(argument);
         }
-        else if (Positional.class.equals(cls)) {
-            if (ArgumentUtil.containsSubclasses(arguments, Arrays.asList(Required.class, Optional.class))) {
+        else if (Positional.class.equals(subClass)) {
+            if (ArgumentSupport.containsInstancesOfSubClasses(arguments, Arrays.asList(Required.class, Optional.class))) {
                 throw new IllegalStateException(
                         "Positional args if present must be positioned at the start."
                 );
@@ -253,15 +258,23 @@ public class ArgumentFactory {
             argument = new Positional(description, index++, type, typeConverter, position++);
             arguments.add(argument);
         }
-        reset();
+        resetOptionalVars();
         return this;
     }
 
-    private void reset() {
+    public List<Argument> getArguments() {
+        List<Argument> arguments = new ArrayList<>(this.arguments);
+        this.arguments.clear();
+        index = 0;
+        position = 0;
+        return arguments;
+    }
+
+    private void resetOptionalVars() {
         names = null;
         defaultValue = null;
         description = null;
-        cls = Required.class;
+        subClass = Required.class;
     }
 
     private boolean namesIsNull(final Set<String> names, final Class<? extends Argument> cls) {
@@ -271,13 +284,5 @@ public class ArgumentFactory {
         else {
             return (names == null) || (names.isEmpty());
         }
-    }
-
-    public List<Argument> getArguments() {
-        List<Argument> arguments = new ArrayList<>(this.arguments);
-        this.arguments.clear();
-        index = 0;
-        position = 0;
-        return arguments;
     }
 }

@@ -1,12 +1,13 @@
 package com.github.wnebyte.args;
 
+import com.github.wnebyte.args.constraint.Constraint;
+import com.github.wnebyte.args.converter.TypeConverter;
 import com.github.wnebyte.args.exception.ConstraintException;
 import com.github.wnebyte.args.exception.ParseException;
 import com.github.wnebyte.args.util.Objects;
 import com.github.wnebyte.args.util.Reflections;
 import java.util.Collection;
 import java.util.Set;
-import java.util.regex.Pattern;
 
 /**
  * This class represents an abstract Argument.
@@ -51,17 +52,16 @@ public abstract class Argument {
     /**
      * Constructs a new instance.
      */
-    protected Argument(
+    public Argument(
             final Set<String> names,
             final String description,
-            final String regex,
             final int index,
             final Class<?> type,
             final TypeConverter<?> typeConverter
     ) {
         this.names = names;
         this.description = description;
-        this.regex = regex;
+        this.regex = createRegExp(names, type);
         this.index = index;
         this.type = type;
         this.typeConverter = typeConverter;
@@ -69,12 +69,11 @@ public abstract class Argument {
     }
 
     /**
-     * Constructs a new instance.
+     * Constructs a new instance with constraints.
      */
-    protected <T> Argument(
+    public <T> Argument(
             final Set<String> names,
             final String description,
-            final String regex,
             final int index,
             final Class<T> type,
             final TypeConverter<T> typeConverter,
@@ -82,7 +81,7 @@ public abstract class Argument {
     ) {
         this.names = names;
         this.description = description;
-        this.regex = regex;
+        this.regex = createRegExp(names, type);
         this.index = index;
         this.type = type;
         this.typeConverter = typeConverter;
@@ -106,7 +105,9 @@ public abstract class Argument {
         return transformer;
     }
 
-    protected Object initialize(final String value) throws ParseException, ConstraintException {
+    protected abstract String createRegExp(final Set<String> names, final Class<?> type);
+
+    protected Object initialize(final String value) throws ParseException {
         return getTransformer().transform(value);
     }
 

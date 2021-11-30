@@ -1,20 +1,18 @@
-package com.github.wnebyte.args;
+package com.github.wnebyte.args.converter;
 
+import com.github.wnebyte.args.Splitter;
 import com.github.wnebyte.args.exception.ParseException;
 import com.github.wnebyte.args.util.Objects;
 import com.github.wnebyte.args.util.Strings;
 import java.lang.reflect.Array;
 import java.util.*;
 
-public class TypeConverters implements AbstractTypeConverters {
+public class TypeConverterMap extends AbstractTypeConverterMap {
 
-    private static final TypeConverters instance = new TypeConverters();
+    private static TypeConverterMap instance = null;
 
-    private final Map<Class<?>, TypeConverter<?>> TYPE_CONVERTERS = new HashMap<>();
-
-    private final Map<Class<?>, TypeConverter<?>> LIST_TYPE_CONVERTERS = new HashMap<>();
-
-    public TypeConverters() {
+    public TypeConverterMap() {
+        converters = new HashMap<>();
         put(byte.class, BYTE_TYPE_CONVERTER);
         put(byte[].class, BYTE_ARRAY_TYPE_CONVERTER);
         put(Byte.class, BYTE_TYPE_CONVERTER);
@@ -51,21 +49,27 @@ public class TypeConverters implements AbstractTypeConverters {
         put(String[].class, arrayTypeConverterOf(String.class));
     }
 
-    public static TypeConverters getInstance() {
+    /* --------------- Static Methods --------------- */
+
+    public static TypeConverterMap getInstance() {
+        if (instance == null) {
+            instance = new TypeConverterMap();
+        }
         return instance;
     }
 
-    @SuppressWarnings("unchecked")
-    public <T> TypeConverter<T[]> arrayTypeConverterOf(
+    public static <T> TypeConverter<T[]> arrayTypeConverterOf(
             final Class<T> componentType, final TypeConverter<T> typeConverter
     ) {
-        if ((componentType == null) || (typeConverter == null)) { return null; }
-
+        if (Objects.isNull(componentType, typeConverter)) {
+            return null;
+        }
         return new TypeConverter<T[]>() {
             @Override
             public T[] convert(final String value) throws ParseException {
                 try {
                     List<String> elements = Strings.splitByComma(value);
+                    @SuppressWarnings("unchecked")
                     T[] array = (T[]) Array.newInstance(componentType, elements.size());
                     int i = 0;
                     for (String element : elements) {
@@ -86,82 +90,51 @@ public class TypeConverters implements AbstractTypeConverters {
         };
     }
 
-    public <T> TypeConverter<List<T>> listTypeConverterOf(
-            final Class<T> componentType, final TypeConverter<T> typeConverter
-    ) {
-        if ((componentType == null) || (typeConverter == null)) { return null; }
-
-        return new TypeConverter<List<T>>() {
-            @Override
-            public List<T> convert(final String value) throws ParseException {
-                TypeConverter<T[]> arrayTypeConverter = arrayTypeConverterOf(componentType, typeConverter);
-                return Arrays.asList(arrayTypeConverter.convert(value));
-            }
-            @Override
-            public List<T> defaultValue() {
-                return null;
-            }
-        };
+    public final <T> TypeConverter<T[]> arrayTypeConverterOf(final Class<T> componentType) {
+        return arrayTypeConverterOf(componentType, get(componentType));
     }
 
     @Override
     public <T> void put(final Class<T> cls, final TypeConverter<T> typeConverter) {
-        if ((cls == null) || (typeConverter == null)) {
-            return;
+        if (Objects.isNull(cls, typeConverter)) {
+            throw new IllegalArgumentException(
+                    "Parameter(s) must not be null."
+            );
         }
-        TYPE_CONVERTERS.put(cls, typeConverter);
+        converters.put(cls, typeConverter);
     }
-
-    /*
-    private <T> void putList(final Class<T> cls, final TypeConverter<List<T>> typeConverter) {
-        if ((cls == null) || (typeConverter == null)) {
-            return;
-        }
-        LIST_TYPE_CONVERTERS.put(cls, typeConverter);
-    }
-
-    @SuppressWarnings("unchecked")
-    public <T> TypeConverter<List<T>> getList(final Class<T> cls) {
-        return (TypeConverter<List<T>>) LIST_TYPE_CONVERTERS.get(cls);
-    }
-
-    @SuppressWarnings("unchecked")
-    public <T> TypeConverter<Collection<T>> getCollection(final Class<T> cls) {
-        return (TypeConverter<Collection<T>>) LIST_TYPE_CONVERTERS.get(cls);
-    }
-     */
 
     @Override
     public <T> boolean putIfAbsent(final Class<T> cls, final TypeConverter<T> typeConverter) {
-        if ((cls == null) || (typeConverter == null)) {
+        if (Objects.isNull(cls, typeConverter)) {
             return false;
         }
-        return TYPE_CONVERTERS.putIfAbsent(cls, typeConverter) == null;
+        return converters.putIfAbsent(cls, typeConverter) == null;
     }
 
     @Override
-    public <T> boolean exists(final Class<T> cls) {
-        return TYPE_CONVERTERS.containsKey(cls);
+    public boolean contains(final Class<?> cls) {
+        return converters.containsKey(cls);
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public <T> TypeConverter<T> get(final Class<T> cls) {
-        return (TypeConverter<T>)TYPE_CONVERTERS.get(cls);
+        return (TypeConverter<T>) converters.get(cls);
     }
 
-    public final <T> TypeConverter<T[]> arrayTypeConverterOf(final Class<T> componentType) {
-        return arrayTypeConverterOf(componentType, get(componentType));
-    }
-
-    public final <T> TypeConverter<List<T>> listTypeConverterOf(final Class<T> componentType) {
-        return listTypeConverterOf(componentType, get(componentType));
-    }
+    /* --------------- TypeConverter Implementations --------------- */
 
     public final TypeConverter<Boolean> BOOLEAN_TYPE_CONVERTER = new TypeConverter<Boolean>() {
         @Override
         public Boolean convert(final String value) throws ParseException {
-            return Boolean.parseBoolean(value);
+            try {
+                return Boolean.parseBoolean(value);
+            } catch (Exception e) {
+                throw new ParseException(
+                        e.getMessage()
+                );
+            }
         }
         @Override
         public Boolean defaultValue() {
@@ -482,7 +455,7 @@ public class TypeConverters implements AbstractTypeConverters {
 
     public final TypeConverter<String> STRING_TYPE_CONVERTER = new TypeConverter<String>() {
         @Override
-        public String convert(final String value) throws ParseException {
+        public String convert(final String value) {
             return value;
         }
         @Override
@@ -495,9 +468,9 @@ public class TypeConverters implements AbstractTypeConverters {
     public boolean equals(Object o) {
         if (o == null) { return false; }
         if (o == this) { return true; }
-        if (!(o instanceof TypeConverters)) { return false; }
-        TypeConverters typeConverters = (TypeConverters) o;
-        return Objects.equals(typeConverters.TYPE_CONVERTERS, this.TYPE_CONVERTERS) &&
+        if (!(o instanceof TypeConverterMap)) { return false; }
+        TypeConverterMap typeConverters = (TypeConverterMap) o;
+        return Objects.equals(typeConverters.converters, this.converters) &&
                 super.equals(typeConverters);
     }
 
@@ -505,12 +478,12 @@ public class TypeConverters implements AbstractTypeConverters {
     public int hashCode() {
         int result = 55;
         return result +
-                Objects.hashCode(this.TYPE_CONVERTERS) +
+                Objects.hashCode(this.converters) +
                 super.hashCode();
     }
 
     @Override
     public String toString() {
-        return String.format("[TypeConverters.class typeConverters: %s]", TYPE_CONVERTERS);
+        return String.format("TypeConverterMap(typeConverters=%s)", converters);
     }
 }

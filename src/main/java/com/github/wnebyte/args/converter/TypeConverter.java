@@ -1,4 +1,4 @@
-package com.github.wnebyte.args;
+package com.github.wnebyte.args.converter;
 
 import com.github.wnebyte.args.exception.ParseException;
 

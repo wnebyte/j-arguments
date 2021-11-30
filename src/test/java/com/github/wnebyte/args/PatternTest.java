@@ -1,9 +1,9 @@
 package com.github.wnebyte.args;
 
+import com.github.wnebyte.args.factory.ArgumentFactoryBuilder;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.util.List;
 import java.util.regex.Pattern;
 
 public class PatternTest {
@@ -32,30 +32,28 @@ public class PatternTest {
 
     @Test
     public void test03() {
-        Pattern pattern = new PatternCreator().createPattern(
+        Pattern pattern = new PatternCreator().create(
                 new ArgumentFactoryBuilder().build()
                         .setNames("-b")
-                        .setPositional()
+                        .isPositional()
                         .create(int.class)
                         .setNames("-c")
-                        .setPositional()
+                        .isPositional()
                         .create(int.class)
                         .setNames("-a")
-                        .setOptional()
+                        .isOptional()
                         .create(boolean.class)
-                        .getArguments(),
-                true
+                        .getArguments()
         );
     }
 
     @Test
     public void test05() {
-        Pattern pattern = new PatternCreator().createPattern(
+        Pattern pattern = new PatternCreator().create(
                 new ArgumentFactoryBuilder().build()
-                        .setPositional()
+                        .isPositional()
                         .create(String.class)
-                        .getArguments(),
-                true
+                        .getArguments()
         );
         Assert.assertTrue(matches(pattern,
                 "hej",

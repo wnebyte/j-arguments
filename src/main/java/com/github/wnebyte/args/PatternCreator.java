@@ -5,37 +5,47 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import com.github.wnebyte.args.util.Strings;
 
-public class PatternCreator {
+public class PatternCreator implements IPatternCreator {
 
-    public String createRegex(final List<Argument> arguments, final boolean rmLws) {
-        return permute(arguments, rmLws);
+    /**
+     * Variable dictates whether any discovered leading whitespace characters are to be removed for
+     * each permutation of the to-be concatenated regular expressions.
+     */
+    private boolean rmlws = true;
+
+    public void setRmlws(boolean value) {
+        this.rmlws = value;
     }
 
-    public Pattern createPattern(final List<Argument> arguments, final boolean rmLws) {
-        return Pattern.compile(permute(arguments, rmLws));
+    public String createRegex(final List<Argument> args) {
+        return permute(args);
     }
 
-    private String permute(final List<Argument> arguments, final boolean rmLws) {
+    public Pattern create(final List<Argument> args) {
+        return Pattern.compile(permute(args));
+    }
+
+    private String permute(final List<Argument> args) {
         // if there are no arguments to permute, return an empty string
-        if ((arguments == null) || (arguments.size() == 0)) {
+        if ((args == null) || (args.size() == 0)) {
             return "";
         }
 
         String regex  = "(";
         int i = 0;
         // init set of unique permutations
-        Set<List<String>> powerSet = powerSet(arguments);
-        for (List<String> e : powerSet) {
+        Set<List<String>> ps = generatePermutations(args);
+        for (List<String> e : ps) {
             // as a string
             String s = Arrays.toString(e.toArray());
             s = Strings.removeFirstAndLast(s, '[', ']');
-            if (rmLws) {
+            if (rmlws) {
                 s = s.replaceFirst("\\\\s", "");
             }
             // add opening and closing parenthesis around the string
             regex = regex.concat("(").concat(s).concat(")");
             // add '|' regex for every string but the last
-            if (i < powerSet.size() - 1) {
+            if (i < ps.size() - 1) {
                 regex = regex.concat("|");
             }
             i++;
@@ -43,14 +53,17 @@ public class PatternCreator {
         return regex.replace(", ", "").concat(")");
     }
 
-    private Set<List<String>> powerSet(final List<Argument> arguments) {
+    private Set<List<String>> generatePermutations(final List<Argument> arguments) {
+        // return set
         Set<List<String>> set = new HashSet<>();
-        // the required & optional argument's regular expressions
-        LinkedList<String> args = ArgumentUtil.getRegularExpressions(arguments, Required.class, Optional.class);
-        // the positional arguments
-        List<Positional> positional = ArgumentUtil.getSubclasses(arguments, Positional.class);
-        // if the specified arguments only contain positional arguments,
-        // map and return them as a set of their regular expressions.
+        // list of regex's
+        LinkedList<String> args = ArgumentSupport.mapToRegexList(arguments, Required.class, Optional.class);
+        // positional args
+        List<Positional> positional = ArgumentSupport.getInstancesOfSubClass(arguments, Positional.class);
+        /*
+        if the specified arguments only contain positional arguments,
+        map and return them as a set of their regular expressions.
+         */
         if (args.isEmpty()) {
             set.add(positional.stream().map(Argument::getRegex).collect(Collectors.toList()));
             return set;

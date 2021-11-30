@@ -19,14 +19,6 @@ public class Splitter {
 
     public static String normalize(final String value) {
         if (value != null) {
-            /*
-            if (firstAndLastMatches(value, '"', '"')) {
-                return value.replace("\"", "");
-            }
-            else if (firstAndLastMatches(value, '\'', '\'')) {
-                return value.replace("'", "");
-            }
-             */
             return value.replace("\"", "")
                     .replace("'", "");
         }

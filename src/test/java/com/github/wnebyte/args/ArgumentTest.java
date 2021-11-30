@@ -1,5 +1,7 @@
 package com.github.wnebyte.args;
 
+import com.github.wnebyte.args.converter.TypeConverter;
+import com.github.wnebyte.args.factory.ArgumentFactoryBuilder;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -14,15 +16,15 @@ public class ArgumentTest {
     public void test00() {
         List<Argument> arguments = new ArgumentFactoryBuilder().build()
                 .setNames("-a", "--a")
-                .setRequired()
+                .isRequired()
                 .setType(String.class)
                 .create()
                 .setNames("-b", "--b")
-                .setRequired()
+                .isRequired()
                 .setType(String.class)
                 .create()
                 .getArguments();
-        Pattern pattern = new PatternCreator().createPattern(arguments, true);
+        Pattern pattern = new PatternCreator().create(arguments);
         Assert.assertTrue(matches(pattern,
                 "--a hello --b 'hello there'",
                 "-b \"hello there\" --a 'hey there'"

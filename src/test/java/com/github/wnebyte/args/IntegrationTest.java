@@ -1,5 +1,6 @@
 package com.github.wnebyte.args;
 
+import com.github.wnebyte.args.factory.ArgumentFactoryBuilder;
 import org.junit.Assert;
 import org.junit.Test;
 import java.util.List;
@@ -12,17 +13,17 @@ public class IntegrationTest {
         List<Argument> arguments = new ArgumentFactoryBuilder().build()
                 .setNames("-a", "--a")
                 .setType(double.class)
-                .setOptional()
+                .isOptional()
                 .create()
                 .setNames("-b", "--b")
                 .setType(short.class)
-                .setOptional()
+                .isOptional()
                 .create()
                 .getArguments();
         String input = "--a 100.5";
-        Pattern pattern = new PatternCreator().createPattern(arguments, true);
+        Pattern pattern = new PatternCreator().create(arguments);
         boolean matches = matches(pattern, input);
-        Parser parser = new ArgumentParser(arguments);
+        IParser parser = new Parser(arguments);
         Object[] args = parser.parse(input);
         double a = (double) args[0];
         Assert.assertTrue(matches);

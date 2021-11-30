@@ -1,5 +1,7 @@
 package com.github.wnebyte.args;
 
+import com.github.wnebyte.args.constraint.Constraint;
+import com.github.wnebyte.args.converter.TypeConverter;
 import com.github.wnebyte.args.exception.ConstraintException;
 import com.github.wnebyte.args.exception.ParseException;
 import com.github.wnebyte.args.util.Reflections;
@@ -12,17 +14,17 @@ import java.util.Set;
  */
 public class Required extends Argument {
 
-    protected Required(
+    public Required(
             final Set<String> name,
             final String description,
             final int index,
             final Class<?> type,
             final TypeConverter<?> typeConverter
     ) {
-        super(name, description, createRegExp(name, type), index, type, typeConverter);
+        super(name, description, index, type, typeConverter);
     }
 
-    protected <T> Required(
+    public <T> Required(
             final Set<String> name,
             final String description,
             final int index,
@@ -30,12 +32,12 @@ public class Required extends Argument {
             final TypeConverter<T> typeConverter,
             final Collection<Constraint<T>> constraints
     ) {
-        super(name, description, createRegExp(name, type), index, type, typeConverter, constraints);
+        super(name, description, index, type, typeConverter, constraints);
     }
 
-    private static String createRegExp(final Set<String> name, final Class<?> cls) {
+    protected String createRegExp(final Set<String> name, final Class<?> type) {
         return "\\s" + "(" + String.join("|", name) + ")" + "\\s" +
-                (Reflections.isArray(cls) ? ARRAY_VALUE_PATTERN : DEFAULT_VALUE_PATTERN);
+                (Reflections.isArray(type) ? ARRAY_VALUE_PATTERN : DEFAULT_VALUE_PATTERN);
     }
 
     @Override
