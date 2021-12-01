@@ -1,9 +1,8 @@
 package com.github.wnebyte.args;
 
+import java.util.Arrays;
 import com.github.wnebyte.args.util.Pair;
 import com.github.wnebyte.args.util.Strings;
-import java.util.Arrays;
-import static com.github.wnebyte.args.util.Strings.firstAndLastMatches;
 import static com.github.wnebyte.args.util.Strings.firstAndLastMatchesAny;
 
 public class Splitter {
@@ -45,8 +44,10 @@ public class Splitter {
         if (name != null) {
             val = value.split(name.concat("\\s"), 2)[1];
         }
-        if (!firstAndLastMatchesAny(val,
-                Arrays.asList(new Pair<>('"', '"'), new Pair<>('\'', '\''), new Pair<>('[', ']')))) {
+        if (!firstAndLastMatchesAny(
+                val,
+                Arrays.asList(new Pair<>('"', '"'), new Pair<>('\'', '\''), new Pair<>('[', ']')))
+        ) {
             val = val.split("\\s", 2)[0];
         }
         return this;

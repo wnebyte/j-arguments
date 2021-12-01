@@ -4,11 +4,16 @@ import java.util.*;
 import java.util.stream.Collectors;
 import com.github.wnebyte.args.util.Collections;
 
+/**
+ * Support class for working with instances of {@link Argument}.
+ */
 public class ArgumentSupport {
 
     /**
-     * Returns a <code>LinkedList</code> of regular expressions mapped from the elements of the
-     * specified <code>arguments</code> collection, that are of the same class as one of the specified <code>cls</code>.
+     * Maps each of the specified <code>args</code> to their regex.
+     * @param args to be mapped.
+     * @param sClasses sub classes to be mapped.
+     * @return a <code>LinkedList</code> of regex's.
      */
     @SafeVarargs
     public static LinkedList<String> mapToRegexList(
@@ -25,6 +30,11 @@ public class ArgumentSupport {
                 .collect(Collectors.toCollection(LinkedList::new));
     }
 
+    /**
+     * Maps each of the specified <code>args</code> to their regex.
+     * @param args to be mapped.
+     * @return a <code>LinkedList</code> of regex's.
+     */
     public static LinkedList<String> mapToRegexList(
             final Collection<Argument> args
     ) {

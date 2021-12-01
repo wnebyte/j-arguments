@@ -106,6 +106,7 @@ public class Optional extends Argument {
     // Todo: need to account for type boolean
     @Override
     public String toString() {
-        return "[" + String.join(", ", getNames()) + (isArray() ? "[...]" : "") + "]";
+       // return "[" + String.join(", ", getNames()) + (isArray() ? "[...]" : "") + "]";
+        return "[( " + String.join(" | ", getNames()) + " )]";
     }
 }

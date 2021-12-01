@@ -41,7 +41,7 @@ public class Required extends Argument {
     }
 
     @Override
-    protected Object initialize(final String value) throws ParseException, ConstraintException {
+    protected Object initialize(final String value) throws ParseException {
         String val = new Splitter()
                 .setName(Strings.firstSubstring(value, getNames()))
                 .setValue(value)
@@ -69,6 +69,7 @@ public class Required extends Argument {
 
     @Override
     public String toString() {
-        return "[" + String.join(", ", getNames()) + (isArray() ? "[...]" : "") + "]";
+       // return "[" + String.join(", ", getNames()) + (isArray() ? "[...]" : "") + "]";
+        return "[ " + String.join(" | ", getNames()) + " ]";
     }
 }

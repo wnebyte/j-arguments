@@ -1,6 +1,7 @@
 package com.github.wnebyte.args;
 
 import com.github.wnebyte.args.converter.TypeConverter;
+import com.github.wnebyte.args.converter.TypeConverterMap;
 import com.github.wnebyte.args.factory.ArgumentFactoryBuilder;
 import org.junit.Assert;
 import org.junit.Test;
@@ -35,7 +36,25 @@ public class ArgumentTest {
         String input = "--a \"a: 'val' b: 'val2'\"";
     }
 
-
+    @Test
+    public void testToString() {
+        List<Argument> args = new ArgumentFactoryBuilder().build()
+                .isPositional()
+                .create(int.class)
+                .setNames("-a", "-A")
+                .isRequired()
+                .create(int.class)
+                .setNames("-b", "-B")
+                .isOptional()
+                .create(int.class)
+                .getArguments();
+        Argument pos = args.get(0);
+        Argument req = args.get(1);
+        Argument opt = args.get(2);
+        System.out.println(pos);
+        System.out.println(req);
+        System.out.println(opt);
+    }
 
     private <T extends Collection<R>, R> void cons(
             Class<? super T> type,

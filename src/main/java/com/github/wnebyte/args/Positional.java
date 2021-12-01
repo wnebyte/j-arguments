@@ -2,7 +2,6 @@ package com.github.wnebyte.args;
 
 import com.github.wnebyte.args.constraint.Constraint;
 import com.github.wnebyte.args.converter.TypeConverter;
-import com.github.wnebyte.args.exception.ConstraintException;
 import com.github.wnebyte.args.exception.ParseException;
 import com.github.wnebyte.args.util.Reflections;
 import java.util.Collection;
@@ -39,12 +38,12 @@ public class Positional extends Argument {
         this.position = position;
     }
 
-    protected String createRegExp(final Set<String> names, final Class<?> type) {
-        return "\\s" + (Reflections.isArray(type) ? ARRAY_VALUE_PATTERN : DEFAULT_VALUE_PATTERN);
-    }
-
     public int getPosition() {
         return position;
+    }
+
+    protected String createRegExp(final Set<String> names, final Class<?> type) {
+        return "\\s" + (Reflections.isArray(type) ? ARRAY_VALUE_PATTERN : DEFAULT_VALUE_PATTERN);
     }
 
     @Override
@@ -76,7 +75,7 @@ public class Positional extends Argument {
 
     @Override
     public String toString() {
-        return "[*" + (Reflections.isArray(getType()) ? "[...]" : "") + "]";
+        return "[ " + "..." + " ]";
     }
 
 }
