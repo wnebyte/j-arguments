@@ -1,8 +1,9 @@
-# args
-java-core-library
+# j-arguments
+java-library
 
 ## About
-This project is a core module used by:  
+This package contains ...
 
-https://github.com/wnebyte/j-shell  
-https://github.com/wnebyte/j-args
+Used as a core module in:   
+https://github.com/wnebyte/j-cli  
+https://github.com/wnebyte/j-exeargs
