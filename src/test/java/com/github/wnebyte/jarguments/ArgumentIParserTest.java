@@ -7,6 +7,7 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 public class ArgumentIParserTest {
@@ -25,12 +26,12 @@ public class ArgumentIParserTest {
                 .setType(String.class)
                 .append()
                 .get();
-        Object[] args = new Parser(arguments).parse("");
+        Object[] args = new ArgumentCollectionParser(arguments).parse("");
     }
 
     @Test
     public void test01() {
-        Parser parser = new Parser(new ArrayList<>());
+        ArgumentCollectionParser parser = new ArgumentCollectionParser(new ArrayList<>());
         List<String> list = parser.split("");
         System.out.println("size: " + list.size() + Arrays.toString(list.toArray()));
     }

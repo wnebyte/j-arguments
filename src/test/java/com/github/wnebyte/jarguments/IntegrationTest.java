@@ -23,7 +23,7 @@ public class IntegrationTest {
         String input = "--a 100.5";
         Pattern pattern = new ArgumentCollectionPatternGenerator(arguments).generatePattern();
         boolean matches = matches(pattern, input);
-        IParser parser = new Parser(arguments);
+        ArgumentCollectionParser parser = new ArgumentCollectionParser(arguments);
         Object[] args = parser.parse(input);
         double a = (double) args[0];
         Assert.assertTrue(matches);

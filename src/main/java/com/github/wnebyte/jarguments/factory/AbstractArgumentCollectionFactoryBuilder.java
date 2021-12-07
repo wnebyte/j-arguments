@@ -1,13 +1,13 @@
 package com.github.wnebyte.jarguments.factory;
 
-import com.github.wnebyte.jarguments.converter.AbstractTypeConverterMap;
 import java.util.Collection;
+import com.github.wnebyte.jarguments.converter.AbstractTypeConverterMap;
 
 public abstract class AbstractArgumentCollectionFactoryBuilder {
 
-    protected abstract AbstractArgumentCollectionFactoryBuilder excludeCharacters(Collection<Character> characters);
+    public abstract AbstractArgumentCollectionFactoryBuilder excludeCharacters(Collection<Character> characters);
 
-    protected abstract AbstractArgumentCollectionFactoryBuilder useTypeConverterMap(AbstractTypeConverterMap converters);
+    public abstract AbstractArgumentCollectionFactoryBuilder useTypeConverterMap(AbstractTypeConverterMap converters);
 
-    protected abstract AbstractArgumentCollectionFactory build();
+    public abstract AbstractArgumentCollectionFactory build();
 }

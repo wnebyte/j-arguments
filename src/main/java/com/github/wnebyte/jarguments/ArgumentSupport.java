@@ -99,4 +99,17 @@ public class ArgumentSupport {
                 .findFirst()
                 .orElse(null);
     }
+
+    public static Argument getByPosition(final Collection<Argument> args, final int position) {
+        if ((Collections.isNullOrEmpty(args)) || (position < 0)) {
+            return null;
+        }
+        return args.stream()
+                .filter(arg -> arg instanceof Positional)
+                .map(arg -> (Positional) args)
+                .filter(arg -> arg.getPosition() == position)
+                .findFirst()
+                .orElse(null);
+
+    }
 }

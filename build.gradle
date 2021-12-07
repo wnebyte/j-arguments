@@ -5,7 +5,7 @@ plugins {
     id 'com.github.johnrengelman.shadow' version '6.1.0'
 }
 
-def projectName = 'jargs'
+def projectName = 'jarguments'
 group 'com.github.wnebyte'
 version '0.0.1'
 

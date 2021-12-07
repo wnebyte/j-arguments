@@ -16,7 +16,7 @@ public abstract class Argument {
 
     /*
     ###########################
-    #    STATIC PROPERTIES    #
+    #      STATIC FIELDS      #
     ###########################
     */
     private static final String VALUE_PATTERN = "[^\\s\"']*|\"[^\"]*\"|'[^']*'|\\$\\(.*\\)";
@@ -32,7 +32,7 @@ public abstract class Argument {
 
     /*
     ###########################
-    #        PROPERTIES       #
+    #         FIELDS          #
     ###########################
     */
     private final Set<String> names;

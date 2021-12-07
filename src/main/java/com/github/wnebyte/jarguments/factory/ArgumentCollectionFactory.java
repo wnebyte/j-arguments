@@ -85,13 +85,14 @@ public class ArgumentCollectionFactory extends AbstractArgumentCollectionFactory
                     "Names may not be null/empty."
             );
         }
-        this.names = new HashSet<>(names.length);
+        this.names = new LinkedHashSet<>(names.length);
         for (String n : names) {
-            n = Strings.exclude(n, exclude);
+            n = Strings.removeAll(n, exclude);
             boolean success = this.names.add(n) & allNames.add(n);
             if (!success) {
                 throw new IllegalArgumentException(
-                        "All names have to be distinct across all of the arguments created using this instance."
+                        "An Argument with the name: '" + n + "'" +
+                                " has already been constructed using this instance."
                 );
             }
         }
@@ -199,13 +200,13 @@ public class ArgumentCollectionFactory extends AbstractArgumentCollectionFactory
     ) {
         if ((namesIsNull(names, subClass)) || (type == null) || (typeConverter == null)) {
             throw new IllegalStateException(
-                    "Names, Type & TypeConverter has to be set."
+                    "Names, Type & TypeConverter has to be specified."
             );
         }
         Argument argument;
 
-        if ((Reflections.isBoolean(type)) || (com.github.wnebyte.jarguments.Optional.class.equals(subClass))) {
-            argument = new com.github.wnebyte.jarguments.Optional(names, description, index++, type, typeConverter, constraints, defaultValue);
+        if ((Reflections.isBoolean(type)) || (Optional.class.equals(subClass))) {
+            argument = new Optional(names, description, index++, type, typeConverter, constraints, defaultValue);
             arguments.add(argument);
         }
         else if (Required.class.equals(subClass)) {
@@ -215,7 +216,7 @@ public class ArgumentCollectionFactory extends AbstractArgumentCollectionFactory
         else if (Positional.class.equals(subClass)) {
             if (arguments.stream().anyMatch(arg -> !(arg instanceof Positional))) {
                 throw new IllegalStateException(
-                        "Positional args if present must be positioned at the start."
+                        "Positional Arguments have to be positioned at the start."
                 );
             }
             argument = new Positional(description, index++, type, typeConverter, constraints, position++);

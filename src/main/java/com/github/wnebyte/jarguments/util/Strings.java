@@ -8,12 +8,13 @@ import java.util.*;
 public class Strings {
 
     /**
-     * Removes occurrences of the specified characters if present from the specified String <code>s</code>.
+     * Removes all occurrences of the specified <code>exclude</code> characters from the specified
+     * String <code>s</code>.
      * @param s to be normalized.
      * @param exclude characters to be removed from the specified String.
      * @return the result
      */
-    public static String exclude(final String s, final Collection<Character> exclude) {
+    public static String removeAll(final String s, final Collection<Character> exclude) {
         if ((s == null) || (exclude == null) || (exclude.isEmpty())) {
             return s;
         }
