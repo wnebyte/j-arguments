@@ -18,10 +18,10 @@ public class TestClass {
 
         List<Argument> args = argumentCollectionFactory
                 .setNames("-h", "--help")
-                .isRequired()
+                .setIsRequired()
                 .append(int.class)
                 .setNames("-a", "--a")
-                .isOptional()
+                .setIsOptional()
                 .setDefaultValue("10")
                 .setDescription("foo bar ...")
                 .append(Integer.class)

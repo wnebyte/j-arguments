@@ -19,16 +19,11 @@ public abstract class Argument {
     #      STATIC FIELDS      #
     ###########################
     */
-    private static final String VALUE_PATTERN = "[^\\s\"']*|\"[^\"]*\"|'[^']*'|\\$\\(.*\\)";
+    private static final String VALUE_PATTERN = "[^\\s\"']*|\"[^\"]*\"|'[^']*'";
 
     protected static final String DEFAULT_VALUE_PATTERN = "(" + VALUE_PATTERN + ")";
 
     protected static final String ARRAY_VALUE_PATTERN = "\\[" + DEFAULT_VALUE_PATTERN + "*\\]";
-
-    protected static final String OBJECT_VALUE_PATTERN = "\\{" + DEFAULT_VALUE_PATTERN + "*\\}";
-
-    private static final String REQUIRED_VALUE_PATTERN =
-            "(" + DEFAULT_VALUE_PATTERN + "|" + ARRAY_VALUE_PATTERN + ")";
 
     /*
     ###########################
@@ -48,6 +43,12 @@ public abstract class Argument {
     private final TypeConverter<?> typeConverter;
 
     private final Transformer<?> transformer;
+
+    /*
+    ###########################
+    #       CONSTRUCTORS      #
+    ###########################
+    */
 
     /**
      * Constructs a new instance.
@@ -175,4 +176,22 @@ public abstract class Argument {
                 Objects.hashCode(getClass()) +
                 super.hashCode();
     }
+
+    @Override
+    public String toString() {
+        return super.toString();
+    }
+
+    public String toPaddedString() {
+        return toString();
+    }
+
+    public String toDescriptiveString() {
+        return "";
+    }
+
+    public String toPaddedDescriptiveString() {
+        return toDescriptiveString();
+    }
+
 }

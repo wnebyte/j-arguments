@@ -75,7 +75,22 @@ public class Positional extends Argument {
 
     @Override
     public String toString() {
+        return "[" + "..." + "]";
+    }
+
+    @Override
+    public String toPaddedString() {
         return "[ " + "..." + " ]";
+    }
+
+    @Override
+    public String toDescriptiveString() {
+        return "[" + "... <" + getType().getSimpleName() + ">]";
+    }
+
+    @Override
+    public String toPaddedDescriptiveString() {
+        return "[ " + "... <" + getType().getSimpleName() + "> ]";
     }
 
 }

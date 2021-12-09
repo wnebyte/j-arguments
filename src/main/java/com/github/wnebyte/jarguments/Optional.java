@@ -103,10 +103,23 @@ public class Optional extends Argument {
                 super.hashCode();
     }
 
-    // Todo: need to account for type boolean
     @Override
     public String toString() {
-       // return "[" + String.join(", ", getNames()) + (isArray() ? "[...]" : "") + "]";
+        return "[(" + String.join(" | ", getNames()) + ")]";
+    }
+
+    @Override
+    public String toPaddedString() {
         return "[( " + String.join(" | ", getNames()) + " )]";
+    }
+
+    @Override
+    public String toDescriptiveString() {
+        return "[(" + String.join(" | ", getNames()) + " <" + getType().getSimpleName() + ">)]";
+    }
+
+    @Override
+    public String toPaddedDescriptiveString() {
+        return "[( " + String.join(" | ", getNames()) + " <" + getType().getSimpleName() + "> )]";
     }
 }

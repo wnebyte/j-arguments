@@ -16,11 +16,11 @@ public class ArgumentTest {
     public void test00() {
         List<Argument> arguments = new ArgumentCollectionFactoryBuilder().build()
                 .setNames("-a", "--a")
-                .isRequired()
+                .setIsRequired()
                 .setType(String.class)
                 .append()
                 .setNames("-b", "--b")
-                .isRequired()
+                .setIsRequired()
                 .setType(String.class)
                 .append()
                 .get();
@@ -38,13 +38,13 @@ public class ArgumentTest {
     @Test
     public void testToString() {
         List<Argument> args = new ArgumentCollectionFactoryBuilder().build()
-                .isPositional()
+                .setIsPositional()
                 .append(int.class)
                 .setNames("-a", "-A")
-                .isRequired()
+                .setIsRequired()
                 .append(int.class)
                 .setNames("-b", "-B")
-                .isOptional()
+                .setIsOptional()
                 .append(int.class)
                 .get();
         Argument pos = args.get(0);
@@ -53,6 +53,10 @@ public class ArgumentTest {
         System.out.println(pos);
         System.out.println(req);
         System.out.println(opt);
+        System.out.println("");
+        System.out.println(pos.toDescriptiveString());
+        System.out.println(req.toDescriptiveString());
+        System.out.println(opt.toDescriptiveString());
     }
 
     private <T extends Collection<R>, R> void cons(

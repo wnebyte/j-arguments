@@ -7,7 +7,6 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
 public class ArgumentIParserTest {
@@ -17,11 +16,11 @@ public class ArgumentIParserTest {
         List<Argument> arguments = new ArgumentCollectionFactoryBuilder().build()
                 .setNames("-a", "--a", "---a")
                 .setType(String.class)
-                .isOptional()
+                .setIsOptional()
                 .setDefaultValue("def0")
                 .append()
                 .setNames("-b", "--b", "---b")
-                .isOptional()
+                .setIsOptional()
                 .setDefaultValue("def1")
                 .setType(String.class)
                 .append()

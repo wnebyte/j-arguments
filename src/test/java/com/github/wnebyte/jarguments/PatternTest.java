@@ -35,13 +35,13 @@ public class PatternTest {
         Pattern pattern = new ArgumentCollectionPatternGenerator(
                 new ArgumentCollectionFactoryBuilder().build()
                         .setNames("-b")
-                        .isPositional()
+                        .setIsPositional()
                         .append(int.class)
                         .setNames("-c")
-                        .isPositional()
+                        .setIsPositional()
                         .append(int.class)
                         .setNames("-a")
-                        .isOptional()
+                        .setIsOptional()
                         .append(boolean.class)
                         .get()
         ).generatePattern();
@@ -51,7 +51,7 @@ public class PatternTest {
     public void test05() {
         Pattern pattern = new ArgumentCollectionPatternGenerator(
                 new ArgumentCollectionFactoryBuilder().build()
-                        .isPositional()
+                        .setIsPositional()
                         .append(String.class)
                         .get())
                 .generatePattern();

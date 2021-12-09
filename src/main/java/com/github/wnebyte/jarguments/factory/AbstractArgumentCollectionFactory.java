@@ -8,6 +8,8 @@ import java.util.List;
 
 public abstract class AbstractArgumentCollectionFactory {
 
+    public abstract Collection<Character> getExcludeCharacters();
+
     /* --------------- Field Setters */
 
     public abstract AbstractArgumentCollectionFactory setNames(String... names);

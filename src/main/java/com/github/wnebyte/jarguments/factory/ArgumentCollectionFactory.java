@@ -66,12 +66,16 @@ public class ArgumentCollectionFactory extends AbstractArgumentCollectionFactory
      * Constructs a new instance using the specified <code>exclude</code> and <code>typeConverters</code>.
      */
     public ArgumentCollectionFactory(
-            Collection<Character> exclude,
-            AbstractTypeConverterMap typeConverters
+            Collection<Character> exclude, AbstractTypeConverterMap typeConverters
     ) {
         this.exclude.addAll(exclude);
         this.typeConverters = (typeConverters != null) ?
                 typeConverters : TypeConverterMap.getInstance();
+    }
+
+    @Override
+    public Collection<Character> getExcludeCharacters() {
+        return new ArrayList<>(exclude);
     }
 
     /**
@@ -88,6 +92,13 @@ public class ArgumentCollectionFactory extends AbstractArgumentCollectionFactory
         this.names = new LinkedHashSet<>(names.length);
         for (String n : names) {
             n = Strings.removeAll(n, exclude);
+            if (n.equals("")) {
+                throw new IllegalArgumentException(
+                        "The name of an Argument may not be left empty after normalization. " +
+                                "The following characters are removed during normalization: " +
+                                Arrays.toString(exclude.toArray()) + "."
+                );
+            }
             boolean success = this.names.add(n) & allNames.add(n);
             if (!success) {
                 throw new IllegalArgumentException(
@@ -148,7 +159,7 @@ public class ArgumentCollectionFactory extends AbstractArgumentCollectionFactory
      * Specifies that the next argument to be created is to be a required argument.
      * @return this.
      */
-    public ArgumentCollectionFactory isRequired() {
+    public ArgumentCollectionFactory setIsRequired() {
         this.subClass = Required.class;
         return this;
     }
@@ -157,7 +168,7 @@ public class ArgumentCollectionFactory extends AbstractArgumentCollectionFactory
      * Specifies that the next argument to be created is to be an optional argument.
      * @return this.
      */
-    public ArgumentCollectionFactory isOptional() {
+    public ArgumentCollectionFactory setIsOptional() {
         this.subClass = com.github.wnebyte.jarguments.Optional.class;
         return this;
     }
@@ -166,7 +177,7 @@ public class ArgumentCollectionFactory extends AbstractArgumentCollectionFactory
      * Specifies that the next argument to be created is to be a positional argument.
      * @return this.
      */
-    public ArgumentCollectionFactory isPositional() {
+    public ArgumentCollectionFactory setIsPositional() {
         this.subClass = Positional.class;
         return this;
     }
@@ -198,68 +209,87 @@ public class ArgumentCollectionFactory extends AbstractArgumentCollectionFactory
             final Collection<Constraint<T>> constraints
 
     ) {
-        if ((namesIsNull(names, subClass)) || (type == null) || (typeConverter == null)) {
-            throw new IllegalStateException(
-                    "Names, Type & TypeConverter has to be specified."
-            );
-        }
         Argument argument;
 
+        if (namesIsNull(names, subClass)) {
+            throw new IllegalArgumentException(
+                    "Names has to be specified."
+            );
+        }
+        if ((type == null) || (typeConverter == null)) {
+            throw new IllegalArgumentException(
+                    "Type & TypeConverter have to be specified."
+            );
+        }
         if ((Reflections.isBoolean(type)) || (Optional.class.equals(subClass))) {
             argument = new Optional(names, description, index++, type, typeConverter, constraints, defaultValue);
-            arguments.add(argument);
         }
         else if (Required.class.equals(subClass)) {
             argument = new Required(names, description, index++, type, typeConverter, constraints);
-            arguments.add(argument);
         }
         else if (Positional.class.equals(subClass)) {
             if (arguments.stream().anyMatch(arg -> !(arg instanceof Positional))) {
-                throw new IllegalStateException(
+                throw new IllegalArgumentException(
                         "Positional Arguments have to be positioned at the start."
                 );
             }
             argument = new Positional(description, index++, type, typeConverter, constraints, position++);
-            arguments.add(argument);
         }
-        resetOptionalVars();
+        else {
+            throw new IllegalArgumentException(
+                    "This factory instance does not know how to construct instances of subclass: " + subClass + "."
+            );
+        }
+
+        arguments.add(argument);
+        resetVariables();
         return this;
     }
 
     public ArgumentCollectionFactory append() {
+        Argument argument;
+
+        if (namesIsNull(names, subClass)) {
+            throw new IllegalArgumentException(
+                    "Names has to be specified."
+            );
+        }
         if (type == null) {
-            throw new IllegalStateException(
-                    "Type must not be null."
+            throw new IllegalArgumentException(
+                    "Type has to be specified."
             );
         }
         if (typeConverter == null) {
             typeConverter = typeConverters.get(type);
-        }
-        if ((namesIsNull(names, subClass)) || (type == null) || (typeConverter == null)) {
-            throw new IllegalStateException(
-                    "Names, Type & TypeConverter has to be set."
-            );
-        }
-        Argument argument;
 
-        if ((Reflections.isBoolean(type)) || (com.github.wnebyte.jarguments.Optional.class.equals(subClass))) {
-            argument = new com.github.wnebyte.jarguments.Optional(names, description, index++, type, typeConverter, defaultValue);
-            arguments.add(argument);
+            if (typeConverter == null) {
+                throw new IllegalArgumentException(
+                        "The specified TypeConverterMap has no mapping for type: " + type + "."
+                );
+            }
+        }
+        if ((Reflections.isBoolean(type)) || (Optional.class.equals(subClass))) {
+            argument = new Optional(names, description, index++, type, typeConverter, defaultValue);
         }
         else if (Required.class.equals(subClass)) {
             argument = new Required(names, description, index++, type, typeConverter);
-            arguments.add(argument);
         }
         else if (Positional.class.equals(subClass)) {
-            if (ArgumentSupport.containsInstancesOfSubClasses(arguments, Arrays.asList(Required.class, Optional.class))) {
-                throw new IllegalStateException(
+            if (arguments.stream().anyMatch(arg -> !(arg instanceof Positional))) {
+                throw new IllegalArgumentException(
                         "Positional args if present must be positioned at the start."
                 );
             }
             argument = new Positional(description, index++, type, typeConverter, position++);
-            arguments.add(argument);
         }
-        resetOptionalVars();
+        else {
+            throw new IllegalArgumentException(
+                    "This factory instance does not know how to construct instances of subclass: " + subClass + "."
+            );
+        }
+
+        arguments.add(argument);
+        resetVariables();
         return this;
     }
 
@@ -268,17 +298,20 @@ public class ArgumentCollectionFactory extends AbstractArgumentCollectionFactory
         this.arguments.clear();
         index = 0;
         position = 0;
+        resetVariables();
         return arguments;
     }
 
-    private void resetOptionalVars() {
+    private void resetVariables() {
         names = null;
         defaultValue = null;
         description = null;
         subClass = Required.class;
+        type = null;
+        typeConverter = null;
     }
 
-    private boolean namesIsNull(final Set<String> names, final Class<? extends Argument> cls) {
+    private static boolean namesIsNull(final Set<String> names, final Class<? extends Argument> cls) {
         if (cls == Positional.class) {
             return false;
         }

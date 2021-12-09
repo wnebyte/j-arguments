@@ -3,7 +3,9 @@ package com.github.wnebyte.jarguments;
 import com.github.wnebyte.jarguments.factory.ArgumentCollectionFactoryBuilder;
 import org.junit.Assert;
 import org.junit.Test;
+
 import java.util.List;
+import java.util.UUID;
 import java.util.regex.Pattern;
 
 public class IntegrationTest {
@@ -13,11 +15,11 @@ public class IntegrationTest {
         List<Argument> arguments = new ArgumentCollectionFactoryBuilder().build()
                 .setNames("-a", "--a")
                 .setType(double.class)
-                .isOptional()
+                .setIsOptional()
                 .append()
                 .setNames("-b", "--b")
                 .setType(short.class)
-                .isOptional()
+                .setIsOptional()
                 .append()
                 .get();
         String input = "--a 100.5";
@@ -36,6 +38,7 @@ public class IntegrationTest {
                 "--b 99 -a 10.2")
         );
     }
+
 
     private boolean matches(final Pattern pattern, final String... input) {
         for (String str : input) {
