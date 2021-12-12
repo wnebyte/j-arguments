@@ -1,13 +1,13 @@
 package com.github.wnebyte.jarguments;
 
+import java.util.Collection;
+import java.util.Set;
 import com.github.wnebyte.jarguments.constraint.Constraint;
 import com.github.wnebyte.jarguments.converter.TypeConverter;
 import com.github.wnebyte.jarguments.exception.ConstraintException;
 import com.github.wnebyte.jarguments.exception.ParseException;
 import com.github.wnebyte.jarguments.util.Objects;
 import com.github.wnebyte.jarguments.util.Reflections;
-import java.util.Collection;
-import java.util.Set;
 
 /**
  * This class represents an abstract Argument.
@@ -19,6 +19,7 @@ public abstract class Argument {
     #      STATIC FIELDS      #
     ###########################
     */
+
     private static final String VALUE_PATTERN = "[^\\s\"']*|\"[^\"]*\"|'[^']*'";
 
     protected static final String DEFAULT_VALUE_PATTERN = "(" + VALUE_PATTERN + ")";
@@ -30,6 +31,7 @@ public abstract class Argument {
     #         FIELDS          #
     ###########################
     */
+
     private final Set<String> names;
 
     private final String description;
@@ -42,7 +44,7 @@ public abstract class Argument {
 
     private final TypeConverter<?> typeConverter;
 
-    private final Transformer<?> transformer;
+    private final Initializer<Object> initializer;
 
     /*
     ###########################
@@ -66,7 +68,7 @@ public abstract class Argument {
         this.index = index;
         this.type = type;
         this.typeConverter = typeConverter;
-        this.transformer = (Transformer<Object>) typeConverter::convert;
+        this.initializer = typeConverter::convert;
     }
 
     /**
@@ -86,7 +88,7 @@ public abstract class Argument {
         this.index = index;
         this.type = type;
         this.typeConverter = typeConverter;
-        this.transformer = (Transformer<Object>) value -> {
+        this.initializer = value -> {
             T val = typeConverter.convert(value);
             if (constraints != null) {
                 for (Constraint<T> constraint : constraints) {
@@ -102,14 +104,12 @@ public abstract class Argument {
         };
     }
 
-    private Transformer<?> getTransformer() {
-        return transformer;
-    }
-
     protected abstract String createRegExp(final Set<String> names, final Class<?> type);
 
+    private Constraint<?> constraint;
+
     protected Object initialize(final String value) throws ParseException {
-        return getTransformer().transform(value);
+        return initializer.apply(value);
     }
 
     protected String getRegex() {
@@ -156,7 +156,7 @@ public abstract class Argument {
                 Objects.equals(argument.type, this.type) &&
                 Objects.equals(argument.typeConverter, this.typeConverter) &&
                 Objects.equals(argument.regex, this.regex) &&
-                Objects.equals(argument.transformer, this.transformer) &&
+                Objects.equals(argument.initializer, this.initializer) &&
                 Objects.equals(argument.getClass(), this.getClass()) &&
                 super.equals(argument);
     }
@@ -170,7 +170,7 @@ public abstract class Argument {
                 Objects.hashCode(description) +
                 Objects.hashCode(type) +
                 Objects.hashCode(typeConverter) +
-                Objects.hashCode(transformer) +
+                Objects.hashCode(initializer) +
                 Objects.hashCode(regex) +
                 Objects.hashCode(index) +
                 Objects.hashCode(getClass()) +
@@ -187,11 +187,10 @@ public abstract class Argument {
     }
 
     public String toDescriptiveString() {
-        return "";
+        return toString();
     }
 
     public String toPaddedDescriptiveString() {
         return toDescriptiveString();
     }
-
 }

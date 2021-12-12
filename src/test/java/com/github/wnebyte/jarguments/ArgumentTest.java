@@ -1,12 +1,15 @@
 package com.github.wnebyte.jarguments;
 
-import com.github.wnebyte.jarguments.converter.TypeConverter;
+import com.github.wnebyte.jarguments.constraint.Constraint;
+import com.github.wnebyte.jarguments.constraint.ConstraintCollectionBuilder;
+import com.github.wnebyte.jarguments.converter.TypeConverterMap;
+import com.github.wnebyte.jarguments.exception.ConstraintException;
+import com.github.wnebyte.jarguments.exception.ParseException;
 import com.github.wnebyte.jarguments.factory.ArgumentCollectionFactoryBuilder;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.util.Collection;
-import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -35,6 +38,28 @@ public class ArgumentTest {
         String input = "--a \"a: 'val' b: 'val2'\"";
     }
 
+    @Test(expected = ConstraintException.class)
+    public void test01() throws ParseException {
+        List<Argument> arguments = new ArgumentCollectionFactoryBuilder().build()
+                .setNames("-a", "--a")
+                .setIsRequired()
+                .append(Integer.class, new ConstraintCollectionBuilder<Integer>()
+                        .addConstraint(new Constraint<Integer>() {
+                            @Override
+                            public boolean holds(Integer i) {
+                                return i == 10;
+                            }
+                            @Override
+                            public String errorMessage() {
+                                return null;
+                            }
+                        })
+                        .build())
+                .get();
+        Argument arg = arguments.get(0);
+        Integer i = (Integer) arg.initialize("9");
+    }
+
     @Test
     public void testToString() {
         List<Argument> args = new ArgumentCollectionFactoryBuilder().build()
@@ -45,40 +70,39 @@ public class ArgumentTest {
                 .append(int.class)
                 .setNames("-b", "-B")
                 .setIsOptional()
+                .setDefaultValue("5")
                 .append(int.class)
+                .setNames("-c", "-C")
+                .setType(boolean.class)
+                .append()
                 .get();
         Argument pos = args.get(0);
         Argument req = args.get(1);
         Argument opt = args.get(2);
+        Argument c = args.get(3);
         System.out.println(pos);
         System.out.println(req);
         System.out.println(opt);
         System.out.println("");
-        System.out.println(pos.toDescriptiveString());
-        System.out.println(req.toDescriptiveString());
+        System.out.println(pos.toPaddedDescriptiveString());
+        System.out.println(req.toPaddedDescriptiveString());
         System.out.println(opt.toDescriptiveString());
+        System.out.println(c.toDescriptiveString());
     }
 
-    private <T extends Collection<R>, R> void cons(
-            Class<? super T> type,
-            Class<R> componentType,
-            TypeConverter<T> typeConverter
-    ) {
-        Required req = new Required(
-                Collections.singleton("*"),
-                "desc",
+    @Test
+    public void test02() {
+        Flag flag = new Flag(
+                new HashSet<>(),
+                "",
                 0,
-                type,
-                typeConverter
+                boolean.class,
+                TypeConverterMap.getInstance().BOOLEAN_TYPE_CONVERTER,
+                "true",
+                "false"
         );
     }
 
-    private void cons(
-            Class<?> type,
-            TypeConverter<?> typeConverter
-    ) {
-
-    }
 
     private boolean matches(final Pattern pattern, final String... input) {
         for (String s : input) {

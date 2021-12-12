@@ -60,6 +60,8 @@ public class ArgumentCollectionFactory extends AbstractArgumentCollectionFactory
 
     private int position = 0;
 
+    private String flagValue;
+
     private String defaultValue;
 
     /**
@@ -146,8 +148,8 @@ public class ArgumentCollectionFactory extends AbstractArgumentCollectionFactory
     }
 
     /**
-     * Sets the defaultValue property of the next argument to be created.
-     * @param defaultValue of the next (optional) argument.
+     * Sets the defaultValue property of the next argument to be appended.
+     * @param defaultValue of the next (optional/flag) argument.
      * @return this.
      */
     public ArgumentCollectionFactory setDefaultValue(final String defaultValue) {
@@ -155,9 +157,14 @@ public class ArgumentCollectionFactory extends AbstractArgumentCollectionFactory
         return this;
     }
 
+    public ArgumentCollectionFactory setFlagValue(final String flagValue) {
+        this.flagValue = flagValue;
+        return this;
+    }
+
     /**
-     * Specifies that the next argument to be created is to be a required argument.
-     * @return this.
+     * Specifies that the next argument to be appended is of type {@link Required}.
+     * @return this (for chaining).
      */
     public ArgumentCollectionFactory setIsRequired() {
         this.subClass = Required.class;
@@ -165,20 +172,29 @@ public class ArgumentCollectionFactory extends AbstractArgumentCollectionFactory
     }
 
     /**
-     * Specifies that the next argument to be created is to be an optional argument.
-     * @return this.
+     * Specifies that the next argument to be appended is of type {@link Optional}.
+     * @return this (for chaining).
      */
     public ArgumentCollectionFactory setIsOptional() {
-        this.subClass = com.github.wnebyte.jarguments.Optional.class;
+        this.subClass = Optional.class;
         return this;
     }
 
     /**
-     * Specifies that the next argument to be created is to be a positional argument.
-     * @return this.
+     * Specifies that the next argument to be appended is of type {@link Positional}.
+     * @return this (for chaining).
      */
     public ArgumentCollectionFactory setIsPositional() {
         this.subClass = Positional.class;
+        return this;
+    }
+
+    /**
+     * Specifies that the next argument to be appended is of type {@link Flag}.
+     * @return this (for chaining).
+     */
+    public ArgumentCollectionFactory setIsFlag() {
+        this.subClass = Flag.class;
         return this;
     }
 
@@ -209,23 +225,64 @@ public class ArgumentCollectionFactory extends AbstractArgumentCollectionFactory
             final Collection<Constraint<T>> constraints
 
     ) {
-        Argument argument;
+        final Argument argument;
 
-        if (namesIsNull(names, subClass)) {
-            throw new IllegalArgumentException(
-                    "Names has to be specified."
-            );
-        }
         if ((type == null) || (typeConverter == null)) {
             throw new IllegalArgumentException(
                     "Type & TypeConverter have to be specified."
             );
         }
-        if ((Reflections.isBoolean(type)) || (Optional.class.equals(subClass))) {
-            argument = new Optional(names, description, index++, type, typeConverter, constraints, defaultValue);
+        if (subClass == null) {
+            subClass = Reflections.isBoolean(type) ? Flag.class : Required.class;
+        }
+        if (namesIsNull(names, subClass)) {
+            throw new IllegalArgumentException(
+                    "Names has to be specified."
+            );
+        }
+        if (Reflections.isBoolean(type) && subClass == Flag.class) {
+            argument = new Flag(
+                    names,
+                    description,
+                    index++,
+                    type,
+                    typeConverter,
+                    flagValue == null ? "true" : flagValue,
+                    defaultValue
+            );
+        }
+        else if (Flag.class.equals(subClass)) {
+            argument = new Flag(
+                    names,
+                    description,
+                    index++,
+                    type,
+                    typeConverter,
+                    Objects.requireNonNull(flagValue, () ->
+                            "FlagValue has to be specified for instances of Flag if type is not of type boolean."),
+                    defaultValue
+            );
+        }
+        else if (Optional.class.equals(subClass)) {
+            argument = new Optional(
+                    names,
+                    description,
+                    index++,
+                    type,
+                    typeConverter,
+                    constraints,
+                    defaultValue
+            );
         }
         else if (Required.class.equals(subClass)) {
-            argument = new Required(names, description, index++, type, typeConverter, constraints);
+            argument = new Required(
+                    names,
+                    description,
+                    index++,
+                    type,
+                    typeConverter,
+                    constraints
+            );
         }
         else if (Positional.class.equals(subClass)) {
             if (arguments.stream().anyMatch(arg -> !(arg instanceof Positional))) {
@@ -233,11 +290,18 @@ public class ArgumentCollectionFactory extends AbstractArgumentCollectionFactory
                         "Positional Arguments have to be positioned at the start."
                 );
             }
-            argument = new Positional(description, index++, type, typeConverter, constraints, position++);
+            argument = new Positional(
+                    description,
+                    index++,
+                    type,
+                    typeConverter,
+                    constraints,
+                    position++
+            );
         }
         else {
             throw new IllegalArgumentException(
-                    "This factory instance does not know how to construct instances of subclass: " + subClass + "."
+                    "This factory instance does not know how to construct instances of class: " + subClass + "."
             );
         }
 
@@ -247,7 +311,7 @@ public class ArgumentCollectionFactory extends AbstractArgumentCollectionFactory
     }
 
     public ArgumentCollectionFactory append() {
-        Argument argument;
+        final Argument argument;
 
         if (namesIsNull(names, subClass)) {
             throw new IllegalArgumentException(
@@ -268,19 +332,64 @@ public class ArgumentCollectionFactory extends AbstractArgumentCollectionFactory
                 );
             }
         }
-        if ((Reflections.isBoolean(type)) || (Optional.class.equals(subClass))) {
-            argument = new Optional(names, description, index++, type, typeConverter, defaultValue);
+        if (subClass == null) {
+            subClass = Reflections.isBoolean(type) ? Flag.class : Required.class;
+        }
+        if (Reflections.isBoolean(type) && subClass == Flag.class) {
+            argument = new Flag(
+                    names,
+                    description,
+                    index++,
+                    type,
+                    typeConverter,
+                    flagValue == null ? "true" : flagValue,
+                    defaultValue
+            );
+        }
+        else if (Flag.class.equals(subClass)) {
+            argument = new Flag(
+                    names,
+                    description,
+                    index++,
+                    type,
+                    typeConverter,
+                    Objects.requireNonNull(flagValue, () ->
+                            "FlagValue has to be specified for instances of Flag if type is not of type boolean."),
+                    defaultValue
+            );
+        }
+        else if (Optional.class.equals(subClass)) {
+            argument = new Optional(
+                    names,
+                    description,
+                    index++,
+                    type,
+                    typeConverter,
+                    defaultValue
+            );
         }
         else if (Required.class.equals(subClass)) {
-            argument = new Required(names, description, index++, type, typeConverter);
+            argument = new Required(
+                    names,
+                    description,
+                    index++,
+                    type,
+                    typeConverter
+            );
         }
         else if (Positional.class.equals(subClass)) {
             if (arguments.stream().anyMatch(arg -> !(arg instanceof Positional))) {
                 throw new IllegalArgumentException(
-                        "Positional args if present must be positioned at the start."
+                        "Positional Arguments have to be positioned at the start."
                 );
             }
-            argument = new Positional(description, index++, type, typeConverter, position++);
+            argument = new Positional(
+                    description,
+                    index++,
+                    type,
+                    typeConverter,
+                    position++
+            );
         }
         else {
             throw new IllegalArgumentException(
@@ -305,8 +414,9 @@ public class ArgumentCollectionFactory extends AbstractArgumentCollectionFactory
     private void resetVariables() {
         names = null;
         defaultValue = null;
+        flagValue = null;
         description = null;
-        subClass = Required.class;
+        subClass = null;
         type = null;
         typeConverter = null;
     }

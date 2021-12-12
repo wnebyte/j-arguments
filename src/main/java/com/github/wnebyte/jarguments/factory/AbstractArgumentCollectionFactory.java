@@ -22,6 +22,8 @@ public abstract class AbstractArgumentCollectionFactory {
 
     public abstract AbstractArgumentCollectionFactory setSubClass(Class<? extends Argument> sClass);
 
+    public abstract AbstractArgumentCollectionFactory setDefaultValue(String defaultValue);
+
     /* --------------- Create Methods --------------- */
 
     public abstract AbstractArgumentCollectionFactory append();

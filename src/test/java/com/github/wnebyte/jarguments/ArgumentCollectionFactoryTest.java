@@ -1,10 +1,10 @@
 package com.github.wnebyte.jarguments;
 
 import com.github.wnebyte.jarguments.converter.TypeConverterMap;
+import com.github.wnebyte.jarguments.exception.ParseException;
 import com.github.wnebyte.jarguments.factory.ArgumentCollectionFactoryBuilder;
 import org.junit.Assert;
 import org.junit.Test;
-
 import java.util.List;
 import java.util.UUID;
 
@@ -54,5 +54,26 @@ public class ArgumentCollectionFactoryTest {
                 .get();
     }
 
-
+    @Test
+    public void test02() throws ParseException {
+        List<Argument> args = new ArgumentCollectionFactoryBuilder().build()
+                .setNames("-a")
+                .append(boolean.class)
+                .setNames("-b")
+                .setIsRequired()
+                .append(int.class)
+                .setNames("-c")
+                .setIsOptional()
+                .setType(String.class)
+                .append()
+                .get();
+        System.out.println(args.get(0).getClass());
+        Assert.assertTrue(args.get(0) instanceof Flag);
+        Assert.assertTrue(args.get(1) instanceof Required);
+        Assert.assertTrue(args.get(2) instanceof Optional);
+        boolean bool = (boolean) args.get(0).initialize("");
+        Assert.assertFalse(bool);
+        bool = (boolean) args.get(0).initialize("-a");
+        Assert.assertTrue(bool);
+    }
 }

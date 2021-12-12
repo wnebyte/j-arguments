@@ -5,7 +5,8 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import com.github.wnebyte.jarguments.util.Strings;
 
-public class ArgumentCollectionPatternGenerator extends AbstractPatternGenerator<Collection<Argument>> {
+public class ArgumentCollectionPatternGenerator
+        extends AbstractPatternGenerator<Collection<Argument>> {
 
     /**
      * Variable dictates whether any discovered leading whitespace characters are to be removed for
@@ -73,13 +74,12 @@ public class ArgumentCollectionPatternGenerator extends AbstractPatternGenerator
         String regex  = "(";
         int i = 0;
         // generate set of permutations
-        Set<List<String>> set = generatePermutations(args);
+        Set<List<String>> set = getPermutations(args);
         for (List<String> element : set) {
             String s = Arrays.toString(element.toArray());
             // normalization
             s = Strings.removeFirstAndLast(s, '[', ']');
             if (rmlws) {
-                // looks weird, but works.
                 s = s.replaceFirst("\\\\s", "");
             }
             // add opening and closing brackets around the string
@@ -93,7 +93,7 @@ public class ArgumentCollectionPatternGenerator extends AbstractPatternGenerator
         return regex.replace(", ", "").concat(")");
     }
 
-    private Set<List<String>> generatePermutations(final Collection<Argument> arguments) {
+    private Set<List<String>> getPermutations(final Collection<Argument> arguments) {
         Set<List<String>> set = new HashSet<>();
         LinkedList<String> args = ArgumentSupport
                 .mapToRegexList(arguments, (arg) -> !(arg instanceof Positional));

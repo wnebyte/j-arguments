@@ -18,4 +18,5 @@ public abstract class AbstractParser<T> {
     protected T getSource() {
         return source;
     }
+
 }

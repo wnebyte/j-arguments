@@ -11,7 +11,7 @@ import java.util.Collection;
 import java.util.Set;
 
 /**
- * This class represents an optional Argument.
+ * This class represents a named, optional Argument that has a default value.
  */
 public class Optional extends Argument {
 
@@ -43,6 +43,7 @@ public class Optional extends Argument {
     }
 
     protected String createRegExp(final Set<String> name, final Class<?> type) {
+        /*
         if (Reflections.isBoolean(type)) {
             return "(\\s" + "(" + String.join("|", name) + ")" + "|)";
         }
@@ -50,14 +51,22 @@ public class Optional extends Argument {
               return "(\\s" + "(" + String.join("|", name) + ")" +  "\\s" +
                       (Reflections.isArray(type) ? ARRAY_VALUE_PATTERN : DEFAULT_VALUE_PATTERN) + "|)";
         }
+         */
+        return "(\\s" + "(" + String.join("|", name) + ")" +  "\\s" +
+                (Reflections.isArray(type) ? ARRAY_VALUE_PATTERN : DEFAULT_VALUE_PATTERN) + "|)";
     }
 
     public String getDefaultValue() {
         return defaultValue;
     }
 
+    public boolean hasDefaultValue() {
+        return (getDefaultValue() != null) && !(getDefaultValue().equals(""));
+    }
+
+    /*
     @Override
-    protected Object initialize(final String value) throws ParseException, ConstraintException {
+    protected Object initialize(final String value) throws ParseException {
         if (Strings.intersects(value, getNames())) {
             if (isBoolean()) {
                 return true;
@@ -72,7 +81,7 @@ public class Optional extends Argument {
             }
         }
         else {
-            if (getDefaultValue() != null) {
+            if (hasDefaultValue()) {
                 String val = new Splitter()
                         .setValue(getDefaultValue())
                         .normalize(isArray())
@@ -82,6 +91,31 @@ public class Optional extends Argument {
             else {
                 return getTypeConverter().defaultValue();
             }
+        }
+    }
+     */
+
+    @Override
+    protected Object initialize(final String value) throws ParseException {
+        // name is present in the input
+        if (Strings.intersects(value, getNames())) {
+            String val = new Splitter()
+                    .setName(Strings.firstSubstring(value, getNames()))
+                    .setValue(value)
+                    .split()
+                    .normalize(isArray())
+                    .get();
+            return super.initialize(val);
+        }
+        else if (hasDefaultValue()) {
+            String val = new Splitter()
+                    .setValue(getDefaultValue())
+                    .normalize(isArray())
+                    .get();
+            return getTypeConverter().convert(val);
+        }
+        else {
+            return getTypeConverter().defaultValue();
         }
     }
 
@@ -115,11 +149,15 @@ public class Optional extends Argument {
 
     @Override
     public String toDescriptiveString() {
-        return "[(" + String.join(" | ", getNames()) + " <" + getType().getSimpleName() + ">)]";
+        return "[(" + String.join(" | ", getNames()) +
+                (hasDefaultValue() ? " = ".concat(getDefaultValue()) : "")
+                + " <" + getType().getSimpleName() + ">)]";
     }
 
     @Override
     public String toPaddedDescriptiveString() {
-        return "[( " + String.join(" | ", getNames()) + " <" + getType().getSimpleName() + "> )]";
+        return "[( " + String.join(" | ", getNames()) +
+                (hasDefaultValue() ? " = ".concat(getDefaultValue()) : "")
+                + " <" + getType().getSimpleName() + "> )]";
     }
 }

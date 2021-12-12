@@ -25,10 +25,10 @@ public class Collections {
         return ((c == null) || (c.length == 0));
     }
 
-    public static <T> T getNextElement(final List<T> list, final int index, final T defaultValue) {
+    public static <T> T getElementOrDefaultValue(final List<T> list, final int index, final T defaultValue) {
         if ((list == null) || (list.isEmpty()) || (index < 0)) {
             return defaultValue;
         }
-        return (index < list.size() - 1) ? list.get(index + 1) : defaultValue;
+        return (index <= list.size() - 1) ? list.get(index) : defaultValue;
     }
 }
