@@ -34,13 +34,13 @@ public class PatternTest {
     public void test03() {
         Pattern pattern = new ArgumentCollectionPatternGenerator(
                 new ArgumentCollectionFactoryBuilder().build()
-                        .setNames("-b")
+                        .setName("-b")
                         .setIsPositional()
                         .append(int.class)
-                        .setNames("-c")
+                        .setName("-c")
                         .setIsPositional()
                         .append(int.class)
-                        .setNames("-a")
+                        .setName("-a")
                         .setIsOptional()
                         .append(boolean.class)
                         .get()

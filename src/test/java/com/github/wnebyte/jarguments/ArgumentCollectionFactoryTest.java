@@ -13,7 +13,7 @@ public class ArgumentCollectionFactoryTest {
     @Test
     public void test00() {
         List<Argument> arguments = new ArgumentCollectionFactoryBuilder().build()
-                .setNames("-a", "--a")
+                .setName("-a", "--a")
                 .setDescription("test arg")
                 .setIsRequired()
                 .setType(float.class)
@@ -24,7 +24,7 @@ public class ArgumentCollectionFactoryTest {
         Assert.assertEquals("--a", arg.getNames().toArray()[1]);
         Assert.assertTrue(arg instanceof Required);
         Assert.assertEquals(float.class, arg.getType());
-        Assert.assertEquals("test arg", arg.getDescription());
+        Assert.assertEquals("test arg", arg.getDesc());
         Assert.assertEquals(0, arg.getIndex());
     }
 
@@ -36,10 +36,10 @@ public class ArgumentCollectionFactoryTest {
                 .setIsPositional()
                 .setType(UUID.class) // should throw the expected exception
                 .append()
-                .setNames("bar")
+                .setName("bar")
                 .setType(String.class)
                 .append()
-                .setNames("b")
+                .setName("b")
                 .setIsOptional()
                 .setType(int.class)
                 .append()
@@ -49,7 +49,7 @@ public class ArgumentCollectionFactoryTest {
     @Test(expected = IllegalArgumentException.class)
     public void test01() {
         List<Argument> args = new ArgumentCollectionFactoryBuilder().build()
-                .setNames("$")
+                .setName("$")
                 .append(int.class)
                 .get();
     }
@@ -57,12 +57,12 @@ public class ArgumentCollectionFactoryTest {
     @Test
     public void test02() throws ParseException {
         List<Argument> args = new ArgumentCollectionFactoryBuilder().build()
-                .setNames("-a")
+                .setName("-a")
                 .append(boolean.class)
-                .setNames("-b")
+                .setName("-b")
                 .setIsRequired()
                 .append(int.class)
-                .setNames("-c")
+                .setName("-c")
                 .setIsOptional()
                 .setType(String.class)
                 .append()

@@ -14,12 +14,12 @@ public class ArgumentIParserTest {
     @Test
     public void test00() throws ParseException, ConstraintException {
         List<Argument> arguments = new ArgumentCollectionFactoryBuilder().build()
-                .setNames("-a", "--a", "---a")
+                .setName("-a", "--a", "---a")
                 .setType(String.class)
                 .setIsOptional()
                 .setDefaultValue("def0")
                 .append()
-                .setNames("-b", "--b", "---b")
+                .setName("-b", "--b", "---b")
                 .setIsOptional()
                 .setDefaultValue("def1")
                 .setType(String.class)

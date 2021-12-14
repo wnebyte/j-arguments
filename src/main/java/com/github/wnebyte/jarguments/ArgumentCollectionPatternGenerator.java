@@ -8,6 +8,12 @@ import com.github.wnebyte.jarguments.util.Strings;
 public class ArgumentCollectionPatternGenerator
         extends AbstractPatternGenerator<Collection<Argument>> {
 
+    /*
+    ###########################
+    #          FIELDS         #
+    ###########################
+    */
+
     /**
      * Variable dictates whether any discovered leading whitespace characters are to be removed for
      * each permutation of the to-be concatenated regular expressions.
@@ -24,9 +30,25 @@ public class ArgumentCollectionPatternGenerator
      */
     private boolean inclEol = true;
 
+    /*
+    ###########################
+    #       CONSTRUCTORS      #
+    ###########################
+    */
+
     public ArgumentCollectionPatternGenerator(final Collection<Argument> args) {
         super(args);
     }
+
+    public ArgumentCollectionPatternGenerator() {
+        super(new ArrayList<>());
+    }
+
+    /*
+    ###########################
+    #         METHODS         #
+    ###########################
+    */
 
     /**
      * @param value whether leading whitespace chars are to be removed for each permutation.
@@ -50,14 +72,14 @@ public class ArgumentCollectionPatternGenerator
     }
 
     public String generateRegex() {
-        String body = permute(super.getSource());
+        String content = permute(super.getSource());
         if (inclSol) {
-            body = "^".concat(body);
+            content = "^".concat(content);
         }
         if (inclEol) {
-            body = body.concat("$");
+            content = content.concat("$");
         }
-        return body;
+        return content;
     }
 
     public Pattern generatePattern() {
@@ -90,6 +112,7 @@ public class ArgumentCollectionPatternGenerator
             }
             i++;
         }
+
         return regex.replace(", ", "").concat(")");
     }
 

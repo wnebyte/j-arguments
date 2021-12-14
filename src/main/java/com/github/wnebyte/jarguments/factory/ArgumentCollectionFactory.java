@@ -85,7 +85,7 @@ public class ArgumentCollectionFactory extends AbstractArgumentCollectionFactory
      * @param names of the next argument.
      * @return this.
      */
-    public ArgumentCollectionFactory setNames(final String... names) {
+    public ArgumentCollectionFactory setName(final String... names) {
         if ((names == null) || (names.length == 0)) {
             throw new IllegalArgumentException(
                     "Names may not be null/empty."

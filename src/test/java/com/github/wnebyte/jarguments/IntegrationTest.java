@@ -5,7 +5,6 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.List;
-import java.util.UUID;
 import java.util.regex.Pattern;
 
 public class IntegrationTest {
@@ -13,11 +12,11 @@ public class IntegrationTest {
     @Test
     public void testOptionalArguments() throws Exception {
         List<Argument> arguments = new ArgumentCollectionFactoryBuilder().build()
-                .setNames("-a", "--a")
+                .setName("-a", "--a")
                 .setType(double.class)
                 .setIsOptional()
                 .append()
-                .setNames("-b", "--b")
+                .setName("-b", "--b")
                 .setType(short.class)
                 .setIsOptional()
                 .append()

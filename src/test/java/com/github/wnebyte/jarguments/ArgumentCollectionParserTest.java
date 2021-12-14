@@ -13,10 +13,10 @@ public class ArgumentCollectionParserTest {
     @Test
     public void test00() throws ParseException {
         List<Argument> arguments = new ArgumentCollectionFactoryBuilder().build()
-                .setNames("-a", "-A")
+                .setName("-a", "-A")
                 .setIsFlag()
                 .append(boolean.class)
-                .setNames("-b", "-B")
+                .setName("-b", "-B")
                 .setIsOptional()
                 .setDefaultValue("99")
                 .append(int.class)
@@ -37,13 +37,13 @@ public class ArgumentCollectionParserTest {
     @Test
     public void testSuccessfulParseMultipleFlag() throws ParseException {
         List<Argument> arguments = new ArgumentCollectionFactoryBuilder().build()
-                .setNames("-a")
+                .setName("-a")
                 .setIsFlag()
                 .append(boolean.class)
-                .setNames("-b")
+                .setName("-b")
                 .setIsFlag()
                 .append(boolean.class)
-                .setNames("-c")
+                .setName("-c")
                 .setIsFlag()
                 .append(boolean.class)
                 .get();
@@ -71,7 +71,7 @@ public class ArgumentCollectionParserTest {
     @Test
     public void testSuccessfulParseFlagWithValues() throws ParseException {
         List<Argument> arguments = new ArgumentCollectionFactoryBuilder().build()
-                .setNames("-a")
+                .setName("-a")
                 .setIsFlag()
                 .setFlagValue("10")
                 .setDefaultValue("0")
@@ -142,13 +142,13 @@ public class ArgumentCollectionParserTest {
     @Test
     public void testSuccessfulParseMultipleRequired() throws ParseException {
         List<Argument> arguments = new ArgumentCollectionFactoryBuilder().build()
-                .setNames("-a")
+                .setName("-a")
                 .setIsRequired()
                 .append(int.class)
-                .setNames("-b")
+                .setName("-b")
                 .setIsRequired()
                 .append(int.class)
-                .setNames("-c")
+                .setName("-c")
                 .setIsRequired()
                 .append(int.class)
                 .get();
@@ -191,13 +191,13 @@ public class ArgumentCollectionParserTest {
     @Test
     public void testSuccessfulParseMultipleOptional00() throws ParseException {
         List<Argument> arguments = new ArgumentCollectionFactoryBuilder().build()
-                .setNames("-a")
+                .setName("-a")
                 .setIsOptional()
                 .append(int.class)
-                .setNames("-b")
+                .setName("-b")
                 .setIsOptional()
                 .append(int.class)
-                .setNames("-c")
+                .setName("-c")
                 .setIsOptional()
                 .append(int.class)
                 .get();
@@ -240,13 +240,13 @@ public class ArgumentCollectionParserTest {
     @Test
     public void testSuccessfulParseMultipleOptional01() throws ParseException {
         List<Argument> arguments = new ArgumentCollectionFactoryBuilder().build()
-                .setNames("-a")
+                .setName("-a")
                 .setIsOptional()
                 .append(int.class)
-                .setNames("-b")
+                .setName("-b")
                 .setIsOptional()
                 .append(int.class)
-                .setNames("-c")
+                .setName("-c")
                 .setIsOptional()
                 .append(int.class)
                 .get();
@@ -307,10 +307,10 @@ public class ArgumentCollectionParserTest {
         List<Argument> arguments = new ArgumentCollectionFactoryBuilder().build()
                 .setIsPositional()
                 .append(String.class)
-                .setNames("-b")
+                .setName("-b")
                 .setIsOptional()
                 .append(int.class)
-                .setNames("-c")
+                .setName("-c")
                 .setIsFlag()
                 .append(boolean.class)
                 .get();
@@ -333,13 +333,13 @@ public class ArgumentCollectionParserTest {
         List<Argument> arguments = new ArgumentCollectionFactoryBuilder().build()
                 .setIsPositional()
                 .append(String.class)
-                .setNames("-b")
+                .setName("-b")
                 .setIsRequired()
                 .append(int.class)
-                .setNames("-c")
+                .setName("-c")
                 .setIsFlag()
                 .append(boolean.class)
-                .setNames("-d")
+                .setName("-d")
                 .setIsOptional()
                 .append(int.class)
                 .get();

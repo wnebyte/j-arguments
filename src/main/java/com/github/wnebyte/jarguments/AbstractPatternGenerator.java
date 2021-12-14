@@ -4,11 +4,13 @@ import java.util.regex.Pattern;
 
 public abstract class AbstractPatternGenerator<T> {
 
-    protected final T source;
+    protected T source;
 
     public AbstractPatternGenerator(T source) {
         this.source = source;
     }
+
+    public AbstractPatternGenerator() {}
 
     public abstract String generateRegex();
 
@@ -16,5 +18,9 @@ public abstract class AbstractPatternGenerator<T> {
 
     protected T getSource() {
         return source;
+    }
+
+    public void setSource(T source) {
+        this.source = source;
     }
 }

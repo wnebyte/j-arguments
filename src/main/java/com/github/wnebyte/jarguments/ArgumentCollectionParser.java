@@ -15,6 +15,10 @@ public class ArgumentCollectionParser extends AbstractParser<Collection<Argument
         super(new ArrayList<>(source));
     }
 
+    public ArgumentCollectionParser() {
+        super(new ArrayList<>());
+    }
+
     public Object[] parse(String input) throws ParseException {
         Object[] args = new Object[getSource().size()];
         List<Positional> positionalArgs = getInstancesOfSubClass(getSource(), Positional.class);

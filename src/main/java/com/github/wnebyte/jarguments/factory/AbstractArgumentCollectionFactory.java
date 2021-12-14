@@ -12,7 +12,7 @@ public abstract class AbstractArgumentCollectionFactory {
 
     /* --------------- Field Setters */
 
-    public abstract AbstractArgumentCollectionFactory setNames(String... names);
+    public abstract AbstractArgumentCollectionFactory setName(String... names);
 
     public abstract AbstractArgumentCollectionFactory setDescription(String desc);
 
@@ -23,6 +23,8 @@ public abstract class AbstractArgumentCollectionFactory {
     public abstract AbstractArgumentCollectionFactory setSubClass(Class<? extends Argument> sClass);
 
     public abstract AbstractArgumentCollectionFactory setDefaultValue(String defaultValue);
+
+    public abstract AbstractArgumentCollectionFactory setFlagValue(String flagValue);
 
     /* --------------- Create Methods --------------- */
 

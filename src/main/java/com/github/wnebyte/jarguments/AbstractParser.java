@@ -5,11 +5,13 @@ import com.github.wnebyte.jarguments.exception.ParseException;
 
 public abstract class AbstractParser<T> {
 
-    protected final T source;
+    protected T source;
 
     public AbstractParser(T source) {
         this.source = source;
     }
+
+    public AbstractParser() { }
 
     public abstract Object[] parse(String input) throws ParseException;
 
@@ -19,4 +21,7 @@ public abstract class AbstractParser<T> {
         return source;
     }
 
+    public void setSource(T source) {
+        this.source = source;
+    }
 }

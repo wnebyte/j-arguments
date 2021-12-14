@@ -1,6 +1,7 @@
 package com.github.wnebyte.jarguments;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Set;
 import com.github.wnebyte.jarguments.constraint.Constraint;
 import com.github.wnebyte.jarguments.converter.TypeConverter;
@@ -34,7 +35,7 @@ public abstract class Argument {
 
     private final Set<String> names;
 
-    private final String description;
+    private final String desc;
 
     private final String regex;
 
@@ -57,13 +58,13 @@ public abstract class Argument {
      */
     public Argument(
             final Set<String> names,
-            final String description,
+            final String desc,
             final int index,
             final Class<?> type,
             final TypeConverter<?> typeConverter
     ) {
         this.names = names;
-        this.description = description;
+        this.desc = desc;
         this.regex = createRegExp(names, type);
         this.index = index;
         this.type = type;
@@ -76,14 +77,14 @@ public abstract class Argument {
      */
     public <T> Argument(
             final Set<String> names,
-            final String description,
+            final String desc,
             final int index,
             final Class<T> type,
             final TypeConverter<T> typeConverter,
             final Collection<Constraint<T>> constraints
     ) {
         this.names = names;
-        this.description = description;
+        this.desc = desc;
         this.regex = createRegExp(names, type);
         this.index = index;
         this.type = type;
@@ -104,43 +105,51 @@ public abstract class Argument {
         };
     }
 
-    protected abstract String createRegExp(final Set<String> names, final Class<?> type);
+    /*
+    ###########################
+    #         METHODS         #
+    ###########################
+    */
 
-    private Constraint<?> constraint;
+    protected abstract String createRegExp(final Set<String> names, final Class<?> type);
 
     protected Object initialize(final String value) throws ParseException {
         return initializer.apply(value);
     }
 
-    protected String getRegex() {
+    protected final String getRegex() {
         return regex;
     }
 
-    protected TypeConverter<?> getTypeConverter() {
+    protected final TypeConverter<?> getTypeConverter() {
         return typeConverter;
     }
 
-    public Set<String> getNames() {
-        return names;
+    public final Set<String> getNames() {
+        return Collections.unmodifiableSet(names);
     }
 
-    public String getDescription() {
-        return description;
+    public final String getDesc() {
+        return desc;
     }
 
-    public Class<?> getType() {
+    public final boolean hasDesc() {
+        return (desc != null) && !(desc.equals(""));
+    }
+
+    public final Class<?> getType() {
         return type;
     }
 
-    public boolean isArray() {
+    public final boolean isArray() {
         return Reflections.isArray(getType());
     }
 
-    public boolean isBoolean() {
+    public final boolean isBoolean() {
         return Reflections.isBoolean(getType());
     }
 
-    public int getIndex() {
+    public final int getIndex() {
         return index;
     }
 
@@ -152,7 +161,7 @@ public abstract class Argument {
         Argument argument = (Argument) o;
         return Objects.equals(argument.index, this.index) &&
                 Objects.equals(argument.names, this.names) &&
-                Objects.equals(argument.description, this.description) &&
+                Objects.equals(argument.desc, this.desc) &&
                 Objects.equals(argument.type, this.type) &&
                 Objects.equals(argument.typeConverter, this.typeConverter) &&
                 Objects.equals(argument.regex, this.regex) &&
@@ -167,7 +176,7 @@ public abstract class Argument {
         return result +
                 12 +
                 Objects.hashCode(names) +
-                Objects.hashCode(description) +
+                Objects.hashCode(desc) +
                 Objects.hashCode(type) +
                 Objects.hashCode(typeConverter) +
                 Objects.hashCode(initializer) +

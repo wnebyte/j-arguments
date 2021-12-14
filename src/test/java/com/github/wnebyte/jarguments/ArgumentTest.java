@@ -18,11 +18,11 @@ public class ArgumentTest {
     @Test
     public void test00() {
         List<Argument> arguments = new ArgumentCollectionFactoryBuilder().build()
-                .setNames("-a", "--a")
+                .setName("-a", "--a")
                 .setIsRequired()
                 .setType(String.class)
                 .append()
-                .setNames("-b", "--b")
+                .setName("-b", "--b")
                 .setIsRequired()
                 .setType(String.class)
                 .append()
@@ -41,7 +41,7 @@ public class ArgumentTest {
     @Test(expected = ConstraintException.class)
     public void test01() throws ParseException {
         List<Argument> arguments = new ArgumentCollectionFactoryBuilder().build()
-                .setNames("-a", "--a")
+                .setName("-a", "--a")
                 .setIsRequired()
                 .append(Integer.class, new ConstraintCollectionBuilder<Integer>()
                         .addConstraint(new Constraint<Integer>() {
@@ -65,14 +65,14 @@ public class ArgumentTest {
         List<Argument> args = new ArgumentCollectionFactoryBuilder().build()
                 .setIsPositional()
                 .append(int.class)
-                .setNames("-a", "-A")
+                .setName("-a", "-A")
                 .setIsRequired()
                 .append(int.class)
-                .setNames("-b", "-B")
+                .setName("-b", "-B")
                 .setIsOptional()
                 .setDefaultValue("5")
                 .append(int.class)
-                .setNames("-c", "-C")
+                .setName("-c", "-C")
                 .setType(boolean.class)
                 .append()
                 .get();
