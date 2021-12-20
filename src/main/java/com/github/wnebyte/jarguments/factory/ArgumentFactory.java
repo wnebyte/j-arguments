@@ -1,26 +1,42 @@
 package com.github.wnebyte.jarguments.factory;
 
+import java.util.*;
 import com.github.wnebyte.jarguments.*;
 import com.github.wnebyte.jarguments.Optional;
 import com.github.wnebyte.jarguments.constraint.Constraint;
-import com.github.wnebyte.jarguments.converter.AbstractTypeConverterMap;
-import com.github.wnebyte.jarguments.converter.TypeConverter;
-import com.github.wnebyte.jarguments.converter.TypeConverterMap;
+import com.github.wnebyte.jarguments.convert.AbstractTypeConverterMap;
+import com.github.wnebyte.jarguments.convert.TypeConverterMap;
+import com.github.wnebyte.jarguments.convert.TypeConverter;
 import com.github.wnebyte.jarguments.util.Reflections;
 import com.github.wnebyte.jarguments.util.Strings;
 
-import java.util.*;
-
-/**
- * This class declares methods for building multiple instances of subclasses of the {@link Argument} class.
- */
-public class ArgumentCollectionFactory extends AbstractArgumentCollectionFactory {
+public class ArgumentFactory extends AbstractArgumentFactory {
 
     /*
     ###########################
-    #    INSTANCE VARIABLES   #
+    #     STATIC UTILITIES    #
     ###########################
     */
+
+    public static ArgumentFactoryBuilder builder() {
+        return new ArgumentFactoryBuilder();
+    }
+
+    private static boolean namesIsNull(final Set<String> names, final Class<? extends Argument> cls) {
+        if (cls == Positional.class) {
+            return false;
+        }
+        else {
+            return (names == null) || (names.isEmpty());
+        }
+    }
+
+    /*
+    ###########################
+    #          FIELDS         #
+    ###########################
+    */
+
     private final Collection<Character> exclude = new ArrayList<Character>() {{
         add(' ');
         add('"');
@@ -43,9 +59,10 @@ public class ArgumentCollectionFactory extends AbstractArgumentCollectionFactory
 
     /*
     ###########################
-    #   ARGUMENT PROPERTIES   #
+    #      OPTION FIELDS      #
     ###########################
     */
+
     private Set<String> names;
 
     private String description;
@@ -67,7 +84,7 @@ public class ArgumentCollectionFactory extends AbstractArgumentCollectionFactory
     /**
      * Constructs a new instance using the specified <code>exclude</code> and <code>typeConverters</code>.
      */
-    public ArgumentCollectionFactory(
+    public ArgumentFactory(
             Collection<Character> exclude, AbstractTypeConverterMap typeConverters
     ) {
         this.exclude.addAll(exclude);
@@ -85,7 +102,7 @@ public class ArgumentCollectionFactory extends AbstractArgumentCollectionFactory
      * @param names of the next argument.
      * @return this.
      */
-    public ArgumentCollectionFactory setName(final String... names) {
+    public ArgumentFactory setName(final String... names) {
         if ((names == null) || (names.length == 0)) {
             throw new IllegalArgumentException(
                     "Names may not be null/empty."
@@ -117,7 +134,7 @@ public class ArgumentCollectionFactory extends AbstractArgumentCollectionFactory
      * @param type of the next argument.
      * @return this.
      */
-    public ArgumentCollectionFactory setType(final Class<?> type) {
+    public ArgumentFactory setType(final Class<?> type) {
         this.type = type;
         return this;
     }
@@ -127,7 +144,7 @@ public class ArgumentCollectionFactory extends AbstractArgumentCollectionFactory
      * @param typeConverter of the next argument.
      * @return this.
      */
-    public ArgumentCollectionFactory setTypeConverter(final TypeConverter<?> typeConverter) {
+    public ArgumentFactory setTypeConverter(final TypeConverter<?> typeConverter) {
         this.typeConverter = typeConverter;
         return this;
     }
@@ -137,12 +154,12 @@ public class ArgumentCollectionFactory extends AbstractArgumentCollectionFactory
      * @param description of the next argument.
      * @return this.
      */
-    public ArgumentCollectionFactory setDescription(final String description) {
+    public ArgumentFactory setDescription(final String description) {
         this.description = description;
         return this;
     }
 
-    public ArgumentCollectionFactory setSubClass(final Class<? extends Argument> sClass) {
+    public ArgumentFactory setSubClass(final Class<? extends Argument> sClass) {
         this.subClass = sClass;
         return this;
     }
@@ -152,12 +169,12 @@ public class ArgumentCollectionFactory extends AbstractArgumentCollectionFactory
      * @param defaultValue of the next (optional/flag) argument.
      * @return this.
      */
-    public ArgumentCollectionFactory setDefaultValue(final String defaultValue) {
+    public ArgumentFactory setDefaultValue(final String defaultValue) {
         this.defaultValue = defaultValue;
         return this;
     }
 
-    public ArgumentCollectionFactory setFlagValue(final String flagValue) {
+    public ArgumentFactory setFlagValue(final String flagValue) {
         this.flagValue = flagValue;
         return this;
     }
@@ -166,7 +183,7 @@ public class ArgumentCollectionFactory extends AbstractArgumentCollectionFactory
      * Specifies that the next argument to be appended is of type {@link Required}.
      * @return this (for chaining).
      */
-    public ArgumentCollectionFactory setIsRequired() {
+    public ArgumentFactory setIsRequired() {
         this.subClass = Required.class;
         return this;
     }
@@ -175,7 +192,7 @@ public class ArgumentCollectionFactory extends AbstractArgumentCollectionFactory
      * Specifies that the next argument to be appended is of type {@link Optional}.
      * @return this (for chaining).
      */
-    public ArgumentCollectionFactory setIsOptional() {
+    public ArgumentFactory setIsOptional() {
         this.subClass = Optional.class;
         return this;
     }
@@ -184,7 +201,7 @@ public class ArgumentCollectionFactory extends AbstractArgumentCollectionFactory
      * Specifies that the next argument to be appended is of type {@link Positional}.
      * @return this (for chaining).
      */
-    public ArgumentCollectionFactory setIsPositional() {
+    public ArgumentFactory setIsPositional() {
         this.subClass = Positional.class;
         return this;
     }
@@ -193,7 +210,7 @@ public class ArgumentCollectionFactory extends AbstractArgumentCollectionFactory
      * Specifies that the next argument to be appended is of type {@link Flag}.
      * @return this (for chaining).
      */
-    public ArgumentCollectionFactory setIsFlag() {
+    public ArgumentFactory setIsFlag() {
         this.subClass = Flag.class;
         return this;
     }
@@ -202,7 +219,7 @@ public class ArgumentCollectionFactory extends AbstractArgumentCollectionFactory
      * Creates a new argument using the specified <code>type</code>.
      * @return this.
      */
-    public <T> ArgumentCollectionFactory append(final Class<T> type) {
+    public <T> ArgumentFactory append(final Class<T> type) {
         TypeConverter<T> typeConverter = typeConverters.get(type);
         return append(type, typeConverter);
     }
@@ -210,16 +227,16 @@ public class ArgumentCollectionFactory extends AbstractArgumentCollectionFactory
      * Creates a new argument using the specified <code>type</code> and <code>typeConverter</code>.
      * @return this.
      */
-    public <T> ArgumentCollectionFactory append(final Class<T> type, final TypeConverter<T> typeConverter) {
+    public <T> ArgumentFactory append(final Class<T> type, final TypeConverter<T> typeConverter) {
         return append(type, typeConverter, null);
     }
 
-    public <T> ArgumentCollectionFactory append(final Class<T> type, final Collection<Constraint<T>> constraints) {
+    public <T> ArgumentFactory append(final Class<T> type, final Collection<Constraint<T>> constraints) {
         TypeConverter<T> typeConverter = typeConverters.get(type);
         return append(type, typeConverter, constraints);
     }
 
-    public <T> ArgumentCollectionFactory append(
+    public <T> ArgumentFactory append(
             final Class<T> type,
             final TypeConverter<T> typeConverter,
             final Collection<Constraint<T>> constraints
@@ -237,7 +254,7 @@ public class ArgumentCollectionFactory extends AbstractArgumentCollectionFactory
         }
         if (namesIsNull(names, subClass)) {
             throw new IllegalArgumentException(
-                    "Names has to be specified."
+                    "At least one name has to be specified for each non-positional Argument."
             );
         }
         if (Reflections.isBoolean(type) && subClass == Flag.class) {
@@ -285,11 +302,6 @@ public class ArgumentCollectionFactory extends AbstractArgumentCollectionFactory
             );
         }
         else if (Positional.class.equals(subClass)) {
-            if (arguments.stream().anyMatch(arg -> !(arg instanceof Positional))) {
-                throw new IllegalArgumentException(
-                        "Positional Arguments have to be positioned at the start."
-                );
-            }
             argument = new Positional(
                     description,
                     index++,
@@ -301,21 +313,23 @@ public class ArgumentCollectionFactory extends AbstractArgumentCollectionFactory
         }
         else {
             throw new IllegalArgumentException(
-                    "This factory instance does not know how to construct instances of class: " + subClass + "."
+                    String.format(
+                            "This factory instance does not know how to construct instances of class: %s.", subClass
+                    )
             );
         }
 
         arguments.add(argument);
-        resetVariables();
+        reset();
         return this;
     }
 
-    public ArgumentCollectionFactory append() {
+    public ArgumentFactory append() {
         final Argument argument;
 
         if (namesIsNull(names, subClass)) {
             throw new IllegalArgumentException(
-                    "Names has to be specified."
+                    "At least one name has to be specified for each non-positional Argument."
             );
         }
         if (type == null) {
@@ -328,7 +342,9 @@ public class ArgumentCollectionFactory extends AbstractArgumentCollectionFactory
 
             if (typeConverter == null) {
                 throw new IllegalArgumentException(
-                        "The specified TypeConverterMap has no mapping for type: " + type + "."
+                        String.format(
+                                "This factory instance's TypeConverterMap has no mapping for Type: %s.", type
+                        )
                 );
             }
         }
@@ -378,11 +394,6 @@ public class ArgumentCollectionFactory extends AbstractArgumentCollectionFactory
             );
         }
         else if (Positional.class.equals(subClass)) {
-            if (arguments.stream().anyMatch(arg -> !(arg instanceof Positional))) {
-                throw new IllegalArgumentException(
-                        "Positional Arguments have to be positioned at the start."
-                );
-            }
             argument = new Positional(
                     description,
                     index++,
@@ -393,25 +404,18 @@ public class ArgumentCollectionFactory extends AbstractArgumentCollectionFactory
         }
         else {
             throw new IllegalArgumentException(
-                    "This factory instance does not know how to construct instances of subclass: " + subClass + "."
+                    String.format(
+                            "This factory instance does not know how to construct instances of class: %s.", subClass
+                    )
             );
         }
 
         arguments.add(argument);
-        resetVariables();
+        reset();
         return this;
     }
 
-    public List<Argument> get() {
-        List<Argument> arguments = new ArrayList<>(this.arguments);
-        this.arguments.clear();
-        index = 0;
-        position = 0;
-        resetVariables();
-        return arguments;
-    }
-
-    private void resetVariables() {
+    private void reset() {
         names = null;
         defaultValue = null;
         flagValue = null;
@@ -421,12 +425,12 @@ public class ArgumentCollectionFactory extends AbstractArgumentCollectionFactory
         typeConverter = null;
     }
 
-    private static boolean namesIsNull(final Set<String> names, final Class<? extends Argument> cls) {
-        if (cls == Positional.class) {
-            return false;
-        }
-        else {
-            return (names == null) || (names.isEmpty());
-        }
+    public List<Argument> get() {
+        List<Argument> arguments = new ArrayList<>(this.arguments);
+        this.arguments.clear();
+        index = 0;
+        position = 0;
+        reset();
+        return arguments;
     }
 }

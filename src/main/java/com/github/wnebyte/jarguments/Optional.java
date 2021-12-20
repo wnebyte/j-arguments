@@ -1,8 +1,7 @@
 package com.github.wnebyte.jarguments;
 
 import com.github.wnebyte.jarguments.constraint.Constraint;
-import com.github.wnebyte.jarguments.converter.TypeConverter;
-import com.github.wnebyte.jarguments.exception.ConstraintException;
+import com.github.wnebyte.jarguments.convert.TypeConverter;
 import com.github.wnebyte.jarguments.exception.ParseException;
 import com.github.wnebyte.jarguments.util.Objects;
 import com.github.wnebyte.jarguments.util.Reflections;
@@ -42,7 +41,8 @@ public class Optional extends Argument {
         this.defaultValue = defaultValue;
     }
 
-    protected String createRegExp(final Set<String> name, final Class<?> type) {
+    @Override
+    protected String createRegExp(final Set<String> names, final Class<?> type) {
         /*
         if (Reflections.isBoolean(type)) {
             return "(\\s" + "(" + String.join("|", name) + ")" + "|)";
@@ -52,8 +52,23 @@ public class Optional extends Argument {
                       (Reflections.isArray(type) ? ARRAY_VALUE_PATTERN : DEFAULT_VALUE_PATTERN) + "|)";
         }
          */
-        return "(\\s" + "(" + String.join("|", name) + ")" +  "\\s" +
+        return "(\\s" + "(" + String.join("|", names) + ")" +  "\\s" +
                 (Reflections.isArray(type) ? ARRAY_VALUE_PATTERN : DEFAULT_VALUE_PATTERN) + "|)";
+    }
+
+    /*
+
+    (-r)( -o)( -o)( -r) ?
+    (-o)( -r) => (-o )(-r), (-o)( -o )( -o )(r)
+     */
+    protected String genRegex(boolean nextIsReq) {
+        if (nextIsReq) {
+            return "(\\s" + "(" + String.join("|", names) + ")" + "\\s" +
+                    (Reflections.isArray(type) ? ARRAY_VALUE_PATTERN : DEFAULT_VALUE_PATTERN) + "\\s" + "|)";
+        } else {
+            return "(\\s" + "(" + String.join("|", names) + ")" + "\\s" +
+                    (Reflections.isArray(type) ? ARRAY_VALUE_PATTERN : DEFAULT_VALUE_PATTERN) + "|)";
+        }
     }
 
     public String getDefaultValue() {

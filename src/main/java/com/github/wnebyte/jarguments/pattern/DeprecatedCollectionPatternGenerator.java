@@ -1,11 +1,16 @@
-package com.github.wnebyte.jarguments;
+package com.github.wnebyte.jarguments.pattern;
 
 import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
+import com.github.wnebyte.jarguments.Argument;
+import com.github.wnebyte.jarguments.ArgumentSupport;
+import com.github.wnebyte.jarguments.Positional;
 import com.github.wnebyte.jarguments.util.Strings;
 
-public class ArgumentCollectionPatternGenerator
+@Deprecated
+public class DeprecatedCollectionPatternGenerator
         extends AbstractPatternGenerator<Collection<Argument>> {
 
     /*
@@ -36,11 +41,11 @@ public class ArgumentCollectionPatternGenerator
     ###########################
     */
 
-    public ArgumentCollectionPatternGenerator(final Collection<Argument> args) {
+    public DeprecatedCollectionPatternGenerator(final Collection<Argument> args) {
         super(args);
     }
 
-    public ArgumentCollectionPatternGenerator() {
+    public DeprecatedCollectionPatternGenerator() {
         super(new ArrayList<>());
     }
 
@@ -71,7 +76,7 @@ public class ArgumentCollectionPatternGenerator
         this.inclEol = value;
     }
 
-    public String generateRegex() {
+    public String getRegex() {
         String content = permute(super.getSource());
         if (inclSol) {
             content = "^".concat(content);
@@ -82,12 +87,12 @@ public class ArgumentCollectionPatternGenerator
         return content;
     }
 
-    public Pattern generatePattern() {
-        String regex = generateRegex();
+    public Pattern getPattern() {
+        String regex = getRegex();
         return Pattern.compile(regex);
     }
 
-    private String permute(final Collection<Argument> args) {
+    protected String permute(final Collection<Argument> args) {
         // if there are no arguments to permute, return an empty string
         if ((args == null) || (args.isEmpty())) {
             return "";
@@ -116,7 +121,7 @@ public class ArgumentCollectionPatternGenerator
         return regex.replace(", ", "").concat(")");
     }
 
-    private Set<List<String>> getPermutations(final Collection<Argument> arguments) {
+    protected Set<List<String>> getPermutations(final Collection<Argument> arguments) {
         Set<List<String>> set = new HashSet<>();
         LinkedList<String> args = ArgumentSupport
                 .mapToRegexList(arguments, (arg) -> !(arg instanceof Positional));

@@ -1,7 +1,5 @@
-package com.github.wnebyte.jarguments;
+package com.github.wnebyte.jarguments.constraint;
 
-import com.github.wnebyte.jarguments.constraint.Constraint;
-import com.github.wnebyte.jarguments.constraint.ConstraintCollectionBuilder;
 import org.junit.Test;
 
 import java.util.Collection;

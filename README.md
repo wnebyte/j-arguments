@@ -2,8 +2,18 @@
 java-library
 
 ## About
-This package contains ...
+A library for creating, validating, and parsing arguments. 
 
-Used as a core module in:   
-https://github.com/wnebyte/j-cli  
-https://github.com/wnebyte/j-exeargs
+## Sample
+Below code demonstrates how to create a collection of arguments.
+
+    public class Sample {
+        List<Argument> arguments = ArgumentFactory.builder().build()
+                .setName("-a", "--a);
+                .setIsRequired()
+                .append(String.class)
+                .setName("-b", "--b")
+                .setIsOptional()
+                .append(int.class)
+                .get();
+    }

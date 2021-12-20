@@ -1,4 +1,4 @@
-package com.github.wnebyte.jarguments;
+package com.github.wnebyte.jarguments.convert;
 
 import com.github.wnebyte.jarguments.exception.ParseException;
 

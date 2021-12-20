@@ -1,6 +1,8 @@
 package com.github.wnebyte.jarguments;
 
-import com.github.wnebyte.jarguments.factory.ArgumentCollectionFactoryBuilder;
+import com.github.wnebyte.jarguments.factory.ArgumentFactoryBuilder;
+import com.github.wnebyte.jarguments.parser.DeprecatedCollectionParser;
+import com.github.wnebyte.jarguments.pattern.DeprecatedCollectionPatternGenerator;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -11,7 +13,7 @@ public class IntegrationTest {
 
     @Test
     public void testOptionalArguments() throws Exception {
-        List<Argument> arguments = new ArgumentCollectionFactoryBuilder().build()
+        List<Argument> arguments = new ArgumentFactoryBuilder().build()
                 .setName("-a", "--a")
                 .setType(double.class)
                 .setIsOptional()
@@ -22,9 +24,9 @@ public class IntegrationTest {
                 .append()
                 .get();
         String input = "--a 100.5";
-        Pattern pattern = new ArgumentCollectionPatternGenerator(arguments).generatePattern();
+        Pattern pattern = new DeprecatedCollectionPatternGenerator(arguments).getPattern();
         boolean matches = matches(pattern, input);
-        ArgumentCollectionParser parser = new ArgumentCollectionParser(arguments);
+        DeprecatedCollectionParser parser = new DeprecatedCollectionParser(arguments);
         Object[] args = parser.parse(input);
         double a = (double) args[0];
         Assert.assertTrue(matches);

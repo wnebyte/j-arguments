@@ -2,8 +2,9 @@ package com.github.wnebyte.jarguments;
 
 import java.util.*;
 import java.util.function.Predicate;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
+
+import com.github.wnebyte.jarguments.exception.ParseException;
 import com.github.wnebyte.jarguments.util.Collections;
 
 /**
@@ -107,10 +108,14 @@ public class ArgumentSupport {
         }
         return args.stream()
                 .filter(arg -> arg instanceof Positional)
-                .map(arg -> (Positional) args)
+                .map(arg -> (Positional) arg)
                 .filter(arg -> arg.getPosition() == position)
                 .findFirst()
                 .orElse(null);
 
+    }
+
+    public static Object initialize(final Argument argument, final String value) throws ParseException {
+        return argument.initialize(value);
     }
 }

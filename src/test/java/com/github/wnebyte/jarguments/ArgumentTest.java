@@ -2,10 +2,11 @@ package com.github.wnebyte.jarguments;
 
 import com.github.wnebyte.jarguments.constraint.Constraint;
 import com.github.wnebyte.jarguments.constraint.ConstraintCollectionBuilder;
-import com.github.wnebyte.jarguments.converter.TypeConverterMap;
+import com.github.wnebyte.jarguments.convert.TypeConverterMap;
 import com.github.wnebyte.jarguments.exception.ConstraintException;
 import com.github.wnebyte.jarguments.exception.ParseException;
-import com.github.wnebyte.jarguments.factory.ArgumentCollectionFactoryBuilder;
+import com.github.wnebyte.jarguments.factory.ArgumentFactoryBuilder;
+import com.github.wnebyte.jarguments.pattern.DeprecatedCollectionPatternGenerator;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -17,7 +18,7 @@ public class ArgumentTest {
 
     @Test
     public void test00() {
-        List<Argument> arguments = new ArgumentCollectionFactoryBuilder().build()
+        List<Argument> arguments = new ArgumentFactoryBuilder().build()
                 .setName("-a", "--a")
                 .setIsRequired()
                 .setType(String.class)
@@ -27,7 +28,7 @@ public class ArgumentTest {
                 .setType(String.class)
                 .append()
                 .get();
-        Pattern pattern = new ArgumentCollectionPatternGenerator(arguments).generatePattern();
+        Pattern pattern = new DeprecatedCollectionPatternGenerator(arguments).getPattern();
         Assert.assertTrue(matches(pattern,
                 "--a hello --b 'hello there'",
                 "-b \"hello there\" --a 'hey there'"
@@ -40,7 +41,7 @@ public class ArgumentTest {
 
     @Test(expected = ConstraintException.class)
     public void test01() throws ParseException {
-        List<Argument> arguments = new ArgumentCollectionFactoryBuilder().build()
+        List<Argument> arguments = new ArgumentFactoryBuilder().build()
                 .setName("-a", "--a")
                 .setIsRequired()
                 .append(Integer.class, new ConstraintCollectionBuilder<Integer>()
@@ -62,7 +63,7 @@ public class ArgumentTest {
 
     @Test
     public void testToString() {
-        List<Argument> args = new ArgumentCollectionFactoryBuilder().build()
+        List<Argument> args = new ArgumentFactoryBuilder().build()
                 .setIsPositional()
                 .append(int.class)
                 .setName("-a", "-A")

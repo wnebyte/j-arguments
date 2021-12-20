@@ -1,6 +1,5 @@
-package com.github.wnebyte.jarguments;
+package com.github.wnebyte.jarguments.util;
 
-import com.github.wnebyte.jarguments.util.Strings;
 import org.junit.Assert;
 import org.junit.Test;
 

@@ -1,18 +1,21 @@
-package com.github.wnebyte.jarguments;
+package com.github.wnebyte.jarguments.parser;
 
+import com.github.wnebyte.jarguments.AbstractTestClass;
+import com.github.wnebyte.jarguments.Argument;
+import com.github.wnebyte.jarguments.pattern.DeprecatedCollectionPatternGenerator;
 import org.junit.Test;
 import org.junit.Assert;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 import com.github.wnebyte.jarguments.exception.ParseException;
-import com.github.wnebyte.jarguments.factory.ArgumentCollectionFactoryBuilder;
+import com.github.wnebyte.jarguments.factory.ArgumentFactoryBuilder;
 
-public class ArgumentCollectionParserTest {
+public class DeprecatedArgumentParserTest extends AbstractTestClass {
 
     @Test
     public void test00() throws ParseException {
-        List<Argument> arguments = new ArgumentCollectionFactoryBuilder().build()
+        List<Argument> arguments = new ArgumentFactoryBuilder().build()
                 .setName("-a", "-A")
                 .setIsFlag()
                 .append(boolean.class)
@@ -22,21 +25,21 @@ public class ArgumentCollectionParserTest {
                 .append(int.class)
                 .get();
         String input = "-a -b 100";
-        Pattern pattern = new ArgumentCollectionPatternGenerator(arguments).generatePattern();
+        Pattern pattern = new DeprecatedCollectionPatternGenerator(arguments).getPattern();
         Assert.assertTrue(pattern.matcher(input).matches());
-        new ArgumentCollectionParser(arguments).parse(input);
+        new DeprecatedCollectionParser(arguments).parse(input);
     }
 
     @Test
     public void testSuccessfulParseEmptyCollection() throws ParseException {
         List<Argument> arguments = new ArrayList<>();
         String input = "";
-        new ArgumentCollectionParser(arguments).parse(input);
+        new DeprecatedCollectionParser(arguments).parse(input);
     }
 
     @Test
     public void testSuccessfulParseMultipleFlag() throws ParseException {
-        List<Argument> arguments = new ArgumentCollectionFactoryBuilder().build()
+        List<Argument> arguments = new ArgumentFactoryBuilder().build()
                 .setName("-a")
                 .setIsFlag()
                 .append(boolean.class)
@@ -61,16 +64,16 @@ public class ArgumentCollectionParserTest {
                 "-b",
                 "-c"
         };
-        Pattern pattern = new ArgumentCollectionPatternGenerator(arguments).generatePattern();
-        Assert.assertTrue(matches(pattern, input));
+        Pattern pattern = new DeprecatedCollectionPatternGenerator(arguments).getPattern();
+        Assert.assertTrue(allMatch(pattern, input));
         for (String s : input) {
-            new ArgumentCollectionParser(arguments).parse(s);
+            new DeprecatedCollectionParser(arguments).parse(s);
         }
     }
 
     @Test
     public void testSuccessfulParseFlagWithValues() throws ParseException {
-        List<Argument> arguments = new ArgumentCollectionFactoryBuilder().build()
+        List<Argument> arguments = new ArgumentFactoryBuilder().build()
                 .setName("-a")
                 .setIsFlag()
                 .setFlagValue("10")
@@ -78,20 +81,20 @@ public class ArgumentCollectionParserTest {
                 .append(int.class)
                 .get();
         String input = "";
-        Pattern pattern = new ArgumentCollectionPatternGenerator(arguments).generatePattern();
+        Pattern pattern = new DeprecatedCollectionPatternGenerator(arguments).getPattern();
         Assert.assertTrue(pattern.matcher(input).matches());
-        int arg = (int) new ArgumentCollectionParser(arguments).parse(input)[0];
+        int arg = (int) new DeprecatedCollectionParser(arguments).parse(input)[0];
         Assert.assertEquals(0, arg);
         input = "-a";
-        pattern = new ArgumentCollectionPatternGenerator(arguments).generatePattern();
+        pattern = new DeprecatedCollectionPatternGenerator(arguments).getPattern();
         Assert.assertTrue(pattern.matcher(input).matches());
-        arg = (int) new ArgumentCollectionParser(arguments).parse(input)[0];
+        arg = (int) new DeprecatedCollectionParser(arguments).parse(input)[0];
         Assert.assertEquals(10, arg);
     }
 
     @Test
     public void testSuccessfulParseMultiplePositional() throws ParseException {
-        List<Argument> arguments = new ArgumentCollectionFactoryBuilder().build()
+        List<Argument> arguments = new ArgumentFactoryBuilder().build()
                 .setIsPositional()
                 .append(int.class)
                 .setIsPositional()
@@ -127,11 +130,11 @@ public class ArgumentCollectionParserTest {
                         30, 10, 20
                 }
         };
-        Pattern pattern = new ArgumentCollectionPatternGenerator(arguments).generatePattern();
-        Assert.assertTrue(matches(pattern, input));
+        Pattern pattern = new DeprecatedCollectionPatternGenerator(arguments).getPattern();
+        Assert.assertTrue(allMatch(pattern, input));
         for (int i = 0; i < input.length; i++) {
             String s = input[i];
-            Object[] args = new ArgumentCollectionParser(arguments).parse(s);
+            Object[] args = new DeprecatedCollectionParser(arguments).parse(s);
             for (int j = 0; j < values[i].length; j++) {
                 int value = values[i][j];
                 Assert.assertEquals(value, args[j]);
@@ -141,7 +144,7 @@ public class ArgumentCollectionParserTest {
 
     @Test
     public void testSuccessfulParseMultipleRequired() throws ParseException {
-        List<Argument> arguments = new ArgumentCollectionFactoryBuilder().build()
+        List<Argument> arguments = new ArgumentFactoryBuilder().build()
                 .setName("-a")
                 .setIsRequired()
                 .append(int.class)
@@ -176,11 +179,11 @@ public class ArgumentCollectionParserTest {
                         10, 20, 30
                 }
         };
-        Pattern pattern = new ArgumentCollectionPatternGenerator(arguments).generatePattern();
-        Assert.assertTrue(matches(pattern, input));
+        Pattern pattern = new DeprecatedCollectionPatternGenerator(arguments).getPattern();
+        Assert.assertTrue(allMatch(pattern, input));
         for (int i = 0; i < input.length; i++) {
             String s = input[i];
-            Object[] args = new ArgumentCollectionParser(arguments).parse(s);
+            Object[] args = new DeprecatedCollectionParser(arguments).parse(s);
             for (int j = 0; j < values[i].length; j++) {
                 int value = values[i][j];
                 Assert.assertEquals(value, args[j]);
@@ -190,7 +193,7 @@ public class ArgumentCollectionParserTest {
 
     @Test
     public void testSuccessfulParseMultipleOptional00() throws ParseException {
-        List<Argument> arguments = new ArgumentCollectionFactoryBuilder().build()
+        List<Argument> arguments = new ArgumentFactoryBuilder().build()
                 .setName("-a")
                 .setIsOptional()
                 .append(int.class)
@@ -225,11 +228,11 @@ public class ArgumentCollectionParserTest {
                         10, 20, 30
                 }
         };
-        Pattern pattern = new ArgumentCollectionPatternGenerator(arguments).generatePattern();
-        Assert.assertTrue(matches(pattern, input));
+        Pattern pattern = new DeprecatedCollectionPatternGenerator(arguments).getPattern();
+        Assert.assertTrue(allMatch(pattern, input));
         for (int i = 0; i < input.length; i++) {
             String s = input[i];
-            Object[] args = new ArgumentCollectionParser(arguments).parse(s);
+            Object[] args = new DeprecatedCollectionParser(arguments).parse(s);
             for (int j = 0; j < values[i].length; j++) {
                 int value = values[i][j];
                 Assert.assertEquals(value, args[j]);
@@ -239,7 +242,7 @@ public class ArgumentCollectionParserTest {
 
     @Test
     public void testSuccessfulParseMultipleOptional01() throws ParseException {
-        List<Argument> arguments = new ArgumentCollectionFactoryBuilder().build()
+        List<Argument> arguments = new ArgumentFactoryBuilder().build()
                 .setName("-a")
                 .setIsOptional()
                 .append(int.class)
@@ -290,11 +293,11 @@ public class ArgumentCollectionParserTest {
                         0, 20, 20
                 }
         };
-        Pattern pattern = new ArgumentCollectionPatternGenerator(arguments).generatePattern();
-        Assert.assertTrue(matches(pattern, input));
+        Pattern pattern = new DeprecatedCollectionPatternGenerator(arguments).getPattern();
+        Assert.assertTrue(allMatch(pattern, input));
         for (int i = 0; i < input.length; i++) {
             String s = input[i];
-            Object[] args = new ArgumentCollectionParser(arguments).parse(s);
+            Object[] args = new DeprecatedCollectionParser(arguments).parse(s);
             for (int j = 0; j < values[i].length; j++) {
                 int value = values[i][j];
                 Assert.assertEquals(value, args[j]);
@@ -304,7 +307,7 @@ public class ArgumentCollectionParserTest {
 
     @Test
     public void testSuccessfulParse00() throws ParseException {
-        List<Argument> arguments = new ArgumentCollectionFactoryBuilder().build()
+        List<Argument> arguments = new ArgumentFactoryBuilder().build()
                 .setIsPositional()
                 .append(String.class)
                 .setName("-b")
@@ -321,16 +324,16 @@ public class ArgumentCollectionParserTest {
                 "'hello there' -c -b 100",
                 "'hello there'"
         };
-        Pattern pattern = new ArgumentCollectionPatternGenerator(arguments).generatePattern();
-        Assert.assertTrue(matches(pattern, input));
+        Pattern pattern = new DeprecatedCollectionPatternGenerator(arguments).getPattern();
+        Assert.assertTrue(allMatch(pattern, input));
         for (String s : input) {
-            new ArgumentCollectionParser(arguments).parse(s);
+            new DeprecatedCollectionParser(arguments).parse(s);
         }
     }
 
     @Test
     public void testSuccessfulParse01() throws ParseException {
-        List<Argument> arguments = new ArgumentCollectionFactoryBuilder().build()
+        List<Argument> arguments = new ArgumentFactoryBuilder().build()
                 .setIsPositional()
                 .append(String.class)
                 .setName("-b")
@@ -351,21 +354,10 @@ public class ArgumentCollectionParserTest {
                 "'hello there' -b 100 -d 500 -c",
                 "'hello there' -c -d 500 -b 200"
         };
-        Pattern pattern = new ArgumentCollectionPatternGenerator(arguments).generatePattern();
-        Assert.assertTrue(matches(pattern, input));
+        Pattern pattern = new DeprecatedCollectionPatternGenerator(arguments).getPattern();
+        Assert.assertTrue(allMatch(pattern, input));
         for (String s : input) {
-            new ArgumentCollectionParser(arguments).parse(s);
+            new DeprecatedCollectionParser(arguments).parse(s);
         }
-    }
-
-    private boolean matches(final Pattern pattern, final String... input) {
-        for (String s : input) {
-            boolean matches = pattern.matcher(s).matches();
-            if (!matches) {
-                System.err.println("'" + s + "'" + " != " + pattern.toString());
-                return false;
-            }
-        }
-        return true;
     }
 }

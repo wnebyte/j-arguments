@@ -1,18 +1,33 @@
-package com.github.wnebyte.jarguments;
+package com.github.wnebyte.jarguments.factory;
 
-import com.github.wnebyte.jarguments.converter.TypeConverterMap;
+import com.github.wnebyte.jarguments.*;
+import com.github.wnebyte.jarguments.convert.TypeConverterMap;
 import com.github.wnebyte.jarguments.exception.ParseException;
-import com.github.wnebyte.jarguments.factory.ArgumentCollectionFactoryBuilder;
 import org.junit.Assert;
 import org.junit.Test;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class ArgumentCollectionFactoryTest {
+public class ArgumentFactoryTest {
+
+    private static class OptionsBuilderBuilder {
+
+        public List<Argument> get() {
+            return new ArrayList<>();
+        }
+    }
+
+    @Test
+    public void testName() {
+        List<Argument> c = new OptionsBuilderBuilder()
+                .get();
+    }
 
     @Test
     public void test00() {
-        List<Argument> arguments = new ArgumentCollectionFactoryBuilder().build()
+        List<Argument> arguments = new ArgumentFactoryBuilder().build()
                 .setName("-a", "--a")
                 .setDescription("test arg")
                 .setIsRequired()
@@ -30,7 +45,7 @@ public class ArgumentCollectionFactoryTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testAppend() {
-        List<Argument> arguments = new ArgumentCollectionFactoryBuilder()
+        List<Argument> arguments = new ArgumentFactoryBuilder()
                 .useTypeConverterMap(TypeConverterMap.getInstance())
                 .build()
                 .setIsPositional()
@@ -48,7 +63,7 @@ public class ArgumentCollectionFactoryTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void test01() {
-        List<Argument> args = new ArgumentCollectionFactoryBuilder().build()
+        List<Argument> args = new ArgumentFactoryBuilder().build()
                 .setName("$")
                 .append(int.class)
                 .get();
@@ -56,7 +71,7 @@ public class ArgumentCollectionFactoryTest {
 
     @Test
     public void test02() throws ParseException {
-        List<Argument> args = new ArgumentCollectionFactoryBuilder().build()
+        List<Argument> arguments = ArgumentFactory.builder().build()
                 .setName("-a")
                 .append(boolean.class)
                 .setName("-b")
@@ -67,13 +82,20 @@ public class ArgumentCollectionFactoryTest {
                 .setType(String.class)
                 .append()
                 .get();
-        System.out.println(args.get(0).getClass());
-        Assert.assertTrue(args.get(0) instanceof Flag);
-        Assert.assertTrue(args.get(1) instanceof Required);
-        Assert.assertTrue(args.get(2) instanceof Optional);
-        boolean bool = (boolean) args.get(0).initialize("");
+        System.out.println(arguments.get(0).getClass());
+        Assert.assertTrue(arguments.get(0) instanceof Flag);
+        Assert.assertTrue(arguments.get(1) instanceof Required);
+        Assert.assertTrue(arguments.get(2) instanceof Optional);
+        boolean bool = (boolean) ArgumentSupport.initialize(arguments.get(0), "");
         Assert.assertFalse(bool);
-        bool = (boolean) args.get(0).initialize("-a");
+        bool = (boolean) ArgumentSupport.initialize(arguments.get(0), "-a");
         Assert.assertTrue(bool);
     }
+
+    @Test
+    public void test03() {
+
+    }
+
+
 }

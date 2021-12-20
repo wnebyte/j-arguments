@@ -1,6 +1,6 @@
-package com.github.wnebyte.jarguments;
+package com.github.wnebyte.jarguments.pattern;
 
-import com.github.wnebyte.jarguments.factory.ArgumentCollectionFactoryBuilder;
+import com.github.wnebyte.jarguments.factory.ArgumentFactoryBuilder;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -32,8 +32,8 @@ public class PatternTest {
 
     @Test
     public void test03() {
-        Pattern pattern = new ArgumentCollectionPatternGenerator(
-                new ArgumentCollectionFactoryBuilder().build()
+        Pattern pattern = new DeprecatedCollectionPatternGenerator(
+                new ArgumentFactoryBuilder().build()
                         .setName("-b")
                         .setIsPositional()
                         .append(int.class)
@@ -44,17 +44,17 @@ public class PatternTest {
                         .setIsOptional()
                         .append(boolean.class)
                         .get()
-        ).generatePattern();
+        ).getPattern();
     }
 
     @Test
     public void test05() {
-        Pattern pattern = new ArgumentCollectionPatternGenerator(
-                new ArgumentCollectionFactoryBuilder().build()
+        Pattern pattern = new DeprecatedCollectionPatternGenerator(
+                new ArgumentFactoryBuilder().build()
                         .setIsPositional()
                         .append(String.class)
                         .get())
-                .generatePattern();
+                .getPattern();
         Assert.assertTrue(matches(pattern,
                 "hej",
                 "'hej'",

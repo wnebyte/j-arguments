@@ -1,17 +1,20 @@
 package com.github.wnebyte.jarguments;
 
+import java.util.Set;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Set;
+import java.util.regex.Pattern;
+
 import com.github.wnebyte.jarguments.constraint.Constraint;
-import com.github.wnebyte.jarguments.converter.TypeConverter;
+import com.github.wnebyte.jarguments.convert.Initializer;
+import com.github.wnebyte.jarguments.convert.TypeConverter;
 import com.github.wnebyte.jarguments.exception.ConstraintException;
 import com.github.wnebyte.jarguments.exception.ParseException;
 import com.github.wnebyte.jarguments.util.Objects;
 import com.github.wnebyte.jarguments.util.Reflections;
 
 /**
- * This class represents an abstract Argument.
+ * This class represents an Argument.
  */
 public abstract class Argument {
 
@@ -33,15 +36,17 @@ public abstract class Argument {
     ###########################
     */
 
-    private final Set<String> names;
+    protected final Set<String> names;
 
-    private final String desc;
+    protected final String desc;
 
-    private final String regex;
+    protected final String regex;
 
-    private final int index;
+    protected final Pattern pattern;
 
-    private final Class<?> type;
+    protected final int index;
+
+    protected final Class<?> type;
 
     private final TypeConverter<?> typeConverter;
 
@@ -66,6 +71,7 @@ public abstract class Argument {
         this.names = names;
         this.desc = desc;
         this.regex = createRegExp(names, type);
+        this.pattern = Pattern.compile(regex);
         this.index = index;
         this.type = type;
         this.typeConverter = typeConverter;
@@ -86,6 +92,7 @@ public abstract class Argument {
         this.names = names;
         this.desc = desc;
         this.regex = createRegExp(names, type);
+        this.pattern = Pattern.compile(regex);
         this.index = index;
         this.type = type;
         this.typeConverter = typeConverter;
@@ -117,12 +124,16 @@ public abstract class Argument {
         return initializer.apply(value);
     }
 
-    protected final String getRegex() {
+    protected final TypeConverter<?> getTypeConverter() {
+        return typeConverter;
+    }
+
+    public final String getRegex() {
         return regex;
     }
 
-    protected final TypeConverter<?> getTypeConverter() {
-        return typeConverter;
+    public final Pattern getPattern() {
+        return pattern;
     }
 
     public final Set<String> getNames() {

@@ -1,7 +1,7 @@
 package com.github.wnebyte.jarguments;
 
-import com.github.wnebyte.jarguments.factory.ArgumentCollectionFactory;
-import com.github.wnebyte.jarguments.factory.ArgumentCollectionFactoryBuilder;
+import com.github.wnebyte.jarguments.factory.ArgumentFactory;
+import com.github.wnebyte.jarguments.factory.ArgumentFactoryBuilder;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -13,7 +13,7 @@ public class ArgumentSupportTest {
 
     @Test
     public void test00() {
-        ArgumentCollectionFactory argumentCollectionFactory = new ArgumentCollectionFactoryBuilder().build();
+        ArgumentFactory argumentCollectionFactory = new ArgumentFactoryBuilder().build();
         List<Argument> arguments = argumentCollectionFactory
                 .setName("-h", "--h")
                 .setIsPositional()

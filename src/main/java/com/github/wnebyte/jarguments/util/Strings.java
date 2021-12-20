@@ -77,6 +77,10 @@ public class Strings {
         return elements;
     }
 
+    public static List<String> split(String s, char target, Character... p) {
+        return split(s, target, Arrays.asList(p));
+    }
+
     /**
      * Splits the specified String <code>s</code> on occurrences of the specified <code>target</code> char where
      * it is preceded by an even number of each and every characters present in the specified <code>collection</code>.

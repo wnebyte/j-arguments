@@ -1,4 +1,4 @@
-package com.github.wnebyte.jarguments;
+package com.github.wnebyte.jarguments.pattern;
 
 import java.util.regex.Pattern;
 
@@ -10,17 +10,15 @@ public abstract class AbstractPatternGenerator<T> {
         this.source = source;
     }
 
-    public AbstractPatternGenerator() {}
+    public abstract String getRegex();
 
-    public abstract String generateRegex();
+    public abstract Pattern getPattern();
 
-    public abstract Pattern generatePattern();
-
-    protected T getSource() {
+    protected final T getSource() {
         return source;
     }
 
-    public void setSource(T source) {
+    public final void setSource(T source) {
         this.source = source;
     }
 }

@@ -1,8 +1,5 @@
-package com.github.wnebyte.jarguments;
+package com.github.wnebyte.jarguments.convert;
 
-import com.github.wnebyte.jarguments.converter.AbstractTypeConverterMap;
-import com.github.wnebyte.jarguments.converter.TypeConverter;
-import com.github.wnebyte.jarguments.converter.TypeConverterMap;
 import org.junit.Assert;
 import org.junit.Test;
 

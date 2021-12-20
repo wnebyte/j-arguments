@@ -1,19 +1,32 @@
 package com.github.wnebyte.jarguments;
 
-import com.github.wnebyte.jarguments.constraint.Constraint;
-import com.github.wnebyte.jarguments.converter.TypeConverter;
-import com.github.wnebyte.jarguments.exception.ParseException;
-import com.github.wnebyte.jarguments.util.Reflections;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Objects;
 import java.util.Set;
+import com.github.wnebyte.jarguments.constraint.Constraint;
+import com.github.wnebyte.jarguments.convert.TypeConverter;
+import com.github.wnebyte.jarguments.exception.ParseException;
+import com.github.wnebyte.jarguments.util.Reflections;
 
 /**
- * This class represents a positional Argument.
+ * This class represents a value based Argument that has a relative position.
  */
-public class Positional extends Argument {
+public class Positional extends Argument implements Comparable<Positional> {
+
+    /*
+    ###########################
+    #         FIELDS          #
+    ###########################
+    */
 
     private final int position;
+
+    /*
+    ###########################
+    #       CONSTRUCTORS      #
+    ###########################
+    */
 
     public Positional(
             final String description,
@@ -38,10 +51,17 @@ public class Positional extends Argument {
         this.position = position;
     }
 
-    public int getPosition() {
+    /*
+    ###########################
+    #         METHODS         #
+    ###########################
+    */
+
+    public final int getPosition() {
         return position;
     }
 
+    @Override
     protected String createRegExp(final Set<String> names, final Class<?> type) {
         return "\\s" + (Reflections.isArray(type) ? ARRAY_VALUE_PATTERN : DEFAULT_VALUE_PATTERN);
     }
@@ -61,15 +81,15 @@ public class Positional extends Argument {
         if (o == this) { return true; }
         if (!(o instanceof Positional)) { return false; }
         Positional positional = (Positional) o;
-        return positional.position == this.position &&
+        return Objects.equals(positional.position, this.position) &&
                 super.equals(positional);
     }
 
     @Override
     public int hashCode() {
         int result = 66;
-        return position +
-                result +
+        return result +
+                Objects.hashCode(position) +
                 super.hashCode();
     }
 
@@ -93,4 +113,13 @@ public class Positional extends Argument {
         return "[ " + "... <" + getType().getSimpleName() + "> ]";
     }
 
+    @Override
+    public int compareTo(Positional o) {
+        if (o == null) {
+            throw new NullPointerException(
+                    ""
+            );
+        }
+        return position - o.position;
+    }
 }

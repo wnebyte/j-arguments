@@ -1,4 +1,4 @@
-package com.github.wnebyte.jarguments.converter;
+package com.github.wnebyte.jarguments.convert;
 
 import java.util.HashMap;
 
