@@ -95,29 +95,37 @@ public class Positional extends Argument implements Comparable<Positional> {
 
     @Override
     public String toString() {
-        return "[" + "..." + "]";
+        return String.format(
+                "[$R%d]", position
+        );
     }
 
     @Override
     public String toPaddedString() {
-        return "[ " + "..." + " ]";
+        return String.format(
+                "[ $R%d ]", position
+        );
     }
 
     @Override
     public String toDescriptiveString() {
-        return "[" + "... <" + getType().getSimpleName() + ">]";
+        return String.format(
+                "[$R%d <%s>]", position, type.getSimpleName()
+        );
     }
 
     @Override
     public String toPaddedDescriptiveString() {
-        return "[ " + "... <" + getType().getSimpleName() + "> ]";
+        return String.format(
+                "[ $R%d <%s> ]", position, type.getSimpleName()
+        );
     }
 
     @Override
     public int compareTo(Positional o) {
         if (o == null) {
             throw new NullPointerException(
-                    ""
+                    "The specified Positional Argument must not be null."
             );
         }
         return position - o.position;
