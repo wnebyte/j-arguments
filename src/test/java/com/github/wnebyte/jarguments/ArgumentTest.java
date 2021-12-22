@@ -74,21 +74,17 @@ public class ArgumentTest {
                 .setDefaultValue("5")
                 .append(int.class)
                 .setName("-c", "-C")
+                .setIsFlag()
                 .setType(boolean.class)
                 .append()
                 .get();
-        Argument pos = args.get(0);
-        Argument req = args.get(1);
-        Argument opt = args.get(2);
-        Argument c = args.get(3);
-        System.out.println(pos);
-        System.out.println(req);
-        System.out.println(opt);
-        System.out.println("");
-        System.out.println(pos.toPaddedDescriptiveString());
-        System.out.println(req.toPaddedDescriptiveString());
-        System.out.println(opt.toDescriptiveString());
-        System.out.println(c.toDescriptiveString());
+
+        for (Argument arg : args) {
+            System.out.println(arg.toString());
+            System.out.println(arg.toPaddedString());
+            System.out.println(arg.toDescriptiveString());
+            System.out.println(arg.toPaddedDescriptiveString() + "\n");
+        }
     }
 
     @Test

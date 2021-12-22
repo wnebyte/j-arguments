@@ -1,7 +1,7 @@
 package com.github.wnebyte.jarguments;
 
-import java.util.Collection;
 import java.util.Set;
+import java.util.Collection;
 import com.github.wnebyte.jarguments.constraint.Constraint;
 import com.github.wnebyte.jarguments.convert.TypeConverter;
 import com.github.wnebyte.jarguments.exception.ParseException;
@@ -9,15 +9,26 @@ import com.github.wnebyte.jarguments.util.Objects;
 import com.github.wnebyte.jarguments.util.Strings;
 
 /**
- * This class represents an optional Argument that only consists of a name, and can be initialized into one of two
- * values.
+ * This class represents an optional Argument that has both a predefined value for when it's included, and excluded.
  */
-public final class Flag extends Optional {
+public class Flag extends Optional {
+
+    /*
+    ###########################
+    #         FIELDS          #
+    ###########################
+    */
 
     /**
      * The value to use during initialization when the option has been included.
      */
-    private final String value;
+    protected final String value;
+
+    /*
+    ###########################
+    #       CONSTRUCTORS      #
+    ###########################
+    */
 
     public Flag(
             final Set<String> names,
@@ -46,6 +57,12 @@ public final class Flag extends Optional {
         this.value = value;
     }
 
+    /*
+    ###########################
+    #         METHODS         #
+    ###########################
+    */
+
     @Override
     protected String createRegExp(final Set<String> names, final Class<?> type) {
         return "(\\s" + "(" + String.join("|", names) + ")" + "|)";
@@ -53,12 +70,16 @@ public final class Flag extends Optional {
 
     @Override
     protected Object initialize(final String value) throws ParseException {
-        if (Strings.intersects(value, getNames())) {
-            return getTypeConverter().convert(this.value);
+        if (Strings.intersects(value, names)) {
+            return typeConverter.convert(this.value);
         } else {
             return hasDefaultValue() ?
-                    getTypeConverter().convert(getDefaultValue()) : getTypeConverter().defaultValue();
+                    typeConverter.convert(defaultValue) : typeConverter.defaultValue();
         }
+    }
+
+    public final String getValue() {
+        return value;
     }
 
     @Override
@@ -82,12 +103,16 @@ public final class Flag extends Optional {
 
     @Override
     public String toString() {
-        return "[(" + String.join(" | ", getNames()) + ")]";
+        return String.format(
+                "[(%s)]", String.join(" | ", names)
+        );
     }
 
     @Override
     public String toPaddedString() {
-        return "[( " + String.join(" | ", getNames()) + " )]";
+        return String.format(
+                "[( %s )]", String.join(" | ", names)
+        );
     }
 
     @Override

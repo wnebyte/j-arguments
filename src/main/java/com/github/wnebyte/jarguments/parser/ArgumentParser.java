@@ -55,31 +55,31 @@ public class ArgumentParser extends AbstractParser<Collection<Argument>> {
         while (it.hasNext()) {
             final String token = it.next();
             String value;
-            Argument opt = getByName(source, token);
-            opt = (opt != null) ? opt : getByPosition(source, pos++);
+            Argument arg = getByName(source, token);
+            arg = (arg != null) ? arg : getByPosition(source, pos++);
 
-            if (opt == null) {
+            if (arg == null) {
                 throw new ParseException(
                         String.format(
-                                "No Argument with name/value: %s is left to be parsed.", token
+                                "No Argument with name/value: '%s' is left to be parsed.", token
                         )
                 );
             }
-            else if ((opt instanceof Flag) || (opt instanceof Positional)) {
+            else if ((arg instanceof Flag) || (arg instanceof Positional)) {
                 value = token;
             }
             else {
                 if (!it.hasNext()) {
                     throw new ParseException(
                             String.format(
-                                    "Argument with name: %s is missing a value.", token
+                                    "Argument with name: '%s' is missing a value.", token
                             )
                     );
                 }
                 value = token.concat(" ").concat(it.next());
             }
-            source.remove(opt);
-            args[opt.getIndex()] = initialize(opt, value, input);
+            source.remove(arg);
+            args[arg.getIndex()] = initialize(arg, value, input);
         }
 
         for (Argument arg : source) {

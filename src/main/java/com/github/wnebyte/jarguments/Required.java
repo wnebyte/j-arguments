@@ -1,17 +1,23 @@
 package com.github.wnebyte.jarguments;
 
+import java.util.Set;
+import java.util.Collection;
 import com.github.wnebyte.jarguments.constraint.Constraint;
 import com.github.wnebyte.jarguments.convert.TypeConverter;
 import com.github.wnebyte.jarguments.exception.ParseException;
 import com.github.wnebyte.jarguments.util.Reflections;
 import com.github.wnebyte.jarguments.util.Strings;
-import java.util.Collection;
-import java.util.Set;
 
 /**
  * This class represents a required Argument.
  */
 public class Required extends Argument {
+
+    /*
+    ###########################
+    #       CONSTRUCTORS      #
+    ###########################
+    */
 
     public Required(
             final Set<String> name,
@@ -34,6 +40,13 @@ public class Required extends Argument {
         super(name, description, index, type, typeConverter, constraints);
     }
 
+    /*
+    ###########################
+    #         METHODS         #
+    ###########################
+    */
+
+    @Override
     protected String createRegExp(final Set<String> name, final Class<?> type) {
         return "\\s" + "(" + String.join("|", name) + ")" + "\\s" +
                 (Reflections.isArray(type) ? ARRAY_VALUE_PATTERN : DEFAULT_VALUE_PATTERN);
@@ -42,7 +55,7 @@ public class Required extends Argument {
     @Override
     protected Object initialize(final String value) throws ParseException {
         String val = new Splitter()
-                .setName(Strings.firstSubstring(value, getNames()))
+                .setName(Strings.firstSubstring(value, names))
                 .setValue(value)
                 .split()
                 .normalize(isArray())
@@ -68,22 +81,29 @@ public class Required extends Argument {
 
     @Override
     public String toString() {
-        return "[" + String.join(" | ", getNames()) + "]";
+        return String.format(
+                "[%s]", String.join(" | ", names)
+        );
     }
 
     @Override
     public String toPaddedString() {
-        return "[ " + String.join(" | ", getNames()) + " ]";
+        return String.format(
+                "[ %s ]", String.join(" | ", names)
+        );
     }
 
     @Override
     public String toDescriptiveString() {
-        return "[" + String.join(" | ", getNames()) + " <" + getType().getSimpleName() + ">]";
+        return String.format(
+                "[%s <%s>]", String.join(" | ", names), type.getSimpleName()
+        );
     }
 
     @Override
     public String toPaddedDescriptiveString() {
-        return "[ " + String.join(" | ", getNames()) + " <" + getType().getSimpleName() + "> ]";
+        return String.format(
+                "[ %s <%s> ]", String.join(" | ", names), type.getSimpleName()
+        );
     }
-
 }

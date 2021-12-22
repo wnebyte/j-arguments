@@ -1,16 +1,16 @@
 package com.github.wnebyte.jarguments;
 
+import java.util.Set;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Objects;
-import java.util.Set;
 import com.github.wnebyte.jarguments.constraint.Constraint;
 import com.github.wnebyte.jarguments.convert.TypeConverter;
 import com.github.wnebyte.jarguments.exception.ParseException;
 import com.github.wnebyte.jarguments.util.Reflections;
 
 /**
- * This class represents a value based Argument that has a relative position.
+ * This class represents a positional Argument.
  */
 public class Positional extends Argument implements Comparable<Positional> {
 
@@ -20,7 +20,7 @@ public class Positional extends Argument implements Comparable<Positional> {
     ###########################
     */
 
-    private final int position;
+    protected final int position;
 
     /*
     ###########################
@@ -57,10 +57,6 @@ public class Positional extends Argument implements Comparable<Positional> {
     ###########################
     */
 
-    public final int getPosition() {
-        return position;
-    }
-
     @Override
     protected String createRegExp(final Set<String> names, final Class<?> type) {
         return "\\s" + (Reflections.isArray(type) ? ARRAY_VALUE_PATTERN : DEFAULT_VALUE_PATTERN);
@@ -73,6 +69,10 @@ public class Positional extends Argument implements Comparable<Positional> {
                 .normalize(isArray())
                 .get();
         return super.initialize(val);
+    }
+
+    public final int getPosition() {
+        return position;
     }
 
     @Override
@@ -118,6 +118,13 @@ public class Positional extends Argument implements Comparable<Positional> {
     public String toPaddedDescriptiveString() {
         return String.format(
                 "[ $R%d <%s> ]", position, type.getSimpleName()
+        );
+    }
+
+    @Override
+    public String toGenericString() {
+        return String.format(
+                "$R%d", position
         );
     }
 

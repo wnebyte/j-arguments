@@ -1,20 +1,32 @@
 package com.github.wnebyte.jarguments;
 
+import java.util.Set;
+import java.util.Collection;
 import com.github.wnebyte.jarguments.constraint.Constraint;
 import com.github.wnebyte.jarguments.convert.TypeConverter;
 import com.github.wnebyte.jarguments.exception.ParseException;
 import com.github.wnebyte.jarguments.util.Objects;
 import com.github.wnebyte.jarguments.util.Reflections;
 import com.github.wnebyte.jarguments.util.Strings;
-import java.util.Collection;
-import java.util.Set;
 
 /**
- * This class represents a named, optional Argument that has a default value.
+ * This class represents an optional Argument.
  */
 public class Optional extends Argument {
 
-    private final String defaultValue;
+    /*
+    ###########################
+    #          FIELDS         #
+    ###########################
+    */
+
+    protected final String defaultValue;
+
+    /*
+    ###########################
+    #       CONSTRUCTORS      #
+    ###########################
+    */
 
     public Optional(
             final Set<String> name,
@@ -41,81 +53,23 @@ public class Optional extends Argument {
         this.defaultValue = defaultValue;
     }
 
+    /*
+    ###########################
+    #         METHODS         #
+    ###########################
+    */
+
     @Override
     protected String createRegExp(final Set<String> names, final Class<?> type) {
-        /*
-        if (Reflections.isBoolean(type)) {
-            return "(\\s" + "(" + String.join("|", name) + ")" + "|)";
-        }
-        else {
-              return "(\\s" + "(" + String.join("|", name) + ")" +  "\\s" +
-                      (Reflections.isArray(type) ? ARRAY_VALUE_PATTERN : DEFAULT_VALUE_PATTERN) + "|)";
-        }
-         */
         return "(\\s" + "(" + String.join("|", names) + ")" +  "\\s" +
                 (Reflections.isArray(type) ? ARRAY_VALUE_PATTERN : DEFAULT_VALUE_PATTERN) + "|)";
     }
 
-    /*
-
-    (-r)( -o)( -o)( -r) ?
-    (-o)( -r) => (-o )(-r), (-o)( -o )( -o )(r)
-     */
-    protected String genRegex(boolean nextIsReq) {
-        if (nextIsReq) {
-            return "(\\s" + "(" + String.join("|", names) + ")" + "\\s" +
-                    (Reflections.isArray(type) ? ARRAY_VALUE_PATTERN : DEFAULT_VALUE_PATTERN) + "\\s" + "|)";
-        } else {
-            return "(\\s" + "(" + String.join("|", names) + ")" + "\\s" +
-                    (Reflections.isArray(type) ? ARRAY_VALUE_PATTERN : DEFAULT_VALUE_PATTERN) + "|)";
-        }
-    }
-
-    public String getDefaultValue() {
-        return defaultValue;
-    }
-
-    public boolean hasDefaultValue() {
-        return (getDefaultValue() != null) && !(getDefaultValue().equals(""));
-    }
-
-    /*
     @Override
     protected Object initialize(final String value) throws ParseException {
-        if (Strings.intersects(value, getNames())) {
-            if (isBoolean()) {
-                return true;
-            } else {
-                String val = new Splitter()
-                        .setName(Strings.firstSubstring(value, getNames()))
-                        .setValue(value)
-                        .split()
-                        .normalize(isArray())
-                        .get();
-                return super.initialize(val);
-            }
-        }
-        else {
-            if (hasDefaultValue()) {
-                String val = new Splitter()
-                        .setValue(getDefaultValue())
-                        .normalize(isArray())
-                        .get();
-                return getTypeConverter().convert(val);
-            }
-            else {
-                return getTypeConverter().defaultValue();
-            }
-        }
-    }
-     */
-
-    @Override
-    protected Object initialize(final String value) throws ParseException {
-        // name is present in the input
-        if (Strings.intersects(value, getNames())) {
+        if (Strings.intersects(value, names)) {
             String val = new Splitter()
-                    .setName(Strings.firstSubstring(value, getNames()))
+                    .setName(Strings.firstSubstring(value, names))
                     .setValue(value)
                     .split()
                     .normalize(isArray())
@@ -124,14 +78,22 @@ public class Optional extends Argument {
         }
         else if (hasDefaultValue()) {
             String val = new Splitter()
-                    .setValue(getDefaultValue())
+                    .setValue(defaultValue)
                     .normalize(isArray())
                     .get();
-            return getTypeConverter().convert(val);
+            return typeConverter.convert(val);
         }
         else {
-            return getTypeConverter().defaultValue();
+            return typeConverter.defaultValue();
         }
+    }
+
+    public final String getDefaultValue() {
+        return defaultValue;
+    }
+
+    public final boolean hasDefaultValue() {
+        return (defaultValue != null) && !(defaultValue.equals(""));
     }
 
     @Override
@@ -154,25 +116,29 @@ public class Optional extends Argument {
 
     @Override
     public String toString() {
-        return "[(" + String.join(" | ", getNames()) + ")]";
+        return String.format(
+                "[(%s)]", String.join(" | ", names)
+        );
     }
 
     @Override
     public String toPaddedString() {
-        return "[( " + String.join(" | ", getNames()) + " )]";
+        return String.format(
+                "[( %s )]", String.join(" | ", names)
+        );
     }
 
     @Override
     public String toDescriptiveString() {
-        return "[(" + String.join(" | ", getNames()) +
-                (hasDefaultValue() ? " = ".concat(getDefaultValue()) : "")
-                + " <" + getType().getSimpleName() + ">)]";
+        return "[(" + String.join(" | ", names) +
+                (hasDefaultValue() ? " = ".concat(defaultValue) : "")
+                + " <" + type.getSimpleName() + ">)]";
     }
 
     @Override
     public String toPaddedDescriptiveString() {
-        return "[( " + String.join(" | ", getNames()) +
-                (hasDefaultValue() ? " = ".concat(getDefaultValue()) : "")
-                + " <" + getType().getSimpleName() + "> )]";
+        return "[( " + String.join(" | ", names) +
+                (hasDefaultValue() ? " = ".concat(defaultValue) : "")
+                + " <" + type.getSimpleName() + "> )]";
     }
 }

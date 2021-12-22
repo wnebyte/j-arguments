@@ -1,13 +1,40 @@
 package com.github.wnebyte.jarguments;
 
 import java.util.Arrays;
+import java.util.Collection;
 import com.github.wnebyte.jarguments.util.Pair;
 import com.github.wnebyte.jarguments.util.Strings;
 import static com.github.wnebyte.jarguments.util.Strings.firstAndLastMatchesAny;
 
-public class Splitter {
+/**
+ * This class implements methods for retrieving and normalizing a substring of a specified <code>String</code>.
+ */
+public class Splitter implements ISplitter {
+
+    /*
+    ###########################
+    #      STATIC FIELDS      #
+    ###########################
+    */
+
+    private static final Collection<Pair<Character, Character>> PAIRS =
+            Arrays.asList(
+                    new Pair<>('"', '"'), new Pair<>('\'', '\''), new Pair<>('[', ']')
+            );
+
+    /*
+    ###########################
+    #         FIELDS          #
+    ###########################
+    */
 
     private String name, value, val;
+
+    /*
+    ###########################
+    #        UTILITIES        #
+    ###########################
+    */
 
     public static String normalizeArray(final String value) {
         if (value != null) {
@@ -23,6 +50,12 @@ public class Splitter {
         }
         return "";
     }
+
+    /*
+    ###########################
+    #         METHODS         #
+    ###########################
+    */
 
     public final Splitter setName(final String name) {
         this.name = name;
@@ -44,10 +77,7 @@ public class Splitter {
         if (name != null) {
             val = value.split(name.concat("\\s"), 2)[1];
         }
-        if (!firstAndLastMatchesAny(
-                val,
-                Arrays.asList(new Pair<>('"', '"'), new Pair<>('\'', '\''), new Pair<>('[', ']')))
-        ) {
+        if (!firstAndLastMatchesAny(val, PAIRS)) {
             val = val.split("\\s", 2)[0];
         }
         return this;

@@ -8,13 +8,13 @@ public class TypeConversionException extends ParseException {
 
     private final String input;
 
-    private final String value;
+    private final String token;
 
-    public TypeConversionException(String msg, Argument argument, String input, String value) {
+    public TypeConversionException(String msg, Argument argument, String input, String token) {
         super(msg);
         this.argument = argument;
         this.input = input;
-        this.value = value;
+        this.token = token;
     }
 
     public Argument getArgument() {
@@ -25,7 +25,7 @@ public class TypeConversionException extends ParseException {
         return input;
     }
 
-    public String getValue() {
-        return value;
+    public String getToken() {
+        return token;
     }
 }

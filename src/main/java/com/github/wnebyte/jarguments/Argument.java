@@ -4,7 +4,6 @@ import java.util.Set;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.regex.Pattern;
-
 import com.github.wnebyte.jarguments.constraint.Constraint;
 import com.github.wnebyte.jarguments.convert.Initializer;
 import com.github.wnebyte.jarguments.convert.TypeConverter;
@@ -14,7 +13,7 @@ import com.github.wnebyte.jarguments.util.Objects;
 import com.github.wnebyte.jarguments.util.Reflections;
 
 /**
- * This class represents an Argument.
+ * This class represents an abstract Argument.
  */
 public abstract class Argument {
 
@@ -48,9 +47,9 @@ public abstract class Argument {
 
     protected final Class<?> type;
 
-    private final TypeConverter<?> typeConverter;
+    protected final TypeConverter<?> typeConverter;
 
-    private final Initializer<Object> initializer;
+    protected final Initializer<Object> initializer;
 
     /*
     ###########################
@@ -212,5 +211,11 @@ public abstract class Argument {
 
     public String toPaddedDescriptiveString() {
         return toDescriptiveString();
+    }
+
+    public String toGenericString() {
+        return String.format(
+                "%s", names.toArray()[0]
+        );
     }
 }
