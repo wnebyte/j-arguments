@@ -49,7 +49,7 @@ public class Required extends Argument {
     @Override
     protected String createRegExp(final Set<String> name, final Class<?> type) {
         return "\\s" + "(" + String.join("|", name) + ")" + "\\s" +
-                (Reflections.isArray(type) ? ARRAY_VALUE_PATTERN : DEFAULT_VALUE_PATTERN);
+                (isArray() ? ARRAY_VALUE_PATTERN : DEFAULT_VALUE_PATTERN);
     }
 
     @Override

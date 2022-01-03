@@ -1,5 +1,6 @@
 package com.github.wnebyte.jarguments;
 
+import java.util.Comparator;
 import java.util.Set;
 import java.util.Collection;
 import java.util.Collections;
@@ -15,7 +16,7 @@ import com.github.wnebyte.jarguments.util.Reflections;
 /**
  * This class represents an abstract Argument.
  */
-public abstract class Argument {
+public abstract class Argument implements Comparable<Argument> {
 
     /*
     ###########################
@@ -28,6 +29,8 @@ public abstract class Argument {
     protected static final String DEFAULT_VALUE_PATTERN = "(" + VALUE_PATTERN + ")";
 
     protected static final String ARRAY_VALUE_PATTERN = "\\[" + DEFAULT_VALUE_PATTERN + "*\\]";
+
+    protected static final Comparator<Argument> COMPARATOR = Comparator.comparing(Argument::getIndex);
 
     /*
     ###########################
@@ -69,10 +72,10 @@ public abstract class Argument {
     ) {
         this.names = names;
         this.desc = desc;
-        this.regex = createRegExp(names, type);
-        this.pattern = Pattern.compile(regex);
         this.index = index;
         this.type = type;
+        this.regex = createRegExp(names, type);
+        this.pattern = Pattern.compile(regex);
         this.typeConverter = typeConverter;
         this.initializer = typeConverter::convert;
     }
@@ -90,10 +93,10 @@ public abstract class Argument {
     ) {
         this.names = names;
         this.desc = desc;
-        this.regex = createRegExp(names, type);
-        this.pattern = Pattern.compile(regex);
         this.index = index;
         this.type = type;
+        this.regex = createRegExp(names, type);
+        this.pattern = Pattern.compile(regex);
         this.typeConverter = typeConverter;
         this.initializer = value -> {
             T val = typeConverter.convert(value);
@@ -152,15 +155,20 @@ public abstract class Argument {
     }
 
     public final boolean isArray() {
-        return Reflections.isArray(getType());
+        return Reflections.isEnumerable(type);
     }
 
     public final boolean isBoolean() {
-        return Reflections.isBoolean(getType());
+        return Reflections.isBoolean(type);
     }
 
     public final int getIndex() {
         return index;
+    }
+
+    @Override
+    public int compareTo(Argument o) {
+        return COMPARATOR.compare(this, o);
     }
 
     @Override

@@ -14,10 +14,13 @@ public class ArgumentFactory extends AbstractArgumentFactory {
 
     /*
     ###########################
-    #     STATIC UTILITIES    #
+    #      STATIC METHODS     #
     ###########################
     */
 
+    /**
+     * @return a new builder instance.
+     */
     public static ArgumentFactoryBuilder builder() {
         return new ArgumentFactoryBuilder();
     }
@@ -59,7 +62,7 @@ public class ArgumentFactory extends AbstractArgumentFactory {
 
     /*
     ###########################
-    #      OPTION FIELDS      #
+    #     ARGUMENT FIELDS     #
     ###########################
     */
 
@@ -81,24 +84,30 @@ public class ArgumentFactory extends AbstractArgumentFactory {
 
     private String defaultValue;
 
+    /*
+    ###########################
+    #       CONSTRUCTORS      #
+    ###########################
+    */
+
     /**
      * Constructs a new instance using the specified <code>exclude</code> and <code>typeConverters</code>.
      */
     public ArgumentFactory(
-            Collection<Character> exclude, AbstractTypeConverterMap typeConverters
+            Collection<Character> exclude,
+            AbstractTypeConverterMap typeConverters
     ) {
         this.exclude.addAll(exclude);
-        this.typeConverters = (typeConverters != null) ?
-                typeConverters : TypeConverterMap.getInstance();
+        this.typeConverters = (typeConverters != null) ? typeConverters : TypeConverterMap.getInstance();
     }
 
     @Override
     public Collection<Character> getExcludeCharacters() {
-        return new ArrayList<>(exclude);
+        return Collections.unmodifiableCollection(exclude);
     }
 
     /**
-     * Sets the name property of the next argument to be created.
+     * Sets the name property of the next argument to be appended.
      * @param names of the next argument.
      * @return this.
      */
@@ -113,16 +122,19 @@ public class ArgumentFactory extends AbstractArgumentFactory {
             n = Strings.removeAll(n, exclude);
             if (n.equals("")) {
                 throw new IllegalArgumentException(
-                        "The name of an Argument may not be left empty after normalization. " +
-                                "The following characters are removed during normalization: " +
-                                Arrays.toString(exclude.toArray()) + "."
+                        String.format(
+                                "The name of an Argument must not be left empty after having been normalized. " +
+                                        "The following characters are removed during normalization: %s.",
+                                Arrays.toString(exclude.toArray())
+                        )
                 );
             }
-            boolean success = this.names.add(n) & allNames.add(n);
-            if (!success) {
+            boolean distinct = this.names.add(n) & allNames.add(n);
+            if (!distinct) {
                 throw new IllegalArgumentException(
-                        "An Argument with the name: '" + n + "'" +
-                                " has already been constructed using this instance."
+                        String.format(
+                                "An Argument with name: '%s' has already been appended.", n
+                        )
                 );
             }
         }
@@ -130,7 +142,7 @@ public class ArgumentFactory extends AbstractArgumentFactory {
     }
 
     /**
-     * Sets the type property of the next argument to be created.
+     * Sets the type property of the next argument to be appended.
      * @param type of the next argument.
      * @return this.
      */
@@ -140,7 +152,7 @@ public class ArgumentFactory extends AbstractArgumentFactory {
     }
 
     /**
-     * Sets the typeConverter property of the next argument to be created.
+     * Sets the typeConverter property of the next argument to be appended.
      * @param typeConverter of the next argument.
      * @return this.
      */
@@ -150,7 +162,7 @@ public class ArgumentFactory extends AbstractArgumentFactory {
     }
 
     /**
-     * Sets the description property of the next argument to be created.
+     * Sets the description property of the next argument to be appended.
      * @param description of the next argument.
      * @return this.
      */
@@ -369,7 +381,7 @@ public class ArgumentFactory extends AbstractArgumentFactory {
                     index++,
                     type,
                     typeConverter,
-                    Objects.requireNonNull(flagValue, () ->
+                    Objects.requireNonNull(flagValue,
                             "FlagValue has to be specified for instances of Flag if type is not of type boolean."),
                     defaultValue
             );
@@ -431,6 +443,7 @@ public class ArgumentFactory extends AbstractArgumentFactory {
         index = 0;
         position = 0;
         reset();
+        arguments.sort(Argument::compareTo);
         return arguments;
     }
 }

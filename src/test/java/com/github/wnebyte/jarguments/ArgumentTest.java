@@ -5,11 +5,13 @@ import com.github.wnebyte.jarguments.constraint.ConstraintCollectionBuilder;
 import com.github.wnebyte.jarguments.convert.TypeConverterMap;
 import com.github.wnebyte.jarguments.exception.ConstraintException;
 import com.github.wnebyte.jarguments.exception.ParseException;
+import com.github.wnebyte.jarguments.factory.ArgumentFactory;
 import com.github.wnebyte.jarguments.factory.ArgumentFactoryBuilder;
 import com.github.wnebyte.jarguments.pattern.DeprecatedCollectionPatternGenerator;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -100,6 +102,26 @@ public class ArgumentTest {
         );
     }
 
+    @Test
+    public void test03() {
+        List<Argument> args = ArgumentFactory.builder().build()
+                .setName("-a", "--a")
+                .setIsRequired()
+                .append(int.class)
+                .setIsPositional()
+                .append(int.class)
+                .setName("--flag")
+                .setIsFlag()
+                .append(boolean.class)
+                .setIsPositional()
+                .append(int.class)
+                .setName("-b", "--b")
+                .setIsOptional()
+                .append(int.class)
+                .get();
+        args.sort(Argument::compareTo);
+        System.out.println(Arrays.toString(args.toArray()));
+    }
 
     private boolean matches(final Pattern pattern, final String... input) {
         for (String s : input) {

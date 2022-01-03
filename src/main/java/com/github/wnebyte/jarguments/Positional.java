@@ -1,9 +1,7 @@
 package com.github.wnebyte.jarguments;
 
-import java.util.Set;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Objects;
+import java.util.*;
+
 import com.github.wnebyte.jarguments.constraint.Constraint;
 import com.github.wnebyte.jarguments.convert.TypeConverter;
 import com.github.wnebyte.jarguments.exception.ParseException;
@@ -12,7 +10,7 @@ import com.github.wnebyte.jarguments.util.Reflections;
 /**
  * This class represents a positional Argument.
  */
-public class Positional extends Argument implements Comparable<Positional> {
+public class Positional extends Argument {
 
     /*
     ###########################
@@ -59,7 +57,7 @@ public class Positional extends Argument implements Comparable<Positional> {
 
     @Override
     protected String createRegExp(final Set<String> names, final Class<?> type) {
-        return "\\s" + (Reflections.isArray(type) ? ARRAY_VALUE_PATTERN : DEFAULT_VALUE_PATTERN);
+        return "\\s" + (isArray() ? ARRAY_VALUE_PATTERN : DEFAULT_VALUE_PATTERN);
     }
 
     @Override
@@ -73,6 +71,14 @@ public class Positional extends Argument implements Comparable<Positional> {
 
     public final int getPosition() {
         return position;
+    }
+
+    @Override
+    public int compareTo(Argument o) {
+        if (o instanceof Positional) {
+            return position - ((Positional) o).position;
+        }
+        return -1;
     }
 
     @Override
@@ -126,15 +132,5 @@ public class Positional extends Argument implements Comparable<Positional> {
         return String.format(
                 "$R%d", position
         );
-    }
-
-    @Override
-    public int compareTo(Positional o) {
-        if (o == null) {
-            throw new NullPointerException(
-                    "The specified Positional Argument must not be null."
-            );
-        }
-        return position - o.position;
     }
 }

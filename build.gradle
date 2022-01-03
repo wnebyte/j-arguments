@@ -2,7 +2,6 @@ import java.text.SimpleDateFormat
 
 plugins {
     id 'java-library'
-    id 'com.github.johnrengelman.shadow' version '6.1.0'
 }
 
 def projectName = 'jarguments'
@@ -12,18 +11,17 @@ version '0.0.1'
 sourceCompatibility = "1.8";
 targetCompatibility = "1.8";
 
-shadowJar {
-    archiveBaseName.set(projectName.concat('-fat'))
-    archiveClassifier.set('')
-    archiveVersion.set(project.version)
+javadoc {
+    sourceSets.main.allJava
+}
+
+java {
+    withJavadocJar()
+    withSourcesJar()
 }
 
 repositories {
     mavenCentral()
-}
-
-javadoc {
-    source = sourceSets.main.allJava
 }
 
 dependencies {
@@ -44,4 +42,18 @@ jar{
         )
     }
     archiveBaseName.set(projectName)
+}
+
+javadocJar {
+    archiveBaseName.set(projectName)
+    archiveClassifier.set('javadoc')
+    archiveVersion.set(project.version)
+    from(javadoc)
+}
+
+sourcesJar {
+    archiveBaseName.set(projectName)
+    archiveClassifier.set('sources')
+    archiveVersion.set(project.version)
+    from(sourceSets.main.allJava)
 }

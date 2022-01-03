@@ -7,9 +7,9 @@ import com.github.wnebyte.jarguments.util.Strings;
 import static com.github.wnebyte.jarguments.util.Strings.firstAndLastMatchesAny;
 
 /**
- * This class implements methods for retrieving and normalizing a substring of a specified <code>String</code>.
+ * This class declares methods for retrieving and normalizing substrings from a given <code>String</code>.
  */
-public class Splitter implements ISplitter {
+public class Splitter {
 
     /*
     ###########################
@@ -18,9 +18,7 @@ public class Splitter implements ISplitter {
     */
 
     private static final Collection<Pair<Character, Character>> PAIRS =
-            Arrays.asList(
-                    new Pair<>('"', '"'), new Pair<>('\'', '\''), new Pair<>('[', ']')
-            );
+            Arrays.asList(new Pair<>('"', '"'), new Pair<>('\'', '\''), new Pair<>('[', ']'));
 
     /*
     ###########################
@@ -32,7 +30,7 @@ public class Splitter implements ISplitter {
 
     /*
     ###########################
-    #        UTILITIES        #
+    #      STATIC METHODS     #
     ###########################
     */
 

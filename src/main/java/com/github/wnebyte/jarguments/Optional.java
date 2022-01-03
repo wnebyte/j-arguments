@@ -6,7 +6,6 @@ import com.github.wnebyte.jarguments.constraint.Constraint;
 import com.github.wnebyte.jarguments.convert.TypeConverter;
 import com.github.wnebyte.jarguments.exception.ParseException;
 import com.github.wnebyte.jarguments.util.Objects;
-import com.github.wnebyte.jarguments.util.Reflections;
 import com.github.wnebyte.jarguments.util.Strings;
 
 /**
@@ -62,7 +61,7 @@ public class Optional extends Argument {
     @Override
     protected String createRegExp(final Set<String> names, final Class<?> type) {
         return "(\\s" + "(" + String.join("|", names) + ")" +  "\\s" +
-                (Reflections.isArray(type) ? ARRAY_VALUE_PATTERN : DEFAULT_VALUE_PATTERN) + "|)";
+                (isArray() ? ARRAY_VALUE_PATTERN : DEFAULT_VALUE_PATTERN) + "|)";
     }
 
     @Override

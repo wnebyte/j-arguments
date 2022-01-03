@@ -82,12 +82,12 @@ public class Strings {
     }
 
     /**
-     * Splits the specified String <code>s</code> on occurrences of the specified <code>target</code> char where
-     * it is preceded by an even number of each and every characters present in the specified <code>collection</code>.
-     * @param s to be split.
-     * @param target delimiter to split on.
+     * Splits the specified <code>String</code> on each occurrence of the specified <code>char</code> where
+     * it is preceded by an even number of every character present in the specified <code>Collection</code>.
+     * @param s the String to be split.
+     * @param target the char to split on.
      * @param collection every element has to occur an even number of times in the substring ending at
-     * the index of <code>target</code> for the split to occur.
+     * the index of the target char for the split to occur.
      * @return the result.
      */
     public static List<String> split(final String s, final char target, final Collection<Character> collection) {
@@ -112,9 +112,9 @@ public class Strings {
     }
 
     /**
-     * Splits the specified String <code>s</code> on each occurrence of a whitespace character
+     * Splits the specified <code>String</code> on each occurrence of a whitespace character
      * that is preceded by an even number of single and double quotation characters.
-     * @param s to be split.
+     * @param s the String to be split.
      * @return the result.
      */
     public static List<String> splitByWhitespace(final String s) {
@@ -122,9 +122,9 @@ public class Strings {
     }
 
     /**
-     * Splits the specified String <code>s</code> on each occurrence of a comma character that is preceded by
+     * Splits the specified <code>String</code> on each occurrence of a comma character that is preceded by
      * an even number of single and double quotation characters.
-     * @param s to be split.
+     * @param s the String to be split.
      * @return the result.
      */
     public static List<String> splitByComma(final String s) {
@@ -132,8 +132,11 @@ public class Strings {
     }
 
     /**
-     * Counts and returns the number of times the specified char <code>c</code> occurs
-     * in the specified String <code>s</code>.
+     * Counts and returns how many times the specified <code>char</code> occurs in the specified
+     * <code>String</code>.
+     * @param s the String.
+     * @param c the char.
+     * @return the number of occurrences.
      */
     public static int occurrences(final String s, final char c) {
         int count = 0;
@@ -199,13 +202,17 @@ public class Strings {
     }
 
     /**
-     * Returns whether the specified String <code>s</code> has a pair of first and last chars matching any of the
-     * specified pairs.
+     * Returns whether the specified <code>String</code> has a pair of first and last chars matching that of any of the
+     * specified <code>Pairs</code>.
+     * @param s the String.
+     * @param c the Collection of pairs.
+     * @return <code>true</code> if the String has a pair of first and last chars matching that of any of the
+     * specified pairs, otherwise <code>false</code>.
      */
-    public static boolean firstAndLastMatchesAny(final String s, final Collection<Pair<Character, Character>> chars) {
-        if ((s == null) || (s.length() < 2) || (chars == null) || (chars.isEmpty())) { return false; }
+    public static boolean firstAndLastMatchesAny(final String s, final Collection<Pair<Character, Character>> c) {
+        if ((s == null) || (s.length() < 2) || (c == null) || (c.isEmpty())) { return false; }
         int len = s.length();
-        for (Pair<Character, Character> pair : chars) {
+        for (Pair<Character, Character> pair : c) {
             boolean matches = firstAndLastMatches(s, pair.getFirst(), pair.getLast());
             if (matches) {
                 return true;

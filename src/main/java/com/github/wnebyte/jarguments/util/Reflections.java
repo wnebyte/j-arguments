@@ -1,36 +1,32 @@
 package com.github.wnebyte.jarguments.util;
 
 import java.util.Arrays;
-import java.util.Collection;
+import java.util.List;
 
 public class Reflections {
 
-    public static boolean isArray(final Class<?> cls) {
+    public static boolean isEnumerable(Class<?> cls) {
+        return isArray(cls) || isIterable(cls);
+    }
+
+    public static boolean isArray(Class<?> cls) {
         return (cls != null) && (cls.isArray());
     }
 
-    public static boolean isCollection(final Class<?> cls) {
-        return (cls != null) && (Collection.class.isAssignableFrom(cls));
-    }
-
-    public static boolean isIterable(final Class<?> cls) {
+    public static boolean isIterable(Class<?> cls) {
         return (cls != null) && (Iterable.class.isAssignableFrom(cls));
     }
 
-    public static boolean isBoolean(final Class<?> cls) {
+    public static boolean isBoolean(Class<?> cls) {
         return (cls == boolean.class || cls == Boolean.class);
     }
 
-    public static boolean isArrayOrCollection(final Class<?> cls) {
-        return (isArray(cls)) || (isCollection(cls));
-    }
-
-    public static boolean isPrimitive(final Class<?> cls) {
+    public static boolean isPrimitive(Class<?> cls) {
         return (cls != null) && (cls.isPrimitive() || isWrapperClass(cls));
     }
 
-    public static boolean isWrapperClass(final Class<?> cls) {
-        return Arrays.asList(
+    public static boolean isWrapperClass(Class<?> cls) {
+        List<Class<?>> classes = Arrays.asList(
                 Boolean.class,
                 Byte.class,
                 Character.class,
@@ -40,10 +36,7 @@ public class Reflections {
                 Long.class,
                 Short.class,
                 String.class
-        ).contains(cls);
-    }
-
-    public static boolean isObject(final Class<?> cls) {
-        return !(isArray(cls)) && !(isPrimitive(cls));
+        );
+        return classes.contains(cls);
     }
 }
