@@ -33,7 +33,7 @@ public class ArgumentSupportTest {
         List<Optional> opt = ArgumentSupport.getInstancesOfSubClass(arguments, Optional.class);
         Assert.assertTrue(opt.isEmpty());
 
-        LinkedList<String> regex = ArgumentSupport.mapToRegexList(arguments, Required.class);
+        LinkedList<String> regex = ArgumentSupport.mapToRegex(arguments, Required.class);
         System.out.println(Arrays.toString(regex.toArray()));
     }
 }

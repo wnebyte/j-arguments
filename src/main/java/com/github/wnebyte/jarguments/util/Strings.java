@@ -7,6 +7,10 @@ import java.util.*;
  */
 public class Strings {
 
+    public static final String EMPTY = "";
+
+    public static final String WHITESPACE = " ";
+
     /**
      * Removes all occurrences of the specified <code>exclude</code> characters from the specified
      * String <code>s</code>.
@@ -213,7 +217,7 @@ public class Strings {
         if ((s == null) || (s.length() < 2) || (c == null) || (c.isEmpty())) { return false; }
         int len = s.length();
         for (Pair<Character, Character> pair : c) {
-            boolean matches = firstAndLastMatches(s, pair.getFirst(), pair.getLast());
+            boolean matches = firstAndLastMatches(s, pair.getFirst(), pair.getSecond());
             if (matches) {
                 return true;
             }

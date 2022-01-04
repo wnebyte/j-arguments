@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
 import com.github.wnebyte.jarguments.exception.ParseException;
 import com.github.wnebyte.jarguments.factory.ArgumentFactoryBuilder;
 
-public class DeprecatedArgumentParserTest extends AbstractTestClass {
+public class DeprecatedCollectionParserTest extends AbstractTestClass {
 
     @Test
     public void test00() throws ParseException {

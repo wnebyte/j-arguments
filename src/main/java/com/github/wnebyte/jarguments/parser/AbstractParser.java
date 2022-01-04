@@ -1,17 +1,12 @@
 package com.github.wnebyte.jarguments.parser;
 
-import java.util.LinkedList;
 import com.github.wnebyte.jarguments.exception.ParseException;
 
-public abstract class AbstractParser<T> {
+public abstract class AbstractParser<T extends Iterable<String>, R> {
 
-    protected final T source;
+    public abstract Object[] initialize() throws ParseException;
 
-    public AbstractParser(T source) {
-        this.source = source;
-    }
+    public abstract void parse(T t, R r) throws ParseException;
 
-    public abstract Object[] parse(String input) throws ParseException;
-
-    protected abstract LinkedList<String> split(String input);
+    public abstract void reset();
 }

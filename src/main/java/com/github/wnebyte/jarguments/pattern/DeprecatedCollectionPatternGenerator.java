@@ -2,7 +2,6 @@ package com.github.wnebyte.jarguments.pattern;
 
 import java.util.*;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import com.github.wnebyte.jarguments.Argument;
 import com.github.wnebyte.jarguments.ArgumentSupport;
@@ -124,11 +123,12 @@ public class DeprecatedCollectionPatternGenerator
     protected Set<List<String>> getPermutations(final Collection<Argument> arguments) {
         Set<List<String>> set = new HashSet<>();
         LinkedList<String> args = ArgumentSupport
-                .mapToRegexList(arguments, (arg) -> !(arg instanceof Positional));
+                .mapToRegex(arguments, (arg) -> !(arg instanceof Positional));
         List<Positional> positional = ArgumentSupport.getInstancesOfSubClass(arguments, Positional.class);
 
         if (args.isEmpty()) {
-            set.add(positional.stream().map(Argument::getRegex).collect(Collectors.toList()));
+           // set.add(positional.stream().map(Argument::getRegex).collect(Collectors.toList()));
+            set.add(ArgumentSupport.mapToRegex(positional));
             return set;
         }
 
@@ -152,7 +152,7 @@ public class DeprecatedCollectionPatternGenerator
                     arguments.stream().filter(arg -> (arg instanceof Positional))
                             .forEach(arg -> {
                                 Positional argument = (Positional) arg;
-                                add(argument.getPosition(), argument.getRegex());
+                                add(argument.getPosition(), ArgumentSupport.getRegex(argument));
                             });
                 }});
             }

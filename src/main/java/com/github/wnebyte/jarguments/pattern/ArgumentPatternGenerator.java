@@ -5,6 +5,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import com.github.wnebyte.jarguments.Argument;
+import com.github.wnebyte.jarguments.ArgumentSupport;
 import com.github.wnebyte.jarguments.Positional;
 import com.github.wnebyte.jarguments.util.Strings;
 
@@ -48,10 +49,14 @@ public class ArgumentPatternGenerator extends AbstractPatternGenerator<Collectio
         set = new HashSet<>();
         List<Argument> copy = new ArrayList<>(c);
         heap(copy.size(), copy);
+        /*
         return set.stream().map(args -> args.stream()
                 .map(Argument::getRegex)
                 .collect(Collectors.toList()))
                 .collect(Collectors.toSet());
+         */
+        return set.stream().map(ArgumentSupport::mapToRegex).collect(Collectors.toSet());
+
     }
 
     protected void heap(int n, List<Argument> c) {

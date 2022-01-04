@@ -12,33 +12,11 @@ import static com.github.wnebyte.jarguments.util.Collections.isNullOrEmpty;
 public class ArgumentSupport {
 
     /**
-     * Maps each element of the specified <code>Collection</code> whose <code>class</code> is contained within the
-     * specified <code>sClasses</code> by calling <code>Argument::getRegex</code>.
-     * @param c elements.
-     * @param sClasses sub-classes to be included in the mapping.
-     * @return an empty <code>LinkedList</code> if either of the specified parameters are <code>null</code>,
-     * otherwise returns a <code>LinkedList</code> containing the regex's of the specified elements.
+     * Maps each <code>Argument</code> to its regex.
+     * @param c the arguments.
+     * @return the result.
      */
-    @SafeVarargs
-    public static LinkedList<String> mapToRegexList(
-            Collection<Argument> c, Class<? extends Argument>... sClasses
-    ) {
-        if ((isNullOrEmpty(c)) || (isNullOrEmpty(sClasses))) {
-            return new LinkedList<>();
-        }
-        List<Class<? extends Argument>> sClassesList = Arrays.asList(sClasses);
-        return c.stream().filter(arg -> sClassesList.contains(arg.getClass()))
-                .map(Argument::getRegex)
-                .collect(Collectors.toCollection(LinkedList::new));
-    }
-
-    /**
-     * Maps each element of the specified <code>Collection</code> by calling <code>Argument::getRegex</code>.
-     * @param c elements.
-     * @return an empty <code>LinkedList</code> if the specified parameter is <code>null</code>,
-     * otherwise returns a <code>LinkedList</code> containing the regex's of the specified elements.
-     */
-    public static LinkedList<String> mapToRegexList(Collection<Argument> c) {
+    public static LinkedList<String> mapToRegex(Collection<? extends Argument> c) {
         if (isNullOrEmpty(c)) {
             return new LinkedList<>();
         }
@@ -47,14 +25,31 @@ public class ArgumentSupport {
     }
 
     /**
-     * Maps the elements of the specified <code>Collection</code> that return <code>true</code> for the
-     * specified <code>Predicate</code> by calling <code>Argument::getRegex</code>.
-     * @param c the elements.
-     * @param p the predicate.
-     * @return an empty <code>LinkedList</code> if the specified parameter is <code>null</code>,
-     * otherwise returns a <code>LinkedList</code> containing the regex's of the specified elements.
+     * Maps each <code>Argument</code> that is of one of the specified subclasses to its regex.
+     * @param c arguments.
+     * @param sClasses subclasses of which are to be included in the mapping.
+     * @return the result.
      */
-    public static LinkedList<String> mapToRegexList(Collection<Argument> c, Predicate<Argument> p) {
+    @SafeVarargs
+    public static LinkedList<String> mapToRegex(
+            Collection<? extends Argument> c, Class<? extends Argument>... sClasses
+    ) {
+        if ((isNullOrEmpty(c)) || (isNullOrEmpty(sClasses))) {
+            return new LinkedList<>();
+        }
+        List<Class<? extends Argument>> list = Arrays.asList(sClasses);
+        return c.stream().filter(arg -> list.contains(arg.getClass()))
+                .map(Argument::getRegex)
+                .collect(Collectors.toCollection(LinkedList::new));
+    }
+
+    /**
+     * Maps each <code>Argument</code> that 'passes' the specified predicate to its regex.
+     * @param c the arguments.
+     * @param p the predicate.
+     * @return the result.
+     */
+    public static LinkedList<String> mapToRegex(Collection<Argument> c, Predicate<Argument> p) {
         if (isNullOrEmpty(c)) {
             return new LinkedList<>();
         }
@@ -63,12 +58,12 @@ public class ArgumentSupport {
     }
 
     /**
-     * Casts and returns the elements from the specified <code>Collection</code> whose <code>class</code>
+     * Casts and returns the Arguments from the specified <code>Collection</code> whose <code>class</code>
      * <code>equals</code> the specified <code>class</code>.
-     * @param c the elements.
+     * @param c the arguments.
      * @param sClass the class.
      * @param <T> the type of the class.
-     * @return the elements from the specified <code>Collection</code> whose <code>class</code>
+     * @return the arguments from the specified <code>Collection</code> whose <code>class</code>
      * <code>equals</code> the specified <code>class</code>.
      */
     @SuppressWarnings("unchecked")
@@ -161,5 +156,13 @@ public class ArgumentSupport {
      */
     public static Object initialize(Argument argument, String value) throws ParseException {
         return argument.initialize(value);
+    }
+
+    public static boolean matches(Argument argument, String value) {
+        return argument.matches(value);
+    }
+
+    public static String getRegex(Argument argument) {
+        return argument.getRegex();
     }
 }

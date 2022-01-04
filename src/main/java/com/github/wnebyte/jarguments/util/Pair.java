@@ -4,28 +4,28 @@ public class Pair<T, R> {
 
     private T first;
 
-    private R last;
+    private R second;
 
     public Pair() { }
 
-    public Pair(final T first, final R last) {
+    public Pair(T first, R second) {
         this.first = first;
-        this.last = last;
+        this.second = second;
     }
 
     public T getFirst() {
         return first;
     }
 
-    public void setFirst(final T first) {
+    public void setFirst(T first) {
         this.first = first;
     }
 
-    public R getLast() {
-        return last;
+    public R getSecond() {
+        return second;
     }
 
-    public void setLast(final R last) {
-        this.last = last;
+    public void setSecond(R second) {
+        this.second = second;
     }
 }

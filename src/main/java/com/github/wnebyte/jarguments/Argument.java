@@ -130,11 +130,15 @@ public abstract class Argument implements Comparable<Argument> {
         return typeConverter;
     }
 
-    public final String getRegex() {
+    final boolean matches(String token) {
+        return pattern.matcher(token).matches();
+    }
+
+    final String getRegex() {
         return regex;
     }
 
-    public final Pattern getPattern() {
+    final Pattern getPattern() {
         return pattern;
     }
 

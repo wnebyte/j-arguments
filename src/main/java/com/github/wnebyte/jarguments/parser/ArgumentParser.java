@@ -8,7 +8,7 @@ import com.github.wnebyte.jarguments.exception.TypeConversionException;
 import com.github.wnebyte.jarguments.util.Strings;
 import static com.github.wnebyte.jarguments.ArgumentSupport.*;
 
-public class ArgumentParser extends AbstractParser<Collection<Argument>> {
+public class ArgumentParser extends AbstractArgumentParser<Collection<Argument>> {
 
     /*
     ###########################

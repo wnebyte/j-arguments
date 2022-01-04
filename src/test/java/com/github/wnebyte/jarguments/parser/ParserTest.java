@@ -1,24 +1,18 @@
 package com.github.wnebyte.jarguments.parser;
 
-import com.github.wnebyte.jarguments.Argument;
-import com.github.wnebyte.jarguments.factory.ArgumentFactory;
-import com.github.wnebyte.jarguments.pattern.AbstractPatternGenerator;
 import com.github.wnebyte.jarguments.AbstractTestClass;
+import com.github.wnebyte.jarguments.Argument;
+import com.github.wnebyte.jarguments.Tokens;
 import com.github.wnebyte.jarguments.exception.ParseException;
-import com.github.wnebyte.jarguments.pattern.ArgumentPatternGenerator;
+import com.github.wnebyte.jarguments.factory.ArgumentFactory;
+import com.github.wnebyte.jarguments.factory.ArgumentFactoryBuilder;
 import org.junit.Assert;
 import org.junit.Test;
-import java.util.Collection;
+
 import java.util.List;
-import java.util.regex.Pattern;
-import com.github.wnebyte.jarguments.factory.ArgumentFactoryBuilder;
 
-public class ArgumentParserTest extends AbstractTestClass {
+public class ParserTest extends AbstractTestClass {
 
-    /*
-    one REQUIRED,
-    one POSITIONAL
-     */
     @Test
     public void test00() throws ParseException {
         List<Argument> arguments = new ArgumentFactoryBuilder().build()
@@ -28,11 +22,6 @@ public class ArgumentParserTest extends AbstractTestClass {
                 .setIsPositional()
                 .append(int.class)
                 .get();
-        AbstractPatternGenerator<Collection<Argument>> generator = new ArgumentPatternGenerator();
-        generator.setSource(arguments);
-        AbstractArgumentParser<Collection<Argument>> parser = new ArgumentParser(arguments);
-        Pattern pattern = generator.getPattern();
-        // should succeed
         String[] input = {
                 "-a 5 100",
                 "100 -a 5"
@@ -46,10 +35,11 @@ public class ArgumentParserTest extends AbstractTestClass {
                 }
         };
         for (int i = 0; i < input.length; i++) {
-            String s = input[i];
-            Assert.assertTrue(allMatch(pattern, s));
-            Assert.assertTrue(allMatch(arguments, s));
-            Object[] args = parser.parse(s);
+            Tokens tokens = Tokens.tokenize(input[i]);
+            Parser parser = new Parser();
+            parser.parse(tokens, arguments);
+            Object[] args = parser.initialize();
+
             for (int j = 0; j < values[i].length; j++) {
                 int value = values[i][j];
                 Assert.assertEquals(value, args[j]);
@@ -57,10 +47,6 @@ public class ArgumentParserTest extends AbstractTestClass {
         }
     }
 
-    /*
-    one OPTIONAL,
-    one POSITIONAL
-    */
     @Test
     public void test01() throws ParseException {
         List<Argument> arguments = new ArgumentFactoryBuilder().build()
@@ -70,10 +56,6 @@ public class ArgumentParserTest extends AbstractTestClass {
                 .setIsPositional()
                 .append(int.class)
                 .get();
-        AbstractPatternGenerator<Collection<Argument>> generator = new ArgumentPatternGenerator();
-        generator.setSource(arguments);
-        AbstractArgumentParser<Collection<Argument>> parser = new ArgumentParser(arguments);
-        Pattern pattern = generator.getPattern();
         // should succeed
         String[] input = {
                 "-a 5 100",
@@ -92,9 +74,11 @@ public class ArgumentParserTest extends AbstractTestClass {
                 }
         };
         for (int i = 0; i < input.length; i++) {
-            String s = input[i];
-            Assert.assertTrue(allMatch(pattern, s));
-            Object[] args = parser.parse(s);
+            Tokens tokens = Tokens.tokenize(input[i]);
+            Parser parser = new Parser();
+            parser.parse(tokens, arguments);
+            Object[] args = parser.initialize();
+
             for (int j = 0; j < values[i].length; j++) {
                 int value = values[i][j];
                 Assert.assertEquals(value, args[j]);
@@ -102,10 +86,6 @@ public class ArgumentParserTest extends AbstractTestClass {
         }
     }
 
-    /*
-    two OPTIONAL,
-    one POSITIONAL
-    */
     @Test
     public void test02() throws ParseException {
         List<Argument> arguments = new ArgumentFactoryBuilder().build()
@@ -118,10 +98,6 @@ public class ArgumentParserTest extends AbstractTestClass {
                 .setIsPositional()
                 .append(int.class)
                 .get();
-        AbstractPatternGenerator<Collection<Argument>> generator = new ArgumentPatternGenerator();
-        generator.setSource(arguments);
-        AbstractArgumentParser<Collection<Argument>> parser = new ArgumentParser(arguments);
-        Pattern pattern = generator.getPattern();
         String[] input = {
                 "-a 5 -b 10 100",
                 "-b 10 -a 5 100",
@@ -133,39 +109,41 @@ public class ArgumentParserTest extends AbstractTestClass {
                 "100 -b 10",
                 "100"
         };
-        Assert.assertTrue(allMatch(pattern, input));
         int[][] values = {
                 {
-                    5, 10, 100
+                        5, 10, 100
                 },
                 {
-                    5, 10, 100
+                        5, 10, 100
                 },
                 {
-                    5, 10, 100
+                        5, 10, 100
                 },
                 {
-                    5, 10, 100
+                        5, 10, 100
                 },
                 {
-                    5, 0, 100
+                        5, 0, 100
                 },
                 {
-                    0, 10, 100
+                        0, 10, 100
                 },
                 {
-                    5, 0, 100
+                        5, 0, 100
                 },
                 {
-                    0, 10, 100
+                        0, 10, 100
                 },
                 {
-                    0, 0, 100
+                        0, 0, 100
                 },
         };
         for (int i = 0; i < input.length; i++) {
-            String s = input[i];
-            Object[] args = parser.parse(s);
+            Tokens tokens = Tokens.tokenize(input[i]);
+            Parser parser = new Parser();
+            parser.parse(tokens, arguments);
+            Object[] args = parser.initialize();
+
             for (int j = 0; j < values[i].length; j++) {
                 int value = values[i][j];
                 Assert.assertEquals(value, args[j]);
@@ -173,11 +151,6 @@ public class ArgumentParserTest extends AbstractTestClass {
         }
     }
 
-    /*
-    one OPTIONAL,
-    one FLAG,
-    two POSITIONAL
-    */
     @Test
     public void test03() throws ParseException {
         List<Argument> arguments = new ArgumentFactoryBuilder().build()
@@ -192,10 +165,6 @@ public class ArgumentParserTest extends AbstractTestClass {
                 .setIsPositional()
                 .append(int.class)
                 .get();
-        AbstractPatternGenerator<Collection<Argument>> generator = new ArgumentPatternGenerator();
-        generator.setSource(arguments);
-        AbstractArgumentParser<Collection<Argument>> parser = new ArgumentParser(arguments);
-        Pattern pattern = generator.getPattern();
         String[] input = {
                 "-a 5 -b 100 50",
                 "-b -a 5 100 50",
@@ -209,24 +178,21 @@ public class ArgumentParserTest extends AbstractTestClass {
                 "50 -a 10 100",
                 "100 -b 50"
         };
-        Assert.assertTrue(super.allMatch(pattern, input));
         Object[][] values = {
                 {
-                    5, true, 100, 50
+                        5, true, 100, 50
                 }
         };
-        Object[] args = parser.parse(input[0]);
+        Tokens tokens = Tokens.tokenize(input[0]);
+        Parser parser = new Parser();
+        parser.parse(tokens, arguments);
+        Object[] args = parser.initialize();
         Assert.assertEquals(values[0][0], args[0]);
         Assert.assertEquals(values[0][1], args[1]);
         Assert.assertEquals(values[0][2], args[2]);
         Assert.assertEquals(values[0][3], args[3]);
     }
 
-    /*
-    one OPTIONAL,
-    one FLAG,
-    two POSITIONAL
-    */
     @Test
     public void test04() throws ParseException {
         List<Argument> arguments = new ArgumentFactoryBuilder().build()
@@ -241,11 +207,6 @@ public class ArgumentParserTest extends AbstractTestClass {
                 .setIsPositional()
                 .append(String.class)
                 .get();
-        AbstractPatternGenerator<Collection<Argument>> generator = new ArgumentPatternGenerator();
-        generator.setSource(arguments);
-        AbstractArgumentParser<Collection<Argument>> parser = new ArgumentParser(arguments);
-        Pattern pattern = generator.getPattern();
-        System.out.println(generator.getRegex().length() * 4); // ~ 5KB
         String[] input = {
                 "-a 5 -b 100 'hello world'", // 1st
                 "-b -a 5 100 'hello world'",
@@ -258,43 +219,44 @@ public class ArgumentParserTest extends AbstractTestClass {
                 "100 -a 10 'hello world'",
                 "100 -b 'hello world'" // 10th
         };
-        Assert.assertTrue(allMatch(pattern, input));
-        // (-a <int>) (-b) [... <int>] [... <String>]
         Object[][] values = {
                 {
-                    5, true, 100, "hello world" // 1st
+                        5, true, 100, "hello world" // 1st
                 },
                 {
-                    5, true, 100, "hello world"
+                        5, true, 100, "hello world"
                 },
                 {
-                    5, true, 100, "hello world"
+                        5, true, 100, "hello world"
                 },
                 {
-                    5, true, 100, "hello world"
+                        5, true, 100, "hello world"
                 },
                 {
-                    50, true, 100, "hello world" // 5 th
+                        50, true, 100, "hello world" // 5 th
                 },
                 {
-                    10, true, 100, "hello world"
+                        10, true, 100, "hello world"
                 },
                 {
-                    0, false, 100, "hello world"
+                        0, false, 100, "hello world"
                 },
                 {
-                    10, true, 100, "hello world"
+                        10, true, 100, "hello world"
                 },
                 {
-                    10, false, 100, "hello world"
+                        10, false, 100, "hello world"
                 },
                 {
-                    0, true, 100, "hello world" // 10 th
+                        0, true, 100, "hello world" // 10 th
                 },
         };
         for (int i = 0; i < input.length; i++) {
-            String s = input[i];
-            Object[] args = parser.parse(s);
+            Tokens tokens = Tokens.tokenize(input[i]);
+            Parser parser = new Parser();
+            parser.parse(tokens, arguments);
+            Object[] args = parser.initialize();
+
             for (int j = 0; j < values[i].length; j++) {
                 Object value = values[i][j];
                 Assert.assertEquals(value, args[j]);
@@ -316,12 +278,10 @@ public class ArgumentParserTest extends AbstractTestClass {
                 .setIsPositional()
                 .append(String.class)
                 .get();
-        AbstractPatternGenerator<Collection<Argument>> generator = new ArgumentPatternGenerator();
-        generator.setSource(arguments);
-        AbstractArgumentParser<Collection<Argument>> parser = new ArgumentParser(arguments);
-        Pattern pattern = generator.getPattern();
         String input = "-a 5 -b 'hello world' 100";
-        Assert.assertTrue(allMatch(pattern, input));
-        parser.parse(input);
+        Tokens tokens = Tokens.tokenize(input);
+        Parser parser = new Parser();
+        parser.parse(tokens, arguments);
+        parser.initialize(); // should throw an exception because the positional arguments are swapped.
     }
 }

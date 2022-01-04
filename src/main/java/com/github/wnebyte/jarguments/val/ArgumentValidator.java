@@ -1,10 +1,9 @@
 package com.github.wnebyte.jarguments.val;
 
 import java.util.*;
-import com.github.wnebyte.jarguments.Argument;
-import com.github.wnebyte.jarguments.Flag;
+
+import com.github.wnebyte.jarguments.*;
 import com.github.wnebyte.jarguments.Optional;
-import com.github.wnebyte.jarguments.Positional;
 import com.github.wnebyte.jarguments.exception.MissingArgumentException;
 import com.github.wnebyte.jarguments.exception.MissingArgumentValueException;
 import com.github.wnebyte.jarguments.exception.NoSuchArgumentException;
@@ -43,7 +42,7 @@ public class ArgumentValidator extends AbstractValidator<Collection<Argument>> {
                 value = token.concat(" ").concat(it.next());
             }
 
-            boolean match = arg.getPattern().matcher(" ".concat(value)).matches();
+            boolean match = ArgumentSupport.matches(arg, Strings.WHITESPACE.concat(value));
             if (!match) {
                 return false;
             }
@@ -94,7 +93,7 @@ public class ArgumentValidator extends AbstractValidator<Collection<Argument>> {
                 value = token.concat(" ").concat(it.next());
             }
 
-            boolean match = arg.getPattern().matcher(" ".concat(value)).matches();
+            boolean match = ArgumentSupport.matches(arg, Strings.WHITESPACE.concat(value));
             if (!match) {
                 return false;
             }

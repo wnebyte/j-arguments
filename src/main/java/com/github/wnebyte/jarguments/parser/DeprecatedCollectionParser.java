@@ -11,7 +11,7 @@ import com.github.wnebyte.jarguments.util.Strings;
 import static com.github.wnebyte.jarguments.ArgumentSupport.*;
 
 @Deprecated
-public class DeprecatedCollectionParser extends AbstractParser<Collection<Argument>> {
+public class DeprecatedCollectionParser extends AbstractArgumentParser<Collection<Argument>> {
 
     public DeprecatedCollectionParser(Collection<Argument> source) {
         super(new ArrayList<>(source));

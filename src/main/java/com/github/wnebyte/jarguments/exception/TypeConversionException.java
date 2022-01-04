@@ -10,11 +10,11 @@ public class TypeConversionException extends ParseException {
 
     private final String token;
 
-    public TypeConversionException(String msg, Argument argument, String input, String token) {
+    public TypeConversionException(String msg, Argument argument, String token, String input) {
         super(msg);
         this.argument = argument;
-        this.input = input;
         this.token = token;
+        this.input = input;
     }
 
     public Argument getArgument() {
