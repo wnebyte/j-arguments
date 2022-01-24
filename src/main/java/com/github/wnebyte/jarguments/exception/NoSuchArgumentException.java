@@ -12,6 +12,12 @@ public class NoSuchArgumentException extends ParseException {
         this.token = token;
     }
 
+    public NoSuchArgumentException(Throwable cause, String input, String token) {
+        super(cause);
+        this.input = input;
+        this.token = token;
+    }
+
     public String getInput() {
         return input;
     }

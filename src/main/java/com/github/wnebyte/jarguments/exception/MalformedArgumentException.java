@@ -14,6 +14,12 @@ public class MalformedArgumentException extends ParseException {
         this.arg = arg;
     }
 
+    public MalformedArgumentException(Throwable cause, String input, Argument arg) {
+        super(cause);
+        this.input = input;
+        this.arg = arg;
+    }
+
     public String getInput() {
         return input;
     }

@@ -1,18 +1,22 @@
 package com.github.wnebyte.jarguments.convert;
 
+import java.util.*;
+import java.lang.reflect.Array;
 import com.github.wnebyte.jarguments.Splitter;
 import com.github.wnebyte.jarguments.exception.ParseException;
 import com.github.wnebyte.jarguments.util.Objects;
 import com.github.wnebyte.jarguments.util.Strings;
-import java.lang.reflect.Array;
-import java.util.*;
 
 public class TypeConverterMap extends AbstractTypeConverterMap {
 
     private static TypeConverterMap instance = null;
 
     public TypeConverterMap() {
-        converters = new HashMap<>();
+        converters = new HashMap<>(9 * 4);
+        init();
+    }
+
+    private void init() {
         put(byte.class, BYTE_TYPE_CONVERTER);
         put(byte[].class, BYTE_ARRAY_TYPE_CONVERTER);
         put(Byte.class, BYTE_TYPE_CONVERTER);
@@ -49,7 +53,11 @@ public class TypeConverterMap extends AbstractTypeConverterMap {
         put(String[].class, arrayTypeConverterOf(String.class));
     }
 
-    /* --------------- Static Methods --------------- */
+    /*
+    ###########################
+    #      STATIC METHODS     #
+    ###########################
+    */
 
     public static TypeConverterMap getInstance() {
         if (instance == null) {
@@ -90,6 +98,12 @@ public class TypeConverterMap extends AbstractTypeConverterMap {
         };
     }
 
+    /*
+    ###########################
+    #         METHODS         #
+    ###########################
+    */
+
     public final <T> TypeConverter<T[]> arrayTypeConverterOf(final Class<T> componentType) {
         return arrayTypeConverterOf(componentType, get(componentType));
     }
@@ -123,7 +137,11 @@ public class TypeConverterMap extends AbstractTypeConverterMap {
         return (TypeConverter<T>) converters.get(cls);
     }
 
-    /* --------------- TypeConverter Implementations --------------- */
+    /*
+    ###########################
+    #     IMPLEMENTATIONS     #
+    ###########################
+    */
 
     public final TypeConverter<Boolean> BOOLEAN_TYPE_CONVERTER = new TypeConverter<Boolean>() {
         @Override

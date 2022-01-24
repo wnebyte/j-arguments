@@ -17,6 +17,13 @@ public class TypeConversionException extends ParseException {
         this.input = input;
     }
 
+    public TypeConversionException(Throwable cause, Argument argument, String token, String input) {
+        super(cause);
+        this.argument = argument;
+        this.token = token;
+        this.input = input;
+    }
+
     public Argument getArgument() {
         return argument;
     }

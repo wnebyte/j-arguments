@@ -6,16 +6,22 @@ public class MissingArgumentException extends ParseException {
 
     private final String input;
 
-    private final Argument missing;
+    private final Argument argument;
 
-    public MissingArgumentException(String message, String input, Argument missing) {
+    public MissingArgumentException(String message, String input, Argument argument) {
         super(message);
         this.input = input;
-        this.missing = missing;
+        this.argument = argument;
     }
 
-    public Argument getMissingArgument() {
-        return missing;
+    public MissingArgumentException(Throwable cause, String input, Argument argument) {
+        super(cause);
+        this.input = input;
+        this.argument = argument;
+    }
+
+    public Argument getArgument() {
+        return argument;
     }
 
     public String getInput() {

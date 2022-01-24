@@ -26,7 +26,7 @@ public class Parser extends AbstractParser<Tokens, Collection<Argument>> {
             return ArgumentSupport.initialize(argument, token);
         } catch (ParseException e) {
             throw new TypeConversionException(
-                    e.getMessage(),
+                    e,
                     argument,
                     token,
                     input
@@ -91,7 +91,7 @@ public class Parser extends AbstractParser<Tokens, Collection<Argument>> {
             if (arg == null) {
                 throw new NoSuchArgumentException(
                         String.format(
-                                "No Argument with name/value: '%s' remain to be parsed.", token
+                                "No Argument with name/value: '%s' is left to be parsed.", token
                         ), input, token
                 );
             }
