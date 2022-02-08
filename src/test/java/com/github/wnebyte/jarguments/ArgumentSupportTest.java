@@ -26,14 +26,14 @@ public class ArgumentSupportTest {
                 .append(int.class)
                 .get();
 
-        List<Positional> pos = ArgumentSupport.getInstancesOfSubClass(arguments, Positional.class);
-        Assert.assertEquals(1, pos.size());
-        List<Required> req = ArgumentSupport.getInstancesOfSubClass(arguments, Required.class);
-        Assert.assertEquals(2, req.size());
-        List<Optional> opt = ArgumentSupport.getInstancesOfSubClass(arguments, Optional.class);
-        Assert.assertTrue(opt.isEmpty());
+        List<Positional> positionalList = ArgumentSupport.getArguments(arguments, Positional.class);
+        Assert.assertEquals(1, positionalList.size());
+        List<Required> requiredList = ArgumentSupport.getArguments(arguments, Required.class);
+        Assert.assertEquals(2, requiredList.size());
+        List<Optional> optionalList = ArgumentSupport.getArguments(arguments, Optional.class);
+        Assert.assertTrue(optionalList.isEmpty());
 
-        LinkedList<String> regex = ArgumentSupport.mapToRegex(arguments, Required.class);
+        List<String> regex = ArgumentSupport.regexList(arguments, Required.class);
         System.out.println(Arrays.toString(regex.toArray()));
     }
 }

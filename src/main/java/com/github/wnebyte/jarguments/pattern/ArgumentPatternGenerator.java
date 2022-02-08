@@ -55,7 +55,7 @@ public class ArgumentPatternGenerator extends AbstractPatternGenerator<Collectio
                 .collect(Collectors.toList()))
                 .collect(Collectors.toSet());
          */
-        return set.stream().map(ArgumentSupport::mapToRegex).collect(Collectors.toSet());
+        return set.stream().map(ArgumentSupport::regexList).collect(Collectors.toSet());
 
     }
 

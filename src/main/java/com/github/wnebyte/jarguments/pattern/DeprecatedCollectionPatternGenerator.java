@@ -122,13 +122,13 @@ public class DeprecatedCollectionPatternGenerator
 
     protected Set<List<String>> getPermutations(final Collection<Argument> arguments) {
         Set<List<String>> set = new HashSet<>();
-        LinkedList<String> args = ArgumentSupport
-                .mapToRegex(arguments, (arg) -> !(arg instanceof Positional));
-        List<Positional> positional = ArgumentSupport.getInstancesOfSubClass(arguments, Positional.class);
+        LinkedList<String> args = new LinkedList<>(
+                ArgumentSupport.regexList(arguments, (arg) -> !(arg instanceof Positional)));
+        List<Positional> positional = ArgumentSupport.getArguments(arguments, Positional.class);
 
         if (args.isEmpty()) {
            // set.add(positional.stream().map(Argument::getRegex).collect(Collectors.toList()));
-            set.add(ArgumentSupport.mapToRegex(positional));
+            set.add(ArgumentSupport.regexList(positional));
             return set;
         }
 

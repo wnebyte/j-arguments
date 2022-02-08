@@ -12,85 +12,68 @@ import static com.github.wnebyte.jarguments.util.Collections.isNullOrEmpty;
 public class ArgumentSupport {
 
     /**
-     * Maps each <code>Argument</code> to its regex.
+     * Returns the regex for each <code>Argument</code>.
      * @param c the arguments.
      * @return the result.
      */
-    public static LinkedList<String> mapToRegex(Collection<? extends Argument> c) {
+    public static List<String> regexList(Collection<? extends Argument> c) {
         if (isNullOrEmpty(c)) {
-            return new LinkedList<>();
+            return Collections.emptyList();
         }
         return c.stream().map(Argument::getRegex)
-                .collect(Collectors.toCollection(LinkedList::new));
-    }
-
-    /**
-     * Maps each <code>Argument</code> that is of one of the specified subclasses to its regex.
-     * @param c arguments.
-     * @param sClasses subclasses of which are to be included in the mapping.
-     * @return the result.
-     */
-    @SafeVarargs
-    public static LinkedList<String> mapToRegex(
-            Collection<? extends Argument> c, Class<? extends Argument>... sClasses
-    ) {
-        if ((isNullOrEmpty(c)) || (isNullOrEmpty(sClasses))) {
-            return new LinkedList<>();
-        }
-        List<Class<? extends Argument>> list = Arrays.asList(sClasses);
-        return c.stream().filter(arg -> list.contains(arg.getClass()))
-                .map(Argument::getRegex)
-                .collect(Collectors.toCollection(LinkedList::new));
-    }
-
-    /**
-     * Maps each <code>Argument</code> that 'passes' the specified predicate to its regex.
-     * @param c the arguments.
-     * @param p the predicate.
-     * @return the result.
-     */
-    public static LinkedList<String> mapToRegex(Collection<Argument> c, Predicate<Argument> p) {
-        if (isNullOrEmpty(c)) {
-            return new LinkedList<>();
-        }
-        return c.stream().filter(p).map(Argument::getRegex)
-                .collect(Collectors.toCollection(LinkedList::new));
-    }
-
-    /**
-     * Casts and returns the Arguments from the specified <code>Collection</code> whose <code>class</code>
-     * <code>equals</code> the specified <code>class</code>.
-     * @param c the arguments.
-     * @param sClass the class.
-     * @param <T> the type of the class.
-     * @return the arguments from the specified <code>Collection</code> whose <code>class</code>
-     * <code>equals</code> the specified <code>class</code>.
-     */
-    @SuppressWarnings("unchecked")
-    public static <T extends Argument> List<T> getInstancesOfSubClass(Collection<Argument> c, Class<T> sClass) {
-        if ((isNullOrEmpty(c)) || (sClass == null)) {
-            return new ArrayList<>(0);
-        }
-        return c.stream().filter(arg -> arg.getClass().equals(sClass))
-                .map(arg -> (T)arg)
                 .collect(Collectors.toList());
     }
 
     /**
-     * Returns whether the specified <code>Collection</code> <code>contains</code> any elements that are of a class
-     * contained within the specified <code>sClasses</code>.
-     * @param c the elements.
-     * @param sClasses the classes.
-     * @return <code>true</code> if the specified <code>Collection</code> <code>contains</code> one or more elements
-     * that are of a class contained within the specified <code>sClasses</code>, otherwise <code>false</code>.
+     * Returns the regex for each <code>Argument</code> that is of the specified <code>Class</code>.
+     * @param c the arguments.
+     * @param cls the class.
+     * @param <T> the type of the class.
+     * @return the result.
      */
-    public static boolean containsInstancesOfSubClasses(
-            Collection<Argument> c, Collection<Class<? extends Argument>> sClasses
-    ) {
-        if ((isNullOrEmpty(c)) || (isNullOrEmpty(sClasses))) {
+    public static <T extends Argument> List<String> regexList(Collection<Argument> c, Class<T> cls) {
+        if ((isNullOrEmpty(c)) || (cls == null)) {
+            return Collections.emptyList();
+        }
+        return c.stream().filter(arg -> arg.getClass().equals(cls))
+                .map(Argument::getRegex)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Returns the regex for each <code>Argument</code> that pass the specified predicate.
+     * @param c the arguments.
+     * @param predicate the predicate.
+     * @return the result.
+     */
+    public static List<String> regexList(Collection<Argument> c, Predicate<Argument> predicate) {
+        if (isNullOrEmpty(c)) {
+            return Collections.emptyList();
+        }
+        return c.stream().filter(predicate)
+                .map(Argument::getRegex)
+                .collect(Collectors.toList());
+    }
+
+    public static <T extends Argument> List<T> getArguments(Collection<Argument> c, Class<T> cls) {
+        List<T> list = new ArrayList<>();
+        if ((isNullOrEmpty(c)) || (cls == null)) {
+            return list;
+        }
+        for (Argument arg : c) {
+            if (arg.getClass().equals(cls)) {
+                T t = cls.cast(arg);
+                list.add(t);
+            }
+        }
+        return list;
+    }
+
+    public static <T extends Argument> boolean containsArgument(Collection<Argument> c, Class<T> cls) {
+        if ((isNullOrEmpty(c)) || (cls == null)) {
             return false;
         }
-        return c.stream().anyMatch(arg -> sClasses.contains(arg.getClass()));
+        return c.stream().anyMatch(arg -> arg.getClass().equals(cls));
     }
 
     /**
@@ -148,10 +131,10 @@ public class ArgumentSupport {
     }
 
     /**
-     * Initializes the specified <code>Argument</code> using the specified <code>String</code>.
+     * Initializes the specified <code>Argument</code> with the specified <code>value</code>.
      * @param argument to be initialized.
      * @param value to initialize with.
-     * @return the result from the initialization.
+     * @return the result.
      * @throws ParseException if the initialization fails.
      */
     public static Object initialize(Argument argument, String value) throws ParseException {
@@ -159,7 +142,7 @@ public class ArgumentSupport {
     }
 
     public static boolean matches(Argument argument, String value) {
-        return argument.matches(value);
+        return (argument != null) && (value != null) && (argument.matches(value));
     }
 
     public static String getRegex(Argument argument) {

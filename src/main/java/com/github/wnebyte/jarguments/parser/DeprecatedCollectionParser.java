@@ -24,7 +24,7 @@ public class DeprecatedCollectionParser extends AbstractArgumentParser<Collectio
     public Object[] parse(String input) throws ParseException {
         List<Argument> source = new ArrayList<>(super.source);
         Object[] args = new Object[source.size()];
-        List<Positional> positionalArgs = getInstancesOfSubClass(source, Positional.class);
+        List<Positional> positionalArgs = getArguments(source, Positional.class);
         LinkedList<String> values = split(input);
 
         for (Positional argument : positionalArgs) {
