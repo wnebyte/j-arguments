@@ -1,29 +1,14 @@
 package com.github.wnebyte.jarguments.factory;
 
+import org.junit.Test;
+import org.junit.Assert;
+import java.util.List;
+import java.util.UUID;
 import com.github.wnebyte.jarguments.*;
 import com.github.wnebyte.jarguments.convert.TypeConverterMap;
 import com.github.wnebyte.jarguments.exception.ParseException;
-import org.junit.Assert;
-import org.junit.Test;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
 
 public class ArgumentFactoryTest {
-
-    private static class OptionsBuilderBuilder {
-
-        public List<Argument> get() {
-            return new ArrayList<>();
-        }
-    }
-
-    @Test
-    public void testName() {
-        List<Argument> c = new OptionsBuilderBuilder()
-                .get();
-    }
 
     @Test
     public void test00() {
@@ -91,11 +76,4 @@ public class ArgumentFactoryTest {
         bool = (boolean) ArgumentSupport.initialize(arguments.get(0), "-a");
         Assert.assertTrue(bool);
     }
-
-    @Test
-    public void test03() {
-
-    }
-
-
 }

@@ -13,7 +13,7 @@ import static com.github.wnebyte.jarguments.ArgumentSupport.getByPosition;
 /**
  * This class is the default implementation of the <code>AbstractParser</code> class.
  */
-public class Parser extends AbstractParser<Tokens, Collection<Argument>> {
+public class Parser extends AbstractParser<TokenSequence, Collection<Argument>> {
 
     /*
     ###########################
@@ -34,8 +34,8 @@ public class Parser extends AbstractParser<Tokens, Collection<Argument>> {
         }
     }
 
-    private static boolean elementsNonNull(Object[] arr) {
-        for (Object o : arr) {
+    private static boolean elementsNonNull(Object[] array) {
+        for (Object o : array) {
             if (o == null)
                 return false;
         }
@@ -71,10 +71,10 @@ public class Parser extends AbstractParser<Tokens, Collection<Argument>> {
     }
 
     @Override
-    public void parse(Tokens tokens, Collection<Argument> arguments) throws ParseException {
+    public void parse(TokenSequence tokens, Collection<Argument> arguments) throws ParseException {
         if ((tokens == null) || (arguments == null))
             throw new NullPointerException(
-                    "Tokens & Arguments must not be null."
+                    "TokenSequence & Arguments must not be null."
             );
         Iterator<String> it = tokens.iterator();
         Collection<Argument> source = new LinkedList<>(arguments);
@@ -91,7 +91,7 @@ public class Parser extends AbstractParser<Tokens, Collection<Argument>> {
             if (arg == null) {
                 throw new NoSuchArgumentException(
                         String.format(
-                                "No Argument with name/value: '%s' is left to be parsed.", token
+                                "No Argument with name/value: '%s' remain to be parsed.", token
                         ), input, token
                 );
             }
@@ -127,7 +127,7 @@ public class Parser extends AbstractParser<Tokens, Collection<Argument>> {
                         ), input, arg
                 );
             }
-            map.put(arg, new Pair<>("", input));
+            map.put(arg, new Pair<>(Strings.EMPTY, input));
         }
     }
 

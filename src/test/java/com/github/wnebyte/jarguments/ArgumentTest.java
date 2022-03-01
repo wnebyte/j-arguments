@@ -1,45 +1,18 @@
 package com.github.wnebyte.jarguments;
 
-import com.github.wnebyte.jarguments.constraint.Constraint;
-import com.github.wnebyte.jarguments.constraint.ConstraintCollectionBuilder;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.regex.Pattern;
+import org.junit.Test;
 import com.github.wnebyte.jarguments.convert.TypeConverterMap;
 import com.github.wnebyte.jarguments.exception.ConstraintException;
 import com.github.wnebyte.jarguments.exception.ParseException;
 import com.github.wnebyte.jarguments.factory.ArgumentFactory;
 import com.github.wnebyte.jarguments.factory.ArgumentFactoryBuilder;
-import com.github.wnebyte.jarguments.pattern.DeprecatedCollectionPatternGenerator;
-import org.junit.Assert;
-import org.junit.Test;
-
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.regex.Pattern;
+import com.github.wnebyte.jarguments.util.ConstraintCollectionBuilder;
 
 public class ArgumentTest {
-
-    @Test
-    public void test00() {
-        List<Argument> arguments = new ArgumentFactoryBuilder().build()
-                .setName("-a", "--a")
-                .setIsRequired()
-                .setType(String.class)
-                .append()
-                .setName("-b", "--b")
-                .setIsRequired()
-                .setType(String.class)
-                .append()
-                .get();
-        Pattern pattern = new DeprecatedCollectionPatternGenerator(arguments).getPattern();
-        Assert.assertTrue(matches(pattern,
-                "--a hello --b 'hello there'",
-                "-b \"hello there\" --a 'hey there'"
-        ));
-        Assert.assertFalse(matches(pattern,
-                "---a hello there"
-        ));
-        String input = "--a \"a: 'val' b: 'val2'\"";
-    }
 
     @Test(expected = ConstraintException.class)
     public void test01() throws ParseException {
@@ -49,7 +22,7 @@ public class ArgumentTest {
                 .append(Integer.class, new ConstraintCollectionBuilder<Integer>()
                         .addConstraint(new Constraint<Integer>() {
                             @Override
-                            public boolean holds(Integer i) {
+                            public boolean verify(Integer i) {
                                 return i == 10;
                             }
                             @Override

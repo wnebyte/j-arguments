@@ -7,7 +7,8 @@ import java.util.Iterator;
 import com.github.wnebyte.jarguments.util.Chars;
 import com.github.wnebyte.jarguments.util.Strings;
 
-public class Tokens implements Iterable<String> {
+// Todo: change class name
+public class TokenSequence implements Iterable<String> {
 
     /*
     ###########################
@@ -15,9 +16,9 @@ public class Tokens implements Iterable<String> {
     ###########################
     */
 
-    public static Tokens tokenize(String input) {
+    public static TokenSequence tokenize(String input) {
         List<String> tokens = Strings.split(input, Chars.WHITESPACE, Chars.QUOTATION_SINGLE, Chars.QUOTATION_DOUBLE);
-        return new Tokens(tokens);
+        return new TokenSequence(tokens);
     }
 
     /*
@@ -34,7 +35,7 @@ public class Tokens implements Iterable<String> {
     ###########################
     */
 
-    private Tokens(List<String> tokens) {
+    private TokenSequence(List<String> tokens) {
         this.tokens = tokens;
     }
 
@@ -44,8 +45,8 @@ public class Tokens implements Iterable<String> {
     ###########################
     */
 
-    public Tokens subTokens(int fromIndex, int toIndex) {
-        return new Tokens(new ArrayList<>(tokens.subList(fromIndex, toIndex)));
+    public TokenSequence subTokens(int fromIndex, int toIndex) {
+        return new TokenSequence(new ArrayList<>(tokens.subList(fromIndex, toIndex)));
     }
 
     public String join() {

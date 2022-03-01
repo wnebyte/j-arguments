@@ -1,16 +1,18 @@
 package com.github.wnebyte.jarguments.factory;
 
-import java.util.Collection;
 import java.util.List;
+import java.util.Collection;
 import com.github.wnebyte.jarguments.Argument;
-import com.github.wnebyte.jarguments.constraint.Constraint;
+import com.github.wnebyte.jarguments.Constraint;
 import com.github.wnebyte.jarguments.convert.TypeConverter;
 
 public abstract class AbstractArgumentFactory {
 
-    public abstract Collection<Character> getExcludeCharacters();
-
-    /* --------------- Field Setters */
+    /*
+    ###########################
+    #         SETTERS         #
+    ###########################
+    */
 
     public abstract AbstractArgumentFactory setName(String... names);
 
@@ -20,13 +22,27 @@ public abstract class AbstractArgumentFactory {
 
     public abstract AbstractArgumentFactory setTypeConverter(TypeConverter<?> converter);
 
-    public abstract AbstractArgumentFactory setSubClass(Class<? extends Argument> sClass);
+    public abstract <T extends Argument> AbstractArgumentFactory setCls(Class<T> sClass);
 
     public abstract AbstractArgumentFactory setDefaultValue(String defaultValue);
 
     public abstract AbstractArgumentFactory setFlagValue(String flagValue);
 
-    /* --------------- Create Methods --------------- */
+    /*
+    ###########################
+    #         GETTERS         #
+    ###########################
+    */
+
+    public abstract List<Argument> get();
+
+    public abstract Collection<Character> getExcludedCharacters();
+
+    /*
+    ###########################
+    #         APPENDERS       #
+    ###########################
+    */
 
     public abstract AbstractArgumentFactory append();
 
@@ -39,7 +55,4 @@ public abstract class AbstractArgumentFactory {
     public abstract <T> AbstractArgumentFactory append(
             Class<T> type, TypeConverter<T> converter, Collection<Constraint<T>> constraints
     );
-
-    public abstract List<Argument> get();
-
 }

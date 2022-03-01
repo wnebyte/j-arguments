@@ -5,8 +5,7 @@ import java.util.Set;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.regex.Pattern;
-import com.github.wnebyte.jarguments.constraint.Constraint;
-import com.github.wnebyte.jarguments.convert.Initializer;
+
 import com.github.wnebyte.jarguments.convert.TypeConverter;
 import com.github.wnebyte.jarguments.exception.ConstraintException;
 import com.github.wnebyte.jarguments.exception.ParseException;
@@ -102,7 +101,7 @@ public abstract class Argument implements Comparable<Argument> {
             T val = typeConverter.convert(value);
             if (constraints != null) {
                 for (Constraint<T> constraint : constraints) {
-                    boolean holds = constraint.holds(val);
+                    boolean holds = constraint.verify(val);
                     if (!holds) {
                         throw new ConstraintException(
                                 constraint.errorMessage()

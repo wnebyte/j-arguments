@@ -41,7 +41,7 @@ public class Strings {
      * empty String, otherwise <code>false</code>.
      */
     public static boolean isEmpty(final String s) {
-        return (s != null) && (s.equals(""));
+        return (s != null) && (s.equals(EMPTY));
     }
 
     /**

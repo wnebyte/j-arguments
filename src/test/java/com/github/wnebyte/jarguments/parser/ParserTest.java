@@ -1,17 +1,16 @@
 package com.github.wnebyte.jarguments.parser;
 
-import com.github.wnebyte.jarguments.AbstractTestClass;
+import java.util.List;
+import org.junit.Test;
+import org.junit.Assert;
+import com.github.wnebyte.jarguments.BaseTestClass;
 import com.github.wnebyte.jarguments.Argument;
-import com.github.wnebyte.jarguments.Tokens;
+import com.github.wnebyte.jarguments.TokenSequence;
 import com.github.wnebyte.jarguments.exception.ParseException;
 import com.github.wnebyte.jarguments.factory.ArgumentFactory;
 import com.github.wnebyte.jarguments.factory.ArgumentFactoryBuilder;
-import org.junit.Assert;
-import org.junit.Test;
 
-import java.util.List;
-
-public class ParserTest extends AbstractTestClass {
+public class ParserTest extends BaseTestClass {
 
     @Test
     public void test00() throws ParseException {
@@ -35,7 +34,7 @@ public class ParserTest extends AbstractTestClass {
                 }
         };
         for (int i = 0; i < input.length; i++) {
-            Tokens tokens = Tokens.tokenize(input[i]);
+            TokenSequence tokens = TokenSequence.tokenize(input[i]);
             Parser parser = new Parser();
             parser.parse(tokens, arguments);
             Object[] args = parser.initialize();
@@ -74,7 +73,7 @@ public class ParserTest extends AbstractTestClass {
                 }
         };
         for (int i = 0; i < input.length; i++) {
-            Tokens tokens = Tokens.tokenize(input[i]);
+            TokenSequence tokens = TokenSequence.tokenize(input[i]);
             Parser parser = new Parser();
             parser.parse(tokens, arguments);
             Object[] args = parser.initialize();
@@ -139,7 +138,7 @@ public class ParserTest extends AbstractTestClass {
                 },
         };
         for (int i = 0; i < input.length; i++) {
-            Tokens tokens = Tokens.tokenize(input[i]);
+            TokenSequence tokens = TokenSequence.tokenize(input[i]);
             Parser parser = new Parser();
             parser.parse(tokens, arguments);
             Object[] args = parser.initialize();
@@ -183,7 +182,7 @@ public class ParserTest extends AbstractTestClass {
                         5, true, 100, 50
                 }
         };
-        Tokens tokens = Tokens.tokenize(input[0]);
+        TokenSequence tokens = TokenSequence.tokenize(input[0]);
         Parser parser = new Parser();
         parser.parse(tokens, arguments);
         Object[] args = parser.initialize();
@@ -252,7 +251,7 @@ public class ParserTest extends AbstractTestClass {
                 },
         };
         for (int i = 0; i < input.length; i++) {
-            Tokens tokens = Tokens.tokenize(input[i]);
+            TokenSequence tokens = TokenSequence.tokenize(input[i]);
             Parser parser = new Parser();
             parser.parse(tokens, arguments);
             Object[] args = parser.initialize();
@@ -279,7 +278,7 @@ public class ParserTest extends AbstractTestClass {
                 .append(String.class)
                 .get();
         String input = "-a 5 -b 'hello world' 100";
-        Tokens tokens = Tokens.tokenize(input);
+        TokenSequence tokens = TokenSequence.tokenize(input);
         Parser parser = new Parser();
         parser.parse(tokens, arguments);
         parser.initialize(); // should throw an exception because the positional arguments are swapped.

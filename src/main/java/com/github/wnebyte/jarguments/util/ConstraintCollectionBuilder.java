@@ -1,19 +1,22 @@
-package com.github.wnebyte.jarguments.constraint;
+package com.github.wnebyte.jarguments.util;
 
-import java.util.Collection;
-import java.util.LinkedList;
 import java.util.List;
+import java.util.ArrayList;
+import java.util.Collection;
+import com.github.wnebyte.jarguments.Constraint;
 
 public class ConstraintCollectionBuilder<T> {
 
     private final List<Constraint<T>> constraints;
 
     public ConstraintCollectionBuilder() {
-        this.constraints = new LinkedList<>();
+        this.constraints = new ArrayList<>();
     }
 
     public ConstraintCollectionBuilder<T> addConstraint(Constraint<T> constraint) {
-        constraints.add(constraint);
+        if (constraint != null) {
+            constraints.add(constraint);
+        }
         return this;
     }
 
