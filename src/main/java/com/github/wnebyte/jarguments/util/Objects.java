@@ -2,41 +2,51 @@ package com.github.wnebyte.jarguments.util;
 
 import java.util.function.Supplier;
 
+/**
+ * This class is a utility class for working with instances of {@link Object}.
+ */
 public class Objects {
 
-    public static <T> T requireNonNullElseGet(final T value, final Supplier<T> supplier) {
-        return value != null ? value : supplier.get();
-    }
-
-    public static <T> boolean equals(final T t1, final T t2) {
-        if ((t1 != null) && (t2 != null)) {
-            return t1.equals(t2);
-        }
-        return (t1 == null) && (t2 == null);
-    }
-
-    public static <T> int hashCode(final T t) {
-        if (t == null) {
-            return 0;
-        }
-        return t.hashCode();
+    /**
+     * Returns the specified <code>value</code> if it is non <code>null</code>,
+     * otherwise returns the result of calling the specified <code>supplier</code>.
+     * @param value a value.
+     * @param supplier a supplier.
+     * @param <T> the type of the value.
+     * @return the specified value if it is non <code>null</code>,
+     * otherwise the result of calling the specified supplier.
+     */
+    public static <T> T requireNonNullElseGet(T value, Supplier<T> supplier) {
+        return (value != null) ? value : supplier.get();
     }
 
     /**
-     * @param objects to be checked for <code>null</code> values.
-     * @return <code>true</code> if the specified <code>objects</code> is <code>null</code>, or if it contains
-     * at least one <code>null</code> value,
-     * else <code>false</code>.
+     * Returns <code>true</code> if the arguments are equal to each other and <code>false</code>
+     * otherwise. Consequently, if both arguments are <code>null</code>, <code>true</code> is returned
+     * and if exactly one argument is <code>null</code>, <code>false</code> is returned. Otherwise,
+     * equality is determined by using the {@linkplain Object#equals(Object)} method on the first argument.
+     * @param a an object.
+     * @param b an object to be compared with <code>a</code> for equality.
+     * @param <T> the type of the two objects.
+     * @return <code>true</code> if the arguments are equal to each other,
+     * otherwise <code>false</code>.
      */
-    public static boolean isNull(Object... objects) {
-        if (objects == null) {
-            return true;
+    public static <T> boolean equals(T a, T b) {
+        if ((a != null) && (b != null)) {
+            return a.equals(b);
         }
-        for (Object o : objects) {
-            if (o == null) {
-                return true;
-            }
-        }
-        return false;
+        return (a == null) && (b == null);
+    }
+
+    /**
+     * Returns the hash code of the specified <code>Object</code> if it is non <code>null</code>,
+     * otherwise <code>0</code>.
+     * @param o an object.
+     * @param <T> the type of the object.
+     * @return the hash code of the specified object if it is non <code>null</code>,
+     * otherwise <code>0</code>.
+     */
+    public static <T> int hashCode(T o) {
+        return (o != null) ? o.hashCode() : 0;
     }
 }

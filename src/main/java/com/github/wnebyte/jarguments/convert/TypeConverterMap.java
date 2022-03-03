@@ -3,16 +3,16 @@ package com.github.wnebyte.jarguments.convert;
 import java.util.*;
 import java.lang.reflect.Array;
 import com.github.wnebyte.jarguments.Splitter;
-import com.github.wnebyte.jarguments.exception.ParseException;
 import com.github.wnebyte.jarguments.util.Objects;
 import com.github.wnebyte.jarguments.util.Strings;
+import com.github.wnebyte.jarguments.exception.ParseException;
 
 public class TypeConverterMap extends AbstractTypeConverterMap {
 
     private static TypeConverterMap instance = null;
 
     public TypeConverterMap() {
-        converters = new HashMap<>(9 * 4);
+        super.converters = new HashMap<>(9 * 4);
         init();
     }
 
@@ -69,7 +69,7 @@ public class TypeConverterMap extends AbstractTypeConverterMap {
     public static <T> TypeConverter<T[]> arrayTypeConverterOf(
             final Class<T> componentType, final TypeConverter<T> typeConverter
     ) {
-        if (Objects.isNull(componentType, typeConverter)) {
+        if (componentType == null || typeConverter == null) {
             return null;
         }
         return new TypeConverter<T[]>() {
@@ -110,9 +110,9 @@ public class TypeConverterMap extends AbstractTypeConverterMap {
 
     @Override
     public <T> void put(final Class<T> cls, final TypeConverter<T> typeConverter) {
-        if (Objects.isNull(cls, typeConverter)) {
+        if (cls == null || typeConverter == null) {
             throw new IllegalArgumentException(
-                    "Parameter(s) must not be null."
+                    "Class & TypeConverter must not be null."
             );
         }
         converters.put(cls, typeConverter);
@@ -120,10 +120,10 @@ public class TypeConverterMap extends AbstractTypeConverterMap {
 
     @Override
     public <T> boolean putIfAbsent(final Class<T> cls, final TypeConverter<T> typeConverter) {
-        if (Objects.isNull(cls, typeConverter)) {
+        if (cls == null || typeConverter == null) {
             return false;
         }
-        return converters.putIfAbsent(cls, typeConverter) == null;
+        return (converters.putIfAbsent(cls, typeConverter) == null);
     }
 
     @Override
