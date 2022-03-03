@@ -158,7 +158,7 @@ public abstract class Argument implements Comparable<Argument> {
     }
 
     public final boolean isArray() {
-        return Reflections.isEnumerable(type);
+        return Reflections.isArrayOrIterable(type);
     }
 
     public final boolean isBoolean() {
