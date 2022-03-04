@@ -1,7 +1,6 @@
 package com.github.wnebyte.jarguments;
 
 import java.util.*;
-
 import com.github.wnebyte.jarguments.convert.TypeConverter;
 import com.github.wnebyte.jarguments.exception.ParseException;
 

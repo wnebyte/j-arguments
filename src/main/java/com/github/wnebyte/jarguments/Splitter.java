@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import com.github.wnebyte.jarguments.util.Pair;
 import com.github.wnebyte.jarguments.util.Strings;
-import static com.github.wnebyte.jarguments.util.Strings.firstAndLastMatchesAny;
+import static com.github.wnebyte.jarguments.util.Strings.firstAndLastEqualsAny;
 
 /**
  * This class declares methods for retrieving and normalizing substrings from a given <code>String</code>.
@@ -75,7 +75,7 @@ public class Splitter {
         if (name != null) {
             val = value.split(name.concat("\\s"), 2)[1];
         }
-        if (!firstAndLastMatchesAny(val, PAIRS)) {
+        if (!firstAndLastEqualsAny(val, PAIRS)) {
             val = val.split("\\s", 2)[0];
         }
         return this;

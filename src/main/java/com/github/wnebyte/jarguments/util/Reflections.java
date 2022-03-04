@@ -25,7 +25,7 @@ public class Reflections {
      * <code>boolean.class</code> or <code>Boolean.class</code>.
      * @param cls the class.
      * @return <code>true</code> if the specified class represents one of
-     * <code>boolean.class</code> or <code>Boolean.class</code>,
+     * boolean.class or Boolean.class,
      * otherwise <code>false</code>.
      */
     public static boolean isBoolean(Class<?> cls) {
@@ -57,7 +57,7 @@ public class Reflections {
     /**
      * Determines whether <code>Iterable.class</code> is assignable from the specified <code>Class</code>.
      * @param cls the class.
-     * @return <code>true</code> if <code>Iterable.class</code> is assignable from the specified <code>Class</code>,
+     * @return <code>true</code> if Iterable.class is assignable from the specified Class,
      * otherwise <code>false</code>.
      */
     public static boolean isIterable(Class<?> cls) {
@@ -68,8 +68,8 @@ public class Reflections {
      * Determines whether the specified <code>Class</code> represents an array class,
      * or <code>Iterable.class</code> is assignable from the specified <code>Class</code>.
      * @param cls the class.
-     * @return <code>true</code> if the specified <code>Class</code> represents an array class,
-     * or <code>Iterable.class</code> is assignable from the specified <code>Class</code>,
+     * @return <code>true</code> if the specified Class represents an array class
+     * or if Iterable.class is assignable from the specified Class,
      * otherwise <code>false</code>.
      */
     public static boolean isArrayOrIterable(Class<?> cls) {

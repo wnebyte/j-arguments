@@ -1,11 +1,10 @@
 package com.github.wnebyte.jarguments;
 
-import java.util.Comparator;
 import java.util.Set;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.regex.Pattern;
-
+import java.util.Comparator;
 import com.github.wnebyte.jarguments.convert.TypeConverter;
 import com.github.wnebyte.jarguments.exception.ConstraintException;
 import com.github.wnebyte.jarguments.exception.ParseException;
@@ -101,8 +100,7 @@ public abstract class Argument implements Comparable<Argument> {
             T val = typeConverter.convert(value);
             if (constraints != null) {
                 for (Constraint<T> constraint : constraints) {
-                    boolean holds = constraint.verify(val);
-                    if (!holds) {
+                    if (!constraint.verify(val)) {
                         throw new ConstraintException(
                                 constraint.errorMessage()
                         );
@@ -129,15 +127,15 @@ public abstract class Argument implements Comparable<Argument> {
         return typeConverter;
     }
 
-    final boolean matches(String token) {
+    protected final boolean matches(String token) {
         return pattern.matcher(token).matches();
     }
 
-    final String getRegex() {
+    protected final String getRegex() {
         return regex;
     }
 
-    final Pattern getPattern() {
+    protected final Pattern getPattern() {
         return pattern;
     }
 
