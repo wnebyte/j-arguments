@@ -1,6 +1,8 @@
 # j-arguments
+
 java-library
 
 ## About
-This library declares classes for building, validating, parsing and 
-initializing various groups of Arguments. 
+
+This library defines an abstract <code>Argument</code> class, alongside a number of subclasses, 
+as well as classes for building, parsing and initializing them.
