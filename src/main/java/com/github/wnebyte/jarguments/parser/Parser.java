@@ -72,7 +72,7 @@ public class Parser extends AbstractParser<TokenSequence, Collection<Argument>> 
 
     @Override
     public void parse(TokenSequence tokens, Collection<Argument> arguments) throws ParseException {
-        if ((tokens == null) || (arguments == null))
+        if (tokens == null || arguments == null)
             throw new NullPointerException(
                     "TokenSequence & Arguments must not be null."
             );
@@ -85,6 +85,7 @@ public class Parser extends AbstractParser<TokenSequence, Collection<Argument>> 
         while (it.hasNext()) {
             final String token = it.next();
             String value;
+            String keyValue;
             Argument arg = getByName(source, token);
             arg = (arg != null) ? arg : getByPosition(source, pos++);
 
@@ -95,8 +96,9 @@ public class Parser extends AbstractParser<TokenSequence, Collection<Argument>> 
                         ), input, token
                 );
             }
-            else if ((arg instanceof Flag) || (arg instanceof Positional)) {
+            else if (arg instanceof Flag || arg instanceof Positional) {
                 value = token;
+                keyValue = token;
             }
             else {
                 if (!it.hasNext()) {
@@ -106,9 +108,11 @@ public class Parser extends AbstractParser<TokenSequence, Collection<Argument>> 
                             ), input, arg
                     );
                 }
-                value = token.concat(Strings.WHITESPACE).concat(it.next());
+               // value = token.concat(Strings.WHITESPACE).concat(it.next());
+                value = it.next();
+                keyValue = token.concat(Strings.WHITESPACE).concat(value);
             }
-            if (!matches(arg, Strings.WHITESPACE.concat(value))) {
+            if (!matches(arg, Strings.WHITESPACE.concat(keyValue))) {
                 throw new MalformedArgumentException(
                         String.format(
                                 "Argument with name: '%s' is malformed.", token

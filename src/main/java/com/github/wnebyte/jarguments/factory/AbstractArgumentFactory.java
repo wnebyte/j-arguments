@@ -16,13 +16,13 @@ public abstract class AbstractArgumentFactory {
 
     public abstract AbstractArgumentFactory setName(String... names);
 
-    public abstract AbstractArgumentFactory setDescription(String desc);
+    public abstract AbstractArgumentFactory setDescription(String description);
 
     public abstract AbstractArgumentFactory setType(Class<?> type);
 
-    public abstract AbstractArgumentFactory setTypeConverter(TypeConverter<?> converter);
+    public abstract AbstractArgumentFactory setTypeConverter(TypeConverter<?> typeConverter);
 
-    public abstract <T extends Argument> AbstractArgumentFactory setCls(Class<T> sClass);
+    public abstract <T extends Argument> AbstractArgumentFactory setClass(Class<T> cls);
 
     public abstract AbstractArgumentFactory setDefaultValue(String defaultValue);
 
@@ -48,11 +48,11 @@ public abstract class AbstractArgumentFactory {
 
     public abstract <T> AbstractArgumentFactory append(Class<T> type);
 
-    public abstract <T> AbstractArgumentFactory append(Class<T> type, TypeConverter<T> converter);
+    public abstract <T> AbstractArgumentFactory append(Class<T> type, TypeConverter<T> typeConverter);
 
     public abstract <T> AbstractArgumentFactory append(Class<T> type, Collection<Constraint<T>> constraints);
 
     public abstract <T> AbstractArgumentFactory append(
-            Class<T> type, TypeConverter<T> converter, Collection<Constraint<T>> constraints
+            Class<T> type, TypeConverter<T> typeConverter, Collection<Constraint<T>> constraints
     );
 }

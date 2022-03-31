@@ -5,7 +5,7 @@ import com.github.wnebyte.jarguments.convert.TypeConverter;
 import com.github.wnebyte.jarguments.exception.ParseException;
 
 /**
- * This class represents a positional Argument.
+ * This class represents a positional and required <code>Argument</code> that has only a value.
  */
 public class Positional extends Argument {
 
@@ -63,8 +63,19 @@ public class Positional extends Argument {
                 .setValue(value)
                 .normalize(isArray())
                 .get();
-        return super.initialize(val);
+        return initializer.apply(val);
     }
+
+    /*
+    @Override
+    protected Object initialize(final String value) throws ParseException {
+        String val = new Splitter()
+                .setValue(value)
+                .normalize(isArray())
+                .get();
+        return initializer.apply(value);
+    }
+     */
 
     public final int getPosition() {
         return position;
@@ -125,7 +136,7 @@ public class Positional extends Argument {
     }
 
     @Override
-    public String toGenericString() {
+    public String getCanonicalName() {
         return String.format(
                 "$R%d", position
         );

@@ -7,7 +7,7 @@ import com.github.wnebyte.jarguments.exception.ParseException;
 import com.github.wnebyte.jarguments.util.Strings;
 
 /**
- * This class represents a required Argument.
+ * This class represents a required <code>Argument</code> that has both a name and a value.
  */
 public class Required extends Argument {
 
@@ -53,13 +53,25 @@ public class Required extends Argument {
     @Override
     protected Object initialize(final String value) throws ParseException {
         String val = new Splitter()
+                .setValue(value)
+                .normalize(isArray())
+                .get();
+        return initializer.apply(val);
+    }
+
+    /*
+    @Override
+    protected Object initialize(final String value) throws ParseException {
+        String val = new Splitter()
                 .setName(Strings.firstSubstring(value, names))
                 .setValue(value)
                 .split()
                 .normalize(isArray())
                 .get();
-        return super.initialize(val);
+        return initializer.apply(val);
+       // return super.initialize(val);
     }
+     */
 
     @Override
     public boolean equals(Object o) {

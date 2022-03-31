@@ -1,6 +1,7 @@
 package com.github.wnebyte.jarguments.parser;
 
 import java.util.List;
+
 import org.junit.Test;
 import org.junit.Assert;
 import com.github.wnebyte.jarguments.BaseTestClass;
@@ -16,9 +17,9 @@ public class ParserTest extends BaseTestClass {
     public void test00() throws ParseException {
         List<Argument> arguments = new ArgumentFactoryBuilder().build()
                 .setName("-a")
-                .setIsRequired()
+                .isRequired()
                 .append(int.class)
-                .setIsPositional()
+                .isPositional()
                 .append(int.class)
                 .get();
         String[] input = {
@@ -50,9 +51,9 @@ public class ParserTest extends BaseTestClass {
     public void test01() throws ParseException {
         List<Argument> arguments = new ArgumentFactoryBuilder().build()
                 .setName("-a")
-                .setIsOptional()
+                .isOptional()
                 .append(int.class)
-                .setIsPositional()
+                .isPositional()
                 .append(int.class)
                 .get();
         // should succeed
@@ -89,12 +90,12 @@ public class ParserTest extends BaseTestClass {
     public void test02() throws ParseException {
         List<Argument> arguments = new ArgumentFactoryBuilder().build()
                 .setName("-a")
-                .setIsOptional()
+                .isOptional()
                 .append(int.class)
                 .setName("-b")
-                .setIsOptional()
+                .isOptional()
                 .append(int.class)
-                .setIsPositional()
+                .isPositional()
                 .append(int.class)
                 .get();
         String[] input = {
@@ -154,14 +155,14 @@ public class ParserTest extends BaseTestClass {
     public void test03() throws ParseException {
         List<Argument> arguments = new ArgumentFactoryBuilder().build()
                 .setName("-a")
-                .setIsOptional()
+                .isOptional()
                 .append(int.class)
                 .setName("-b")
-                .setIsFlag()
+                .isFlag()
                 .append(boolean.class)
-                .setIsPositional()
+                .isPositional()
                 .append(int.class)
-                .setIsPositional()
+                .isPositional()
                 .append(int.class)
                 .get();
         String[] input = {
@@ -196,14 +197,14 @@ public class ParserTest extends BaseTestClass {
     public void test04() throws ParseException {
         List<Argument> arguments = new ArgumentFactoryBuilder().build()
                 .setName("-a")
-                .setIsOptional()
+                .isOptional()
                 .append(int.class)
                 .setName("-b")
-                .setIsFlag()
+                .isFlag()
                 .append(boolean.class)
-                .setIsPositional()
+                .isPositional()
                 .append(int.class)
-                .setIsPositional()
+                .isPositional()
                 .append(String.class)
                 .get();
         String[] input = {
@@ -267,14 +268,14 @@ public class ParserTest extends BaseTestClass {
     public void test04ParseException() throws ParseException {
         List<Argument> arguments = ArgumentFactory.builder().build()
                 .setName("-a")
-                .setIsOptional()
+                .isOptional()
                 .append(int.class)
                 .setName("-b")
-                .setIsFlag()
+                .isFlag()
                 .append(boolean.class)
-                .setIsPositional()
+                .isPositional()
                 .append(int.class)
-                .setIsPositional()
+                .isPositional()
                 .append(String.class)
                 .get();
         String input = "-a 5 -b 'hello world' 100";
@@ -282,5 +283,51 @@ public class ParserTest extends BaseTestClass {
         Parser parser = new Parser();
         parser.parse(tokens, arguments);
         parser.initialize(); // should throw an exception because the positional arguments are swapped.
+    }
+
+    @Test
+    public void test05() throws ParseException {
+        List<Argument> c = ArgumentFactory.builder().build()
+                .setName("name", "-n")
+                .isRequired()
+                .append(String.class)
+                .setName("url", "-u")
+                .isRequired()
+                .append(String.class)
+                .setName("comment", "-c")
+                .isRequired()
+                .append(String.class)
+                .get();
+        String input = "name 'Lars Petterson' url https://www.google.com -c \"this is a comment\"";
+
+        Object[] values = {
+                "Lars Petterson",
+                "https://www.google.com",
+                "this is a comment"
+        };
+        TokenSequence tokens = TokenSequence.tokenize(input);
+        Parser parser = new Parser();
+        parser.parse(tokens, c);
+        Object[] vals = parser.initialize();
+        Assert.assertEquals(vals.length, values.length);
+
+        for (int i = 0; i < vals.length; i++) {
+            Assert.assertEquals(vals[i], values[i]);
+        }
+    }
+
+    @Test
+    public void test06() {
+        List<Argument> c = ArgumentFactory.builder().build()
+                .isPositional()
+                .append(String.class)
+                .setName("--name")
+                .isOptional()
+                .setDefaultValue("default_name")
+                .append(String.class)
+                .isOptional()
+                .setDefaultValue("2000")
+                .append(int.class)
+                .get();
     }
 }

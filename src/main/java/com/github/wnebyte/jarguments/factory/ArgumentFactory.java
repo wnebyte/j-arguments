@@ -7,6 +7,7 @@ import com.github.wnebyte.jarguments.Constraint;
 import com.github.wnebyte.jarguments.convert.AbstractTypeConverterMap;
 import com.github.wnebyte.jarguments.convert.TypeConverterMap;
 import com.github.wnebyte.jarguments.convert.TypeConverter;
+import com.github.wnebyte.jarguments.exception.ParseException;
 import com.github.wnebyte.jarguments.util.Reflections;
 import com.github.wnebyte.jarguments.util.Strings;
 
@@ -19,18 +20,19 @@ public class ArgumentFactory extends AbstractArgumentFactory {
     */
 
     /**
-     * @return a new builder instance.
+     * Returns a new builder instance.
+     * @return a new instance.
      */
     public static ArgumentFactoryBuilder builder() {
         return new ArgumentFactoryBuilder();
     }
 
-    private static boolean namesIsNull(final Set<String> names, final Class<? extends Argument> cls) {
+    private static boolean namesIsNull(Set<String> names, Class<? extends Argument> cls) {
         if (cls == Positional.class) {
             return false;
         }
         else {
-            return (names == null) || (names.isEmpty());
+            return (names == null || names.isEmpty());
         }
     }
 
@@ -62,7 +64,7 @@ public class ArgumentFactory extends AbstractArgumentFactory {
 
     /*
     ###########################
-    #   ARGUMENT PROPERTIES   #
+    #        PROPERTIES       #
     ###########################
     */
 
@@ -92,7 +94,7 @@ public class ArgumentFactory extends AbstractArgumentFactory {
 
     /**
      * Constructs a new instance using the specified <code>Collection</code> and <code>AbstractTypeConverterMap</code>.
-     * @param exclude characters to be removed from the name of an <code>Argument</code> during normalization.
+     * @param exclude chars to be removed from the specified name of each <code>Argument</code>.
      * @param typeConverters to be used.
      */
     public ArgumentFactory(
@@ -115,7 +117,7 @@ public class ArgumentFactory extends AbstractArgumentFactory {
 
     /**
      * Constructs a new instance using the specified <code>Collection</code>.
-     * @param exclude characters to be removed from the name of an <code>Argument</code> during normalization.
+     * @param exclude chars to be removed from the specified name of each <code>Argument</code>.
      */
     public ArgumentFactory(Collection<Character> exclude) {
         this(exclude, null);
@@ -130,12 +132,12 @@ public class ArgumentFactory extends AbstractArgumentFactory {
 
     /**
      * Sets the name property for the next <code>Argument</code> to be appended.
-     * @param names of the next argument.
+     * @param names an array of names.
      * @return this.
      */
     @Override
-    public ArgumentFactory setName(final String... names) {
-        if ((names == null) || (names.length == 0)) {
+    public ArgumentFactory setName(String... names) {
+        if ((names == null || names.length == 0)) {
             throw new IllegalArgumentException(
                     "Names may not be null/empty."
             );
@@ -166,144 +168,152 @@ public class ArgumentFactory extends AbstractArgumentFactory {
 
     /**
      * Sets the type property for the next <code>Argument</code> to be appended.
-     * @param type of the next argument.
+     * @param type a type.
      * @return this.
      */
-    public ArgumentFactory setType(final Class<?> type) {
+    public ArgumentFactory setType(Class<?> type) {
         this.type = type;
         return this;
     }
 
     /**
      * Sets the typeConverter property of the next <code>Argument</code> to be appended.
-     * @param typeConverter of the next argument.
+     * @param typeConverter a TypeConverter.
      * @return this.
      */
-    public ArgumentFactory setTypeConverter(final TypeConverter<?> typeConverter) {
+    public ArgumentFactory setTypeConverter(TypeConverter<?> typeConverter) {
         this.typeConverter = typeConverter;
         return this;
     }
 
     /**
      * Sets the description property for the next <code>Argument</code> to be appended.
-     * @param description of the next argument.
+     * @param description a description.
      * @return this.
      */
-    public ArgumentFactory setDescription(final String description) {
+    public ArgumentFactory setDescription(String description) {
         this.description = description;
         return this;
     }
 
-    public <T extends Argument> ArgumentFactory setCls(final Class<T> sClass) {
-        this.cls = sClass;
+    /**
+     * Sets the subclass for the next <code>Argument</code> to be appended.
+     * @param cls a subclass of Argument.
+     * @return this.
+     */
+    public <T extends Argument> ArgumentFactory setClass(Class<T> cls) {
+        this.cls = cls;
         return this;
     }
 
     /**
      * Sets the defaultValue property for the next <code>Argument</code> to be appended.
-     * @param defaultValue of the next argument.
+     * @param defaultValue a default value.
      * @return this.
      */
-    public ArgumentFactory setDefaultValue(final String defaultValue) {
+    public ArgumentFactory setDefaultValue(String defaultValue) {
         this.defaultValue = defaultValue;
         return this;
     }
 
     /**
      * Sets the flagValue property for the next <code>Argument</code> to be appended.
-     * @param flagValue of the next argument.
+     * @param flagValue a flag value.
      * @return this.
      */
-    public ArgumentFactory setFlagValue(final String flagValue) {
+    public ArgumentFactory setFlagValue(String flagValue) {
         this.flagValue = flagValue;
         return this;
     }
 
     /**
-     * Specifies that the next <code>Argument</code> to be appended is of type {@link Required}.
+     * Specifies that the subclass of the next <code>Argument</code> to be appended is {@link Required}.
      * @return this.
      */
-    public ArgumentFactory setIsRequired() {
+    public ArgumentFactory isRequired() {
         this.cls = Required.class;
         return this;
     }
 
     /**
-     * Specifies that the next <code>Argument</code> to be appended is of type {@link Optional}.
+     * Specifies that the subclass of the next <code>Argument</code> to be appended is {@link Optional}.
      * @return this.
      */
-    public ArgumentFactory setIsOptional() {
+    public ArgumentFactory isOptional() {
         this.cls = Optional.class;
         return this;
     }
 
     /**
-     * Specifies that the next <code>Argument</code> to be appended is of type {@link Positional}.
+     * Specifies that the subclass of the next <code>Argument</code> to be appended is {@link Positional}.
      * @return this.
      */
-    public ArgumentFactory setIsPositional() {
+    public ArgumentFactory isPositional() {
         this.cls = Positional.class;
         return this;
     }
 
     /**
-     * Specifies that the next <code>Argument</code> to be appended is of type {@link Flag}.
+     * Specifies that the subclass of the next <code>Argument</code> to be appended is {@link Flag}.
      * @return this.
      */
-    public ArgumentFactory setIsFlag() {
+    public ArgumentFactory isFlag() {
         this.cls = Flag.class;
         return this;
     }
 
     /**
-     * Constructs a new <code>Argument</code> and adds it to an internal <code>Collection</code>.
-     * @param type the type of the argument.
+     * Constructs a new <code>Argument</code> using the specified <code>Class</code>.
+     * @param type a type;
      * @return this.
      */
-    public <T> ArgumentFactory append(final Class<T> type) {
+    public <T> ArgumentFactory append(Class<T> type) {
         TypeConverter<T> typeConverter = typeConverters.get(type);
         return append(type, typeConverter);
     }
 
     /**
-     * Constructs a new <code>Argument</code> and adds it to an internal <code>Collection</code>.
-     * @param type the type of the argument.
-     * @param typeConverter the typeConverter of the argument.
+     * Constructs a new <code>Argument</code> using the specified <code>Class</code> and
+     * <code>TypeConverter</code>.
+     * @param type a type.
+     * @param typeConverter a TypeConverter.
      * @return this.
      */
-    public <T> ArgumentFactory append(final Class<T> type, final TypeConverter<T> typeConverter) {
+    public <T> ArgumentFactory append(Class<T> type, TypeConverter<T> typeConverter) {
         return append(type, typeConverter, null);
     }
 
     /**
-     * Constructs a new <code>Argument</code> and adds it to an internal <code>Collection</code>.
-     * @param type the type of the argument.
-     * @param constraints the constraints of the argument.
+     * Constructs a new <code>Argument</code> using preset values and the specified <code>type</code> and
+     * <code>Collection</code>.
+     * @param type a type.
+     * @param constraints a Collection.
      * @return this.
      */
-    public <T> ArgumentFactory append(final Class<T> type, final Collection<Constraint<T>> constraints) {
+    public <T> ArgumentFactory append(Class<T> type, Collection<Constraint<T>> constraints) {
         TypeConverter<T> typeConverter = typeConverters.get(type);
         return append(type, typeConverter, constraints);
     }
 
     /**
-     * Constructs a new <code>Argument</code> and adds it to an internal <code>Collection</code>.
-     * @param type the type of the argument.
-     * @param typeConverter the typeConverter of the argument.
-     * @param constraints the constraints of the argument.
+     * Constructs a new <code>Argument</code> using the specified <code>Class</code>,
+     * <code>TypeConverter</code> and <code>Collection</code>.
+     * @param type a type.
+     * @param typeConverter a TypeConverter.
+     * @param constraints a Collection.
      * @return this.
      */
     public <T> ArgumentFactory append(
-            final Class<T> type,
-            final TypeConverter<T> typeConverter,
-            final Collection<Constraint<T>> constraints
+            Class<T> type,
+            TypeConverter<T> typeConverter,
+            Collection<Constraint<T>> constraints
 
     ) {
         final Argument argument;
 
-        if ((type == null) || (typeConverter == null)) {
+        if (type == null || typeConverter == null) {
             throw new IllegalArgumentException(
-                    "Type & TypeConverter have to be specified."
+                    "Type & TypeConverter have to be non-null."
             );
         }
         if (cls == null) {
@@ -326,14 +336,18 @@ public class ArgumentFactory extends AbstractArgumentFactory {
             );
         }
         else if (Flag.class.equals(cls)) {
+            if (flagValue == null) {
+                throw new IllegalArgumentException(
+                        "FlagValue has to be specified for instances of Flag if type is not of type Boolean."
+                );
+            }
             argument = new Flag(
                     names,
                     description,
                     index++,
                     type,
                     typeConverter,
-                    Objects.requireNonNull(flagValue, () ->
-                            "FlagValue has to be specified for instances of Flag if type is not of type boolean."),
+                    flagValue,
                     defaultValue
             );
         }
@@ -376,14 +390,14 @@ public class ArgumentFactory extends AbstractArgumentFactory {
             );
         }
 
+        dryrun(argument);
         arguments.add(argument);
         reset();
         return this;
     }
 
     /**
-     * Constructs a new <code>Argument</code> and adds it to an internal <code>Collection</code>.
-     * @return this.
+     * Constructs a new <code>Argument</code>.
      */
     public ArgumentFactory append() {
         final Argument argument;
@@ -424,14 +438,18 @@ public class ArgumentFactory extends AbstractArgumentFactory {
             );
         }
         else if (Flag.class.equals(cls)) {
+            if (flagValue == null) {
+                throw new IllegalArgumentException(
+                        "FlagValue has to be specified for instances of Flag if type is not of type Boolean."
+                );
+            }
             argument = new Flag(
                     names,
                     description,
                     index++,
                     type,
                     typeConverter,
-                    Objects.requireNonNull(flagValue,
-                            "FlagValue has to be specified for instances of Flag if type is not of type boolean."),
+                    flagValue,
                     defaultValue
             );
         }
@@ -471,6 +489,7 @@ public class ArgumentFactory extends AbstractArgumentFactory {
             );
         }
 
+        dryrun(argument);
         arguments.add(argument);
         reset();
         return this;
@@ -479,6 +498,27 @@ public class ArgumentFactory extends AbstractArgumentFactory {
     @Override
     public Collection<Character> getExcludedCharacters() {
         return Collections.unmodifiableCollection(exclude);
+    }
+
+    private void dryrun(Argument a) {
+        if (a instanceof Optional) {
+            try {
+                ArgumentSupport.initialize(a, Strings.EMPTY);
+            } catch (ParseException e) {
+                throw new IllegalArgumentException(
+                        e.getMessage()
+                );
+            }
+        }
+        if (a instanceof Flag) {
+            try {
+                ArgumentSupport.initialize(a, a.getNames().toArray(new String[0])[0]);
+            } catch (ParseException e) {
+                throw new IllegalArgumentException(
+                        e.getMessage()
+                );
+            }
+        }
     }
 
     private void reset() {
@@ -492,7 +532,7 @@ public class ArgumentFactory extends AbstractArgumentFactory {
     }
 
     /**
-     * Returns the internal <code>Collection</code> of Arguments.
+     * Returns the sorted <code>Collection</code> of Arguments.
      * @return the Arguments.
      */
     public List<Argument> get() {
@@ -501,6 +541,7 @@ public class ArgumentFactory extends AbstractArgumentFactory {
         index = 0;
         position = 0;
         reset();
+        allNames.clear();
         arguments.sort(Argument::compareTo);
         return arguments;
     }

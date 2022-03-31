@@ -10,6 +10,7 @@ import com.github.wnebyte.jarguments.exception.ConstraintException;
 import com.github.wnebyte.jarguments.exception.ParseException;
 import com.github.wnebyte.jarguments.util.Objects;
 import com.github.wnebyte.jarguments.util.Reflections;
+import com.github.wnebyte.jarguments.util.Strings;
 
 /**
  * This class represents an abstract Argument.
@@ -127,8 +128,8 @@ public abstract class Argument implements Comparable<Argument> {
         return typeConverter;
     }
 
-    protected final boolean matches(String token) {
-        return pattern.matcher(token).matches();
+    protected final boolean matches(String keyValue) {
+        return pattern.matcher(keyValue).matches();
     }
 
     protected final String getRegex() {
@@ -143,12 +144,16 @@ public abstract class Argument implements Comparable<Argument> {
         return Collections.unmodifiableSet(names);
     }
 
-    public final String getDesc() {
+    public String getCanonicalName() {
+        return (names.isEmpty()) ? null : names.toArray(new String[0])[0];
+    }
+
+    public final String getDescription() {
         return desc;
     }
 
-    public final boolean hasDesc() {
-        return (desc != null) && !(desc.equals(""));
+    public final boolean hasDescription() {
+        return (desc != null) && !(desc.equals(Strings.EMPTY));
     }
 
     public final Class<?> getType() {
@@ -222,9 +227,4 @@ public abstract class Argument implements Comparable<Argument> {
         return toDescriptiveString();
     }
 
-    public String toGenericString() {
-        return String.format(
-                "%s", names.toArray()[0]
-        );
-    }
 }

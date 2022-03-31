@@ -26,7 +26,7 @@ public class Splitter {
     ###########################
     */
 
-    private String name, value, val;
+    private String name, value, returnVal;
 
     /*
     ###########################
@@ -62,7 +62,7 @@ public class Splitter {
 
     public final Splitter setValue(final String value) {
         this.value = value;
-        this.val = value;
+        this.returnVal = value;
         return this;
     }
 
@@ -73,20 +73,20 @@ public class Splitter {
             );
         }
         if (name != null) {
-            val = value.split(name.concat("\\s"), 2)[1];
+            returnVal = value.split(name.concat("\\s"), 2)[1];
         }
-        if (!firstAndLastEqualsAny(val, PAIRS)) {
-            val = val.split("\\s", 2)[0];
+        if (!firstAndLastEqualsAny(returnVal, PAIRS)) {
+            returnVal = returnVal.split("\\s", 2)[0];
         }
         return this;
     }
 
     public final Splitter normalize(final boolean isArray) {
-        val = isArray ? normalizeArray(val) : normalize(val);
+        returnVal = isArray ? normalizeArray(returnVal) : normalize(returnVal);
         return this;
     }
 
     public final String get() {
-        return val;
+        return returnVal;
     }
 }

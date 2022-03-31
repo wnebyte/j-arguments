@@ -128,13 +128,25 @@ public class TypeConverterMap extends AbstractTypeConverterMap {
 
     @Override
     public boolean contains(final Class<?> cls) {
-        return converters.containsKey(cls);
+        if (cls == null) {
+            return false;
+        } else {
+            return converters.containsKey(cls);
+        }
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public <T> TypeConverter<T> get(final Class<T> cls) {
-        return (TypeConverter<T>) converters.get(cls);
+        if (cls == null) {
+            return null;
+        }
+        TypeConverter<?> typeConverter = converters.get(cls);
+        if (typeConverter != null) {
+            return (TypeConverter<T>) typeConverter;
+        } else {
+            return null;
+        }
     }
 
     /*
@@ -221,7 +233,7 @@ public class TypeConverterMap extends AbstractTypeConverterMap {
         }
         @Override
         public byte[] defaultValue() {
-            return new byte[0];
+            return null;
         }
     };
 

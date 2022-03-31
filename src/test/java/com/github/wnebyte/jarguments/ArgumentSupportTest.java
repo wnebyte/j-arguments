@@ -14,13 +14,13 @@ public class ArgumentSupportTest {
         ArgumentFactory argumentCollectionFactory = new ArgumentFactoryBuilder().build();
         List<Argument> arguments = argumentCollectionFactory
                 .setName("-h", "--h")
-                .setIsPositional()
+                .isPositional()
                 .append(int.class)
                 .setName("-a", "--a")
-                .setIsRequired()
+                .isRequired()
                 .append(int.class)
                 .setName("-b", "--b")
-                .setIsRequired()
+                .isRequired()
                 .append(int.class)
                 .get();
 

@@ -18,7 +18,7 @@ public class ArgumentTest {
     public void test01() throws ParseException {
         List<Argument> arguments = new ArgumentFactoryBuilder().build()
                 .setName("-a", "--a")
-                .setIsRequired()
+                .isRequired()
                 .append(Integer.class, new ConstraintCollectionBuilder<Integer>()
                         .addConstraint(new Constraint<Integer>() {
                             @Override
@@ -39,17 +39,17 @@ public class ArgumentTest {
     @Test
     public void testToString() {
         List<Argument> args = new ArgumentFactoryBuilder().build()
-                .setIsPositional()
+                .isPositional()
                 .append(int.class)
                 .setName("-a", "-A")
-                .setIsRequired()
+                .isRequired()
                 .append(int.class)
                 .setName("-b", "-B")
-                .setIsOptional()
+                .isOptional()
                 .setDefaultValue("5")
                 .append(int.class)
                 .setName("-c", "-C")
-                .setIsFlag()
+                .isFlag()
                 .setType(boolean.class)
                 .append()
                 .get();
@@ -79,17 +79,17 @@ public class ArgumentTest {
     public void test03() {
         List<Argument> args = ArgumentFactory.builder().build()
                 .setName("-a", "--a")
-                .setIsRequired()
+                .isRequired()
                 .append(int.class)
-                .setIsPositional()
+                .isPositional()
                 .append(int.class)
                 .setName("--flag")
-                .setIsFlag()
+                .isFlag()
                 .append(boolean.class)
-                .setIsPositional()
+                .isPositional()
                 .append(int.class)
                 .setName("-b", "--b")
-                .setIsOptional()
+                .isOptional()
                 .append(int.class)
                 .get();
         args.sort(Argument::compareTo);

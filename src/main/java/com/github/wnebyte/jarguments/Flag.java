@@ -8,7 +8,7 @@ import com.github.wnebyte.jarguments.util.Objects;
 import com.github.wnebyte.jarguments.util.Strings;
 
 /**
- * This class represents an optional Argument that has both a predefined value for when it's included, and excluded.
+ * This class represents an optional <code>Argument</code> that has only a name.
  */
 public class Flag extends Optional {
 
@@ -69,6 +69,28 @@ public class Flag extends Optional {
 
     @Override
     protected Object initialize(final String value) throws ParseException {
+        if (value == null || value.equals(Strings.EMPTY)) {
+            if (hasDefaultValue()) {
+                String val = new Splitter()
+                        .setValue(defaultValue)
+                        .normalize(isArray())
+                        .get();
+                return typeConverter.convert(val);
+            } else {
+                return typeConverter.defaultValue();
+            }
+        } else {
+            String val = new Splitter()
+                    .setValue(this.value)
+                    .normalize(isArray())
+                    .get();
+            return typeConverter.convert(val);
+        }
+    }
+
+    /*
+    @Override
+    protected Object initialize(final String value) throws ParseException {
         if (Strings.intersects(value, names)) {
             return typeConverter.convert(this.value);
         } else {
@@ -76,6 +98,7 @@ public class Flag extends Optional {
                     typeConverter.convert(defaultValue) : typeConverter.defaultValue();
         }
     }
+     */
 
     public final String getValue() {
         return value;
