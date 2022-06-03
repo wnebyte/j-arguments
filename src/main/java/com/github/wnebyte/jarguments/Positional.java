@@ -7,7 +7,7 @@ import com.github.wnebyte.jarguments.exception.ParseException;
 /**
  * This class represents a positional and required <code>Argument</code> that has only a value.
  */
-public class Positional extends Argument {
+public class Positional extends Required {
 
     /*
     ###########################

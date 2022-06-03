@@ -325,6 +325,7 @@ public class ParserTest extends BaseTestClass {
                 .isOptional()
                 .setDefaultValue("default_name")
                 .append(String.class)
+                .setName("--opt")
                 .isOptional()
                 .setDefaultValue("2000")
                 .append(int.class)

@@ -56,17 +56,18 @@ public class ArgumentSupport {
     }
 
     public static <T extends Argument> List<T> getArguments(Collection<Argument> c, Class<T> cls) {
-        List<T> list = new ArrayList<>();
-        if ((isNullOrEmpty(c)) || (cls == null)) {
-            return list;
+        List<T> arguments = new ArrayList<>();
+        if (isNullOrEmpty(c) || cls == null) {
+            return arguments;
         }
-        for (Argument arg : c) {
-            if (arg.getClass().equals(cls)) {
-                T t = cls.cast(arg);
-                list.add(t);
+        for (Argument argument : c) {
+            if (cls.isAssignableFrom(argument.getClass())) {
+                T obj = cls.cast(argument);
+                arguments.add(obj);
             }
         }
-        return list;
+
+        return arguments;
     }
 
     public static <T extends Argument> boolean containsArgument(Collection<Argument> c, Class<T> cls) {

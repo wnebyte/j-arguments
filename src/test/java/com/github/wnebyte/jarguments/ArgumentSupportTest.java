@@ -1,18 +1,20 @@
 package com.github.wnebyte.jarguments;
 
-import java.util.Arrays;
 import java.util.List;
 import org.junit.Test;
 import org.junit.Assert;
 import com.github.wnebyte.jarguments.factory.ArgumentFactory;
 import com.github.wnebyte.jarguments.factory.ArgumentFactoryBuilder;
+import static com.github.wnebyte.jarguments.ArgumentSupport.getArguments;
 
 public class ArgumentSupportTest {
 
     @Test
-    public void test00() {
-        ArgumentFactory argumentCollectionFactory = new ArgumentFactoryBuilder().build();
-        List<Argument> arguments = argumentCollectionFactory
+    public void testGetArguments00() {
+        ArgumentFactory factory = new ArgumentFactoryBuilder().build();
+        // 1 positional
+        // 2 required
+        List<Argument> c = factory
                 .setName("-h", "--h")
                 .isPositional()
                 .append(int.class)
@@ -24,13 +26,34 @@ public class ArgumentSupportTest {
                 .append(int.class)
                 .get();
 
-        List<Positional> positionalList = ArgumentSupport.getArguments(arguments, Positional.class);
+        Assert.assertEquals(3, c.size());
+        List<Positional> positionalList = ArgumentSupport.getArguments(c, Positional.class);
         Assert.assertEquals(1, positionalList.size());
-        List<Required> requiredList = ArgumentSupport.getArguments(arguments, Required.class);
-        Assert.assertEquals(2, requiredList.size());
-        List<Optional> optionalList = ArgumentSupport.getArguments(arguments, Optional.class);
+        List<Required> requiredList = ArgumentSupport.getArguments(c, Required.class);
+        Assert.assertEquals(3, requiredList.size());
+        List<Optional> optionalList = ArgumentSupport.getArguments(c, Optional.class);
         Assert.assertTrue(optionalList.isEmpty());
-        List<String> regex = ArgumentSupport.regexList(arguments, Required.class);
-        System.out.println(Arrays.toString(regex.toArray()));
+    }
+
+    @Test
+    public void testGetArguments01() {
+        // 2 optional
+        // 1 flag
+        List<Argument> c = new ArgumentFactory()
+                .setName("-a")
+                .isOptional()
+                .append(int.class)
+                .setName("-b")
+                .isFlag()
+                .append(boolean.class)
+                .setName("-c")
+                .isFlag()
+                .append(boolean.class)
+                .get();
+
+        List<Optional> c1 = getArguments(c, Optional.class);
+        Assert.assertEquals(3, c1.size());
+        List<Flag> c2 = getArguments(c, Flag.class);
+        Assert.assertEquals(2, c2.size());
     }
 }
