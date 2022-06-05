@@ -4,9 +4,9 @@ import java.util.*;
 import com.github.wnebyte.jarguments.*;
 import com.github.wnebyte.jarguments.Optional;
 import com.github.wnebyte.jarguments.Constraint;
-import com.github.wnebyte.jarguments.convert.AbstractTypeConverterMap;
-import com.github.wnebyte.jarguments.convert.TypeConverterMap;
-import com.github.wnebyte.jarguments.convert.TypeConverter;
+import com.github.wnebyte.jarguments.adapter.AbstractTypeAdapterRegistry;
+import com.github.wnebyte.jarguments.adapter.TypeAdapter;
+import com.github.wnebyte.jarguments.adapter.TypeAdapterRegistry;
 import com.github.wnebyte.jarguments.exception.ParseException;
 import com.github.wnebyte.jarguments.util.Reflections;
 import com.github.wnebyte.jarguments.util.Strings;
@@ -56,7 +56,7 @@ public class ArgumentFactory extends AbstractArgumentFactory {
         add('}');
     }};
 
-    private final AbstractTypeConverterMap typeConverters;
+    private final AbstractTypeAdapterRegistry typeConverters;
 
     private final Set<String> allNames = new HashSet<>();
 
@@ -76,7 +76,7 @@ public class ArgumentFactory extends AbstractArgumentFactory {
 
     private Class<?> type;
 
-    private TypeConverter<?> typeConverter;
+    private TypeAdapter<?> typeAdapter;
 
     private int index = 0;
 
@@ -93,25 +93,25 @@ public class ArgumentFactory extends AbstractArgumentFactory {
     */
 
     /**
-     * Constructs a new instance using the specified <code>Collection</code> and <code>AbstractTypeConverterMap</code>.
+     * Constructs a new instance using the specified <code>Collection</code> and <code>AbstractTypeAdapterRegistry</code>.
      * @param exclude chars to be removed from the specified name of each <code>Argument</code>.
      * @param typeConverters to be used.
      */
     public ArgumentFactory(
             Collection<Character> exclude,
-            AbstractTypeConverterMap typeConverters
+            AbstractTypeAdapterRegistry typeConverters
     ) {
         if (exclude != null) {
             this.exclude.addAll(exclude);
         }
-        this.typeConverters = (typeConverters != null) ? typeConverters : TypeConverterMap.getInstance();
+        this.typeConverters = (typeConverters != null) ? typeConverters : TypeAdapterRegistry.getInstance();
     }
 
     /**
-     * Constructs a new instance using the specified <code>AbstractTypeConverterMap</code>.
+     * Constructs a new instance using the specified <code>AbstractTypeAdapterRegistry</code>.
      * @param typeConverters to be used.
      */
-    public ArgumentFactory(AbstractTypeConverterMap typeConverters) {
+    public ArgumentFactory(AbstractTypeAdapterRegistry typeConverters) {
         this(null, typeConverters);
     }
 
@@ -177,12 +177,12 @@ public class ArgumentFactory extends AbstractArgumentFactory {
     }
 
     /**
-     * Sets the typeConverter property of the next <code>Argument</code> to be appended.
-     * @param typeConverter a TypeConverter.
+     * Sets the typeAdapter property of the next <code>Argument</code> to be appended.
+     * @param typeAdapter a TypeAdapter.
      * @return this.
      */
-    public ArgumentFactory setTypeConverter(TypeConverter<?> typeConverter) {
-        this.typeConverter = typeConverter;
+    public ArgumentFactory setTypeAdapter(TypeAdapter<?> typeAdapter) {
+        this.typeAdapter = typeAdapter;
         return this;
     }
 
@@ -268,19 +268,19 @@ public class ArgumentFactory extends AbstractArgumentFactory {
      * @return this.
      */
     public <T> ArgumentFactory append(Class<T> type) {
-        TypeConverter<T> typeConverter = typeConverters.get(type);
-        return append(type, typeConverter);
+        TypeAdapter<T> typeAdapter = typeConverters.get(type);
+        return append(type, typeAdapter);
     }
 
     /**
      * Constructs a new <code>Argument</code> using the specified <code>Class</code> and
-     * <code>TypeConverter</code>.
+     * <code>TypeAdapter</code>.
      * @param type a type.
-     * @param typeConverter a TypeConverter.
+     * @param typeAdapter a TypeAdapter.
      * @return this.
      */
-    public <T> ArgumentFactory append(Class<T> type, TypeConverter<T> typeConverter) {
-        return append(type, typeConverter, null);
+    public <T> ArgumentFactory append(Class<T> type, TypeAdapter<T> typeAdapter) {
+        return append(type, typeAdapter, null);
     }
 
     /**
@@ -291,29 +291,29 @@ public class ArgumentFactory extends AbstractArgumentFactory {
      * @return this.
      */
     public <T> ArgumentFactory append(Class<T> type, Collection<Constraint<T>> constraints) {
-        TypeConverter<T> typeConverter = typeConverters.get(type);
-        return append(type, typeConverter, constraints);
+        TypeAdapter<T> typeAdapter = typeConverters.get(type);
+        return append(type, typeAdapter, constraints);
     }
 
     /**
      * Constructs a new <code>Argument</code> using the specified <code>Class</code>,
-     * <code>TypeConverter</code> and <code>Collection</code>.
+     * <code>TypeAdapter</code> and <code>Collection</code>.
      * @param type a type.
-     * @param typeConverter a TypeConverter.
+     * @param typeAdapter a TypeAdapter.
      * @param constraints a Collection.
      * @return this.
      */
     public <T> ArgumentFactory append(
             Class<T> type,
-            TypeConverter<T> typeConverter,
+            TypeAdapter<T> typeAdapter,
             Collection<Constraint<T>> constraints
 
     ) {
         final Argument argument;
 
-        if (type == null || typeConverter == null) {
+        if (type == null || typeAdapter == null) {
             throw new IllegalArgumentException(
-                    "Type & TypeConverter have to be non-null."
+                    "Type & TypeAdapter have to be non-null."
             );
         }
         if (cls == null) {
@@ -328,9 +328,10 @@ public class ArgumentFactory extends AbstractArgumentFactory {
             argument = new Flag(
                     names,
                     description,
+                    null,
                     index++,
                     type,
-                    typeConverter,
+                    typeAdapter,
                     flagValue == null ? "true" : flagValue,
                     defaultValue
             );
@@ -344,9 +345,10 @@ public class ArgumentFactory extends AbstractArgumentFactory {
             argument = new Flag(
                     names,
                     description,
+                    null,
                     index++,
                     type,
-                    typeConverter,
+                    typeAdapter,
                     flagValue,
                     defaultValue
             );
@@ -355,9 +357,11 @@ public class ArgumentFactory extends AbstractArgumentFactory {
             argument = new Optional(
                     names,
                     description,
+                    null,
+                    null,
                     index++,
                     type,
-                    typeConverter,
+                    typeAdapter,
                     constraints,
                     defaultValue
             );
@@ -366,18 +370,22 @@ public class ArgumentFactory extends AbstractArgumentFactory {
             argument = new Required(
                     names,
                     description,
+                    null,
+                    null,
                     index++,
                     type,
-                    typeConverter,
+                    typeAdapter,
                     constraints
             );
         }
         else if (Positional.class.equals(cls)) {
             argument = new Positional(
                     description,
+                    null,
+                    null,
                     index++,
                     type,
-                    typeConverter,
+                    typeAdapter,
                     constraints,
                     position++
             );
@@ -412,13 +420,13 @@ public class ArgumentFactory extends AbstractArgumentFactory {
                     "Type has to be specified."
             );
         }
-        if (typeConverter == null) {
-            typeConverter = typeConverters.get(type);
+        if (typeAdapter == null) {
+            typeAdapter = typeConverters.get(type);
 
-            if (typeConverter == null) {
+            if (typeAdapter == null) {
                 throw new IllegalArgumentException(
                         String.format(
-                                "This factory instance's TypeConverterMap has no mapping for Type: %s.", type
+                                "This factory instance's TypeAdapterRegistry has no mapping for Type: %s.", type
                         )
                 );
             }
@@ -430,9 +438,10 @@ public class ArgumentFactory extends AbstractArgumentFactory {
             argument = new Flag(
                     names,
                     description,
+                    null,
                     index++,
                     type,
-                    typeConverter,
+                    typeAdapter,
                     flagValue == null ? "true" : flagValue,
                     defaultValue
             );
@@ -446,9 +455,10 @@ public class ArgumentFactory extends AbstractArgumentFactory {
             argument = new Flag(
                     names,
                     description,
+                    null,
                     index++,
                     type,
-                    typeConverter,
+                    typeAdapter,
                     flagValue,
                     defaultValue
             );
@@ -457,9 +467,11 @@ public class ArgumentFactory extends AbstractArgumentFactory {
             argument = new Optional(
                     names,
                     description,
+                    null,
+                    null,
                     index++,
                     type,
-                    typeConverter,
+                    typeAdapter,
                     defaultValue
             );
         }
@@ -467,17 +479,21 @@ public class ArgumentFactory extends AbstractArgumentFactory {
             argument = new Required(
                     names,
                     description,
+                    null,
+                    null,
                     index++,
                     type,
-                    typeConverter
+                    typeAdapter
             );
         }
         else if (Positional.class.equals(cls)) {
             argument = new Positional(
                     description,
+                    null,
+                    null,
                     index++,
                     type,
-                    typeConverter,
+                    typeAdapter,
                     position++
             );
         }
@@ -528,7 +544,7 @@ public class ArgumentFactory extends AbstractArgumentFactory {
         description = null;
         cls = null;
         type = null;
-        typeConverter = null;
+        typeAdapter = null;
     }
 
     /**

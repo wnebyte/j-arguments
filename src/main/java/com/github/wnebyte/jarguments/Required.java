@@ -2,9 +2,8 @@ package com.github.wnebyte.jarguments;
 
 import java.util.Set;
 import java.util.Collection;
-import com.github.wnebyte.jarguments.convert.TypeConverter;
+import com.github.wnebyte.jarguments.adapter.TypeAdapter;
 import com.github.wnebyte.jarguments.exception.ParseException;
-import com.github.wnebyte.jarguments.util.Strings;
 
 /**
  * This class represents a required <code>Argument</code> that has both a name and a value.
@@ -20,22 +19,26 @@ public class Required extends Argument {
     public Required(
             final Set<String> name,
             final String description,
+            final String metavar,
+            final Set<String> choices,
             final int index,
             final Class<?> type,
-            final TypeConverter<?> typeConverter
+            final TypeAdapter<?> typeAdapter
     ) {
-        super(name, description, index, type, typeConverter);
+        super(name, description, metavar, choices, index, type, typeAdapter);
     }
 
     public <T> Required(
             final Set<String> name,
             final String description,
+            final String metavar,
+            final Set<String> choices,
             final int index,
             final Class<T> type,
-            final TypeConverter<T> typeConverter,
+            final TypeAdapter<T> typeAdapter,
             final Collection<Constraint<T>> constraints
     ) {
-        super(name, description, index, type, typeConverter, constraints);
+        super(name, description, metavar, choices, index, type, typeAdapter, constraints);
     }
 
     /*
@@ -59,19 +62,14 @@ public class Required extends Argument {
         return initializer.apply(val);
     }
 
-    /*
     @Override
-    protected Object initialize(final String value) throws ParseException {
-        String val = new Splitter()
-                .setName(Strings.firstSubstring(value, names))
-                .setValue(value)
-                .split()
-                .normalize(isArray())
-                .get();
-        return initializer.apply(val);
-       // return super.initialize(val);
+    public int compareTo(Argument o) {
+        if (o instanceof Positional) {
+            return -1;
+        } else {
+            return index - o.getIndex();
+        }
     }
-     */
 
     @Override
     public boolean equals(Object o) {

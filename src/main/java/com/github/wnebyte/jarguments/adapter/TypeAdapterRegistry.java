@@ -1,4 +1,4 @@
-package com.github.wnebyte.jarguments.convert;
+package com.github.wnebyte.jarguments.adapter;
 
 import java.util.*;
 import java.lang.reflect.Array;
@@ -7,51 +7,7 @@ import com.github.wnebyte.jarguments.util.Objects;
 import com.github.wnebyte.jarguments.util.Strings;
 import com.github.wnebyte.jarguments.exception.ParseException;
 
-public class TypeConverterMap extends AbstractTypeConverterMap {
-
-    private static TypeConverterMap instance = null;
-
-    public TypeConverterMap() {
-        super.converters = new HashMap<>(9 * 4);
-        init();
-    }
-
-    private void init() {
-        put(byte.class, BYTE_TYPE_CONVERTER);
-        put(byte[].class, BYTE_ARRAY_TYPE_CONVERTER);
-        put(Byte.class, BYTE_TYPE_CONVERTER);
-        put(Byte[].class, arrayTypeConverterOf(Byte.class));
-        put(boolean.class, BOOLEAN_TYPE_CONVERTER);
-        put(boolean[].class, BOOLEAN_ARRAY_TYPE_CONVERTER);
-        put(Boolean.class, BOOLEAN_TYPE_CONVERTER);
-        put(Boolean[].class, arrayTypeConverterOf(Boolean.class));
-        put(char.class, CHARACTER_TYPE_CONVERTER);
-        put(char[].class, CHAR_ARRAY_TYPE_CONVERTER);
-        put(Character.class, CHARACTER_TYPE_CONVERTER);
-        put(Character[].class, arrayTypeConverterOf(Character.class));
-        put(double.class, DOUBLE_TYPE_CONVERTER);
-        put(double[].class, DOUBLE_ARRAY_TYPE_CONVERTER);
-        put(Double.class, DOUBLE_TYPE_CONVERTER);
-        put(Double[].class, arrayTypeConverterOf(Double.class));
-        put(float.class, FLOAT_TYPE_CONVERTER);
-        put(float[].class, FLOAT_ARRAY_TYPE_CONVERTER);
-        put(Float.class, FLOAT_TYPE_CONVERTER);
-        put(Float[].class, arrayTypeConverterOf(Float.class));
-        put(int.class, INTEGER_TYPE_CONVERTER);
-        put(int[].class, INT_ARRAY_TYPE_CONVERTER);
-        put(Integer.class, INTEGER_TYPE_CONVERTER);
-        put(Integer[].class, arrayTypeConverterOf(Integer.class));
-        put(long.class, LONG_TYPE_CONVERTER);
-        put(long[].class, LONG_ARRAY_TYPE_CONVERTER);
-        put(Long.class, LONG_TYPE_CONVERTER);
-        put(Long[].class, arrayTypeConverterOf(Long.class));
-        put(short.class, SHORT_TYPE_CONVERTER);
-        put(short[].class, SHORT_ARRAY_TYPE_CONVERTER);
-        put(Short.class, SHORT_TYPE_CONVERTER);
-        put(Short[].class, arrayTypeConverterOf(Short.class));
-        put(String.class, STRING_TYPE_CONVERTER);
-        put(String[].class, arrayTypeConverterOf(String.class));
-    }
+public class TypeAdapterRegistry extends AbstractTypeAdapterRegistry {
 
     /*
     ###########################
@@ -59,20 +15,20 @@ public class TypeConverterMap extends AbstractTypeConverterMap {
     ###########################
     */
 
-    public static TypeConverterMap getInstance() {
-        if (instance == null) {
-            instance = new TypeConverterMap();
+    public static TypeAdapterRegistry getInstance() {
+        if (INSTANCE == null) {
+            INSTANCE = new TypeAdapterRegistry();
         }
-        return instance;
+        return INSTANCE;
     }
 
-    public static <T> TypeConverter<T[]> arrayTypeConverterOf(
-            final Class<T> componentType, final TypeConverter<T> typeConverter
+    public static <T> TypeAdapter<T[]> arrayTypeAdapterOf(
+            final Class<T> componentType, final TypeAdapter<T> typeAdapter
     ) {
-        if (componentType == null || typeConverter == null) {
+        if (componentType == null || typeAdapter == null) {
             return null;
         }
-        return new TypeConverter<T[]>() {
+        return new TypeAdapter<T[]>() {
             @Override
             public T[] convert(final String value) throws ParseException {
                 try {
@@ -82,7 +38,7 @@ public class TypeConverterMap extends AbstractTypeConverterMap {
                     int i = 0;
                     for (String element : elements) {
                         String val = Splitter.normalize(element);
-                        array[i++] = typeConverter.convert(val);
+                        array[i++] = typeAdapter.convert(val);
                     }
                     return array;
                 } catch (Exception e) {
@@ -98,32 +54,133 @@ public class TypeConverterMap extends AbstractTypeConverterMap {
         };
     }
 
+    public static <T> TypeAdapter<List<T>> listTypeAdapterOf(
+            final Class<T> componentType, final TypeAdapter<T> typeAdapter
+    ) {
+        if (componentType == null || typeAdapter == null) {
+            return null;
+        }
+        TypeAdapter<T[]> arrayTypeAdapter = arrayTypeAdapterOf(componentType, typeAdapter);
+
+        return new TypeAdapter<List<T>>() {
+            @Override
+            public List<T> convert(String value) throws ParseException {
+                T[] array = arrayTypeAdapter.convert(value);
+                return Arrays.asList(array);
+            }
+            @Override
+            public List<T> defaultValue() {
+                return null;
+            }
+        };
+    }
+
+    public static <T> TypeAdapter<Collection<T>> collectionTypeAdapterOf(
+            final Class<T> componentType, final TypeAdapter<T> typeAdapter
+    ) {
+        if (componentType == null || typeAdapter == null) {
+            return null;
+        }
+        TypeAdapter<List<T>> listTypeAdapter = listTypeAdapterOf(componentType, typeAdapter);
+
+        return new TypeAdapter<Collection<T>>() {
+            @Override
+            public Collection<T> convert(String value) throws ParseException {
+                return listTypeAdapter.convert(value);
+            }
+            @Override
+            public Collection<T> defaultValue() {
+                return null;
+            }
+        };
+    }
+
+    /*
+    ###########################
+    #       STATIC FIELDS     #
+    ###########################
+    */
+
+    private static TypeAdapterRegistry INSTANCE = null;
+
+    /*
+    ###########################
+    #       CONSTRUCTORS      #
+    ###########################
+    */
+
+    public TypeAdapterRegistry() {
+        super.converters = new HashMap<>(9 * 4);
+        init();
+    }
+
     /*
     ###########################
     #         METHODS         #
     ###########################
     */
 
-    public final <T> TypeConverter<T[]> arrayTypeConverterOf(final Class<T> componentType) {
-        return arrayTypeConverterOf(componentType, get(componentType));
+    private void init() {
+        register(byte.class, BYTE_TYPE_ADAPTER);
+        register(byte[].class, BYTE_ARRAY_TYPE_ADAPTER);
+        register(Byte.class, BYTE_TYPE_ADAPTER);
+        register(Byte[].class, arrayTypeAdapterOf(Byte.class));
+        register(boolean.class, BOOLEAN_TYPE_ADAPTER);
+        register(boolean[].class, BOOLEAN_ARRAY_TYPE_ADAPTER);
+        register(Boolean.class, BOOLEAN_TYPE_ADAPTER);
+        register(Boolean[].class, arrayTypeAdapterOf(Boolean.class));
+        register(char.class, CHARACTER_TYPE_ADAPTER);
+        register(char[].class, CHAR_ARRAY_TYPE_ADAPTER);
+        register(Character.class, CHARACTER_TYPE_ADAPTER);
+        register(Character[].class, arrayTypeAdapterOf(Character.class));
+        register(double.class, DOUBLE_TYPE_ADAPTER);
+        register(double[].class, DOUBLE_ARRAY_TYPE_ADAPTER);
+        register(Double.class, DOUBLE_TYPE_ADAPTER);
+        register(Double[].class, arrayTypeAdapterOf(Double.class));
+        register(float.class, FLOAT_TYPE_ADAPTER);
+        register(float[].class, FLOAT_ARRAY_TYPE_ADAPTER);
+        register(Float.class, FLOAT_TYPE_ADAPTER);
+        register(Float[].class, arrayTypeAdapterOf(Float.class));
+        register(int.class, INTEGER_TYPE_ADAPTER);
+        register(int[].class, INT_ARRAY_TYPE_ADAPTER);
+        register(Integer.class, INTEGER_TYPE_ADAPTER);
+        register(Integer[].class, arrayTypeAdapterOf(Integer.class));
+        register(long.class, LONG_TYPE_ADAPTER);
+        register(long[].class, LONG_ARRAY_TYPE_ADAPTER);
+        register(Long.class, LONG_TYPE_ADAPTER);
+        register(Long[].class, arrayTypeAdapterOf(Long.class));
+        register(short.class, SHORT_TYPE_ADAPTER);
+        register(short[].class, SHORT_ARRAY_TYPE_ADAPTER);
+        register(Short.class, SHORT_TYPE_ADAPTER);
+        register(Short[].class, arrayTypeAdapterOf(Short.class));
+        register(String.class, STRING_TYPE_ADAPTER);
+        register(String[].class, arrayTypeAdapterOf(String.class));
+    }
+
+    public final <T> TypeAdapter<T[]> arrayTypeAdapterOf(final Class<T> componentType) {
+        return arrayTypeAdapterOf(componentType, get(componentType));
+    }
+
+    public final <T> TypeAdapter<List<T>> listTypeAdapterOf(final Class<T> componentType) {
+        return listTypeAdapterOf(componentType, get(componentType));
     }
 
     @Override
-    public <T> void put(final Class<T> cls, final TypeConverter<T> typeConverter) {
-        if (cls == null || typeConverter == null) {
+    public <T> void register(final Class<T> cls, final TypeAdapter<T> typeAdapter) {
+        if (cls == null || typeAdapter == null) {
             throw new IllegalArgumentException(
-                    "Class & TypeConverter must not be null."
+                    "Class & TypeAdapter must not be null."
             );
         }
-        converters.put(cls, typeConverter);
+        converters.put(cls, typeAdapter);
     }
 
     @Override
-    public <T> boolean putIfAbsent(final Class<T> cls, final TypeConverter<T> typeConverter) {
-        if (cls == null || typeConverter == null) {
+    public <T> boolean registerIfAbsent(final Class<T> cls, final TypeAdapter<T> typeAdapter) {
+        if (cls == null || typeAdapter == null) {
             return false;
         }
-        return (converters.putIfAbsent(cls, typeConverter) == null);
+        return (converters.putIfAbsent(cls, typeAdapter) == null);
     }
 
     @Override
@@ -137,13 +194,13 @@ public class TypeConverterMap extends AbstractTypeConverterMap {
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T> TypeConverter<T> get(final Class<T> cls) {
+    public <T> TypeAdapter<T> get(final Class<T> cls) {
         if (cls == null) {
             return null;
         }
-        TypeConverter<?> typeConverter = converters.get(cls);
-        if (typeConverter != null) {
-            return (TypeConverter<T>) typeConverter;
+        TypeAdapter<?> typeAdapter = converters.get(cls);
+        if (typeAdapter != null) {
+            return (TypeAdapter<T>) typeAdapter;
         } else {
             return null;
         }
@@ -151,11 +208,11 @@ public class TypeConverterMap extends AbstractTypeConverterMap {
 
     /*
     ###########################
-    #     IMPLEMENTATIONS     #
+    #         ADAPTERS        #
     ###########################
     */
 
-    public final TypeConverter<Boolean> BOOLEAN_TYPE_CONVERTER = new TypeConverter<Boolean>() {
+    public final TypeAdapter<Boolean> BOOLEAN_TYPE_ADAPTER = new TypeAdapter<Boolean>() {
         @Override
         public Boolean convert(final String value) throws ParseException {
             try {
@@ -172,7 +229,7 @@ public class TypeConverterMap extends AbstractTypeConverterMap {
         }
     };
 
-    public final TypeConverter<boolean[]> BOOLEAN_ARRAY_TYPE_CONVERTER = new TypeConverter<boolean[]>() {
+    public final TypeAdapter<boolean[]> BOOLEAN_ARRAY_TYPE_ADAPTER = new TypeAdapter<boolean[]>() {
         @Override
         public boolean[] convert(final String value) throws ParseException {
             try {
@@ -181,7 +238,7 @@ public class TypeConverterMap extends AbstractTypeConverterMap {
                 int i = 0;
                 for (String element : elements) {
                     String val = Splitter.normalize(element);
-                    array[i++] = BOOLEAN_TYPE_CONVERTER.convert(val);
+                    array[i++] = BOOLEAN_TYPE_ADAPTER.convert(val);
                 }
                 return array;
             } catch (Exception e) {
@@ -196,7 +253,7 @@ public class TypeConverterMap extends AbstractTypeConverterMap {
         }
     };
 
-    public final TypeConverter<Byte> BYTE_TYPE_CONVERTER = new TypeConverter<Byte>() {
+    public final TypeAdapter<Byte> BYTE_TYPE_ADAPTER = new TypeAdapter<Byte>() {
         @Override
         public Byte convert(final String value) throws ParseException {
             try {
@@ -213,7 +270,7 @@ public class TypeConverterMap extends AbstractTypeConverterMap {
         }
     };
 
-    public final TypeConverter<byte[]> BYTE_ARRAY_TYPE_CONVERTER = new TypeConverter<byte[]>() {
+    public final TypeAdapter<byte[]> BYTE_ARRAY_TYPE_ADAPTER = new TypeAdapter<byte[]>() {
         @Override
         public byte[] convert(final String value) throws ParseException {
             try {
@@ -222,7 +279,7 @@ public class TypeConverterMap extends AbstractTypeConverterMap {
                 int i = 0;
                 for (String element : elements) {
                     String val = Splitter.normalize(element);
-                    array[i++] = BYTE_TYPE_CONVERTER.convert(val);
+                    array[i++] = BYTE_TYPE_ADAPTER.convert(val);
                 }
                 return array;
             } catch (Exception e) {
@@ -237,7 +294,7 @@ public class TypeConverterMap extends AbstractTypeConverterMap {
         }
     };
 
-    public final TypeConverter<Character> CHARACTER_TYPE_CONVERTER = new TypeConverter<Character>() {
+    public final TypeAdapter<Character> CHARACTER_TYPE_ADAPTER = new TypeAdapter<Character>() {
         @Override
         public Character convert(final String value) throws ParseException {
             try {
@@ -254,7 +311,7 @@ public class TypeConverterMap extends AbstractTypeConverterMap {
         }
     };
 
-    public final TypeConverter<char[]> CHAR_ARRAY_TYPE_CONVERTER = new TypeConverter<char[]>() {
+    public final TypeAdapter<char[]> CHAR_ARRAY_TYPE_ADAPTER = new TypeAdapter<char[]>() {
         @Override
         public char[] convert(final String value) throws ParseException {
             try {
@@ -263,7 +320,7 @@ public class TypeConverterMap extends AbstractTypeConverterMap {
                 int i = 0;
                 for (String element : elements) {
                     String val = Splitter.normalize(element);
-                    array[i++] = CHARACTER_TYPE_CONVERTER.convert(val);
+                    array[i++] = CHARACTER_TYPE_ADAPTER.convert(val);
                 }
                 return array;
             } catch (Exception e) {
@@ -278,7 +335,7 @@ public class TypeConverterMap extends AbstractTypeConverterMap {
         }
     };
 
-    public final TypeConverter<Double> DOUBLE_TYPE_CONVERTER = new TypeConverter<Double>() {
+    public final TypeAdapter<Double> DOUBLE_TYPE_ADAPTER = new TypeAdapter<Double>() {
         @Override
         public Double convert(final String value) throws ParseException {
             try {
@@ -295,7 +352,7 @@ public class TypeConverterMap extends AbstractTypeConverterMap {
         }
     };
 
-    public final TypeConverter<double[]> DOUBLE_ARRAY_TYPE_CONVERTER = new TypeConverter<double[]>() {
+    public final TypeAdapter<double[]> DOUBLE_ARRAY_TYPE_ADAPTER = new TypeAdapter<double[]>() {
         @Override
         public double[] convert(final String value) throws ParseException {
             try {
@@ -304,7 +361,7 @@ public class TypeConverterMap extends AbstractTypeConverterMap {
                 int i = 0;
                 for (String element : elements) {
                     String val = Splitter.normalize(element);
-                    array[i++] = DOUBLE_TYPE_CONVERTER.convert(val);
+                    array[i++] = DOUBLE_TYPE_ADAPTER.convert(val);
                 }
                 return array;
             } catch (Exception e) {
@@ -319,7 +376,7 @@ public class TypeConverterMap extends AbstractTypeConverterMap {
         }
     };
 
-    public final TypeConverter<Float> FLOAT_TYPE_CONVERTER = new TypeConverter<Float>() {
+    public final TypeAdapter<Float> FLOAT_TYPE_ADAPTER = new TypeAdapter<Float>() {
         @Override
         public Float convert(final String value) throws ParseException {
             try {
@@ -336,7 +393,7 @@ public class TypeConverterMap extends AbstractTypeConverterMap {
         }
     };
 
-    public final TypeConverter<float[]> FLOAT_ARRAY_TYPE_CONVERTER = new TypeConverter<float[]>() {
+    public final TypeAdapter<float[]> FLOAT_ARRAY_TYPE_ADAPTER = new TypeAdapter<float[]>() {
         @Override
         public float[] convert(final String value) throws ParseException {
             try {
@@ -345,7 +402,7 @@ public class TypeConverterMap extends AbstractTypeConverterMap {
                 int i = 0;
                 for (String element : elements) {
                     String val = Splitter.normalize(element);
-                    array[i++] = FLOAT_TYPE_CONVERTER.convert(val);
+                    array[i++] = FLOAT_TYPE_ADAPTER.convert(val);
                 }
                 return array;
             } catch (Exception e) {
@@ -360,7 +417,7 @@ public class TypeConverterMap extends AbstractTypeConverterMap {
         }
     };
 
-    public final TypeConverter<Integer> INTEGER_TYPE_CONVERTER = new TypeConverter<Integer>() {
+    public final TypeAdapter<Integer> INTEGER_TYPE_ADAPTER = new TypeAdapter<Integer>() {
         @Override
         public Integer convert(final String value) throws ParseException {
             try {
@@ -377,7 +434,7 @@ public class TypeConverterMap extends AbstractTypeConverterMap {
         }
     };
 
-    public final TypeConverter<int[]> INT_ARRAY_TYPE_CONVERTER = new TypeConverter<int[]>() {
+    public final TypeAdapter<int[]> INT_ARRAY_TYPE_ADAPTER = new TypeAdapter<int[]>() {
         @Override
         public int[] convert(final String value) throws ParseException {
             try {
@@ -386,7 +443,7 @@ public class TypeConverterMap extends AbstractTypeConverterMap {
                 int i = 0;
                 for (String element : elements) {
                     String val = Splitter.normalize(element);
-                    array[i++] = INTEGER_TYPE_CONVERTER.convert(val);
+                    array[i++] = INTEGER_TYPE_ADAPTER.convert(val);
                 }
                 return array;
             } catch (Exception e) {
@@ -401,7 +458,7 @@ public class TypeConverterMap extends AbstractTypeConverterMap {
         }
     };
 
-    public final TypeConverter<Long> LONG_TYPE_CONVERTER = new TypeConverter<Long>() {
+    public final TypeAdapter<Long> LONG_TYPE_ADAPTER = new TypeAdapter<Long>() {
         @Override
         public Long convert(final String value) throws ParseException {
             try {
@@ -418,7 +475,7 @@ public class TypeConverterMap extends AbstractTypeConverterMap {
         }
     };
 
-    public final TypeConverter<long[]> LONG_ARRAY_TYPE_CONVERTER = new TypeConverter<long[]>() {
+    public final TypeAdapter<long[]> LONG_ARRAY_TYPE_ADAPTER = new TypeAdapter<long[]>() {
         @Override
         public long[] convert(final String value) throws ParseException {
             try {
@@ -427,7 +484,7 @@ public class TypeConverterMap extends AbstractTypeConverterMap {
                 int i = 0;
                 for (String element : elements) {
                     String val = Splitter.normalize(element);
-                    array[i++] = LONG_TYPE_CONVERTER.convert(val);
+                    array[i++] = LONG_TYPE_ADAPTER.convert(val);
                 }
                 return array;
             } catch (Exception e) {
@@ -442,7 +499,7 @@ public class TypeConverterMap extends AbstractTypeConverterMap {
         }
     };
 
-    public final TypeConverter<Short> SHORT_TYPE_CONVERTER = new TypeConverter<Short>() {
+    public final TypeAdapter<Short> SHORT_TYPE_ADAPTER = new TypeAdapter<Short>() {
         @Override
         public Short convert(final String value) throws ParseException {
             try {
@@ -459,7 +516,7 @@ public class TypeConverterMap extends AbstractTypeConverterMap {
         }
     };
 
-    public final TypeConverter<short[]> SHORT_ARRAY_TYPE_CONVERTER = new TypeConverter<short[]>() {
+    public final TypeAdapter<short[]> SHORT_ARRAY_TYPE_ADAPTER = new TypeAdapter<short[]>() {
         @Override
         public short[] convert(String value) throws ParseException {
             try {
@@ -468,7 +525,7 @@ public class TypeConverterMap extends AbstractTypeConverterMap {
                 int i = 0;
                 for (String element : elements) {
                     String val = Splitter.normalize(element);
-                    array[i++] = SHORT_TYPE_CONVERTER.convert(val);
+                    array[i++] = SHORT_TYPE_ADAPTER.convert(val);
                 }
                 return array;
             } catch (Exception e) {
@@ -483,7 +540,7 @@ public class TypeConverterMap extends AbstractTypeConverterMap {
         }
     };
 
-    public final TypeConverter<String> STRING_TYPE_CONVERTER = new TypeConverter<String>() {
+    public final TypeAdapter<String> STRING_TYPE_ADAPTER = new TypeAdapter<String>() {
         @Override
         public String convert(final String value) {
             return value;
@@ -498,8 +555,8 @@ public class TypeConverterMap extends AbstractTypeConverterMap {
     public boolean equals(Object o) {
         if (o == null) { return false; }
         if (o == this) { return true; }
-        if (!(o instanceof TypeConverterMap)) { return false; }
-        TypeConverterMap typeConverters = (TypeConverterMap) o;
+        if (!(o instanceof TypeAdapterRegistry)) { return false; }
+        TypeAdapterRegistry typeConverters = (TypeAdapterRegistry) o;
         return Objects.equals(typeConverters.converters, this.converters) &&
                 super.equals(typeConverters);
     }
@@ -514,6 +571,6 @@ public class TypeConverterMap extends AbstractTypeConverterMap {
 
     @Override
     public String toString() {
-        return String.format("TypeConverterMap(typeConverters=%s)", converters);
+        return String.format("com.github.wnebyte.jarguments.adapter.TypeAdapterRegistry(converters=%s)", converters);
     }
 }

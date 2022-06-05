@@ -61,13 +61,13 @@ public class Parser extends AbstractParser<TokenSequence, Collection<Argument>> 
         if (map == null) {
             return new Object[0];
         }
-        Object[] arr = new Object[map.size()];
+        Object[] values = new Object[map.size()];
         for (Map.Entry<Argument, Pair<String, String>> entry : map.entrySet()) {
-            arr[entry.getKey().getIndex()]
+            values[entry.getKey().getIndex()]
                     = initialize(entry.getKey(), entry.getValue().getFirst(), entry.getValue().getSecond());
         }
-        assert elementsNonNull(arr);
-        return arr;
+        assert elementsNonNull(values);
+        return values;
     }
 
     @Override
@@ -92,7 +92,7 @@ public class Parser extends AbstractParser<TokenSequence, Collection<Argument>> 
             if (arg == null) {
                 throw new NoSuchArgumentException(
                         String.format(
-                                "No Argument with name/value: '%s' remain to be parsed.", token
+                                "No such Argument with name: '%s'.", token
                         ), input, token
                 );
             }
@@ -102,13 +102,12 @@ public class Parser extends AbstractParser<TokenSequence, Collection<Argument>> 
             }
             else {
                 if (!it.hasNext()) {
-                    throw new MissingArgumentValueException(
+                    throw new MissingArgumentException(
                             String.format(
-                                    "Argument with name: '%s' is missing a value.", token
+                                    "Value must be specified for Argument with name: '%s'.", token
                             ), input, arg
                     );
                 }
-               // value = token.concat(Strings.WHITESPACE).concat(it.next());
                 value = it.next();
                 keyValue = token.concat(Strings.WHITESPACE).concat(value);
             }

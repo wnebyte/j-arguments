@@ -2,7 +2,7 @@ package com.github.wnebyte.jarguments;
 
 import java.util.Set;
 import java.util.Collection;
-import com.github.wnebyte.jarguments.convert.TypeConverter;
+import com.github.wnebyte.jarguments.adapter.TypeAdapter;
 import com.github.wnebyte.jarguments.exception.ParseException;
 import com.github.wnebyte.jarguments.util.Objects;
 import com.github.wnebyte.jarguments.util.Strings;
@@ -32,27 +32,29 @@ public class Flag extends Optional {
     public Flag(
             final Set<String> names,
             final String description,
+            final String metavar,
             final int index,
             final Class<?> type,
-            final TypeConverter<?> typeConverter,
+            final TypeAdapter<?> typeAdapter,
             final String value,
             final String defaultValue
     ) {
-        super(names, description, index, type, typeConverter, defaultValue);
+        super(names, description, metavar, null, index, type, typeAdapter, defaultValue);
         this.value = value;
     }
 
     public <T> Flag(
             final Set<String> name,
             final String description,
+            final String metavar,
             final int index,
             final Class<T> type,
-            final TypeConverter<T> typeConverter,
+            final TypeAdapter<T> typeAdapter,
             final Collection<Constraint<T>> constraints,
             final String value,
             final String defaultValue
     ) {
-        super(name, description, index, type, typeConverter, constraints, defaultValue);
+        super(name, description, metavar, null, index, type, typeAdapter, constraints, defaultValue);
         this.value = value;
     }
 
@@ -75,30 +77,18 @@ public class Flag extends Optional {
                         .setValue(defaultValue)
                         .normalize(isArray())
                         .get();
-                return typeConverter.convert(val);
+                return typeAdapter.convert(val);
             } else {
-                return typeConverter.defaultValue();
+                return typeAdapter.defaultValue();
             }
         } else {
             String val = new Splitter()
                     .setValue(this.value)
                     .normalize(isArray())
                     .get();
-            return typeConverter.convert(val);
+            return typeAdapter.convert(val);
         }
     }
-
-    /*
-    @Override
-    protected Object initialize(final String value) throws ParseException {
-        if (Strings.intersects(value, names)) {
-            return typeConverter.convert(this.value);
-        } else {
-            return hasDefaultValue() ?
-                    typeConverter.convert(defaultValue) : typeConverter.defaultValue();
-        }
-    }
-     */
 
     public final String getValue() {
         return value;

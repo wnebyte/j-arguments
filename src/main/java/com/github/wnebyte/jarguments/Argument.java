@@ -5,11 +5,12 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.regex.Pattern;
 import java.util.Comparator;
-import com.github.wnebyte.jarguments.convert.TypeConverter;
+import com.github.wnebyte.jarguments.adapter.TypeAdapter;
 import com.github.wnebyte.jarguments.exception.ConstraintException;
 import com.github.wnebyte.jarguments.exception.ParseException;
 import com.github.wnebyte.jarguments.util.Objects;
 import com.github.wnebyte.jarguments.util.Reflections;
+import com.github.wnebyte.jarguments.util.Sets;
 import com.github.wnebyte.jarguments.util.Strings;
 
 /**
@@ -39,7 +40,11 @@ public abstract class Argument implements Comparable<Argument> {
 
     protected final Set<String> names;
 
-    protected final String desc;
+    protected final String description;
+
+    protected final String metavar;
+
+    protected final Set<String> choices;
 
     protected final String regex;
 
@@ -49,7 +54,7 @@ public abstract class Argument implements Comparable<Argument> {
 
     protected final Class<?> type;
 
-    protected final TypeConverter<?> typeConverter;
+    protected final TypeAdapter<?> typeAdapter;
 
     protected final Initializer<Object> initializer;
 
@@ -64,19 +69,34 @@ public abstract class Argument implements Comparable<Argument> {
      */
     public Argument(
             final Set<String> names,
-            final String desc,
+            final String description,
+            final String metavar,
+            final Set<String> choices,
             final int index,
             final Class<?> type,
-            final TypeConverter<?> typeConverter
+            final TypeAdapter<?> typeAdapter
     ) {
         this.names = names;
-        this.desc = desc;
+        this.description = description;
+        this.metavar = metavar;
+        this.choices = choices;
         this.index = index;
         this.type = type;
         this.regex = createRegExp(names, type);
         this.pattern = Pattern.compile(regex);
-        this.typeConverter = typeConverter;
-        this.initializer = typeConverter::convert;
+        this.typeAdapter = typeAdapter;
+        this.initializer = value -> {
+            if (choices != null) {
+                if (!choices.contains(value)) {
+                    throw new ConstraintException(
+                            String.format(
+                                    "Value: '%s' is not contained within set: '%s'", value, Sets.toString(choices)
+                            )
+                    );
+                }
+            }
+            return typeAdapter.convert(value);
+        };
     }
 
     /**
@@ -84,21 +104,34 @@ public abstract class Argument implements Comparable<Argument> {
      */
     public <T> Argument(
             final Set<String> names,
-            final String desc,
+            final String description,
+            final String metavar,
+            final Set<String> choices,
             final int index,
             final Class<T> type,
-            final TypeConverter<T> typeConverter,
+            final TypeAdapter<T> typeAdapter,
             final Collection<Constraint<T>> constraints
     ) {
         this.names = names;
-        this.desc = desc;
+        this.description = description;
+        this.metavar = metavar;
+        this.choices = choices;
         this.index = index;
         this.type = type;
         this.regex = createRegExp(names, type);
         this.pattern = Pattern.compile(regex);
-        this.typeConverter = typeConverter;
+        this.typeAdapter = typeAdapter;
         this.initializer = value -> {
-            T val = typeConverter.convert(value);
+            if (choices != null) {
+                if (!choices.contains(value)) {
+                    throw new ConstraintException(
+                            String.format(
+                                    "Value: '%s' is not contained within set: '%s'.",  value, Sets.toString(choices)
+                            )
+                    );
+                }
+            }
+            T val = typeAdapter.convert(value);
             if (constraints != null) {
                 for (Constraint<T> constraint : constraints) {
                     if (!constraint.verify(val)) {
@@ -124,8 +157,8 @@ public abstract class Argument implements Comparable<Argument> {
         return initializer.apply(value);
     }
 
-    protected final TypeConverter<?> getTypeConverter() {
-        return typeConverter;
+    protected final TypeAdapter<?> getTypeAdapter() {
+        return typeAdapter;
     }
 
     protected final boolean matches(String keyValue) {
@@ -144,16 +177,32 @@ public abstract class Argument implements Comparable<Argument> {
         return Collections.unmodifiableSet(names);
     }
 
+    public final String getMetavar() {
+        return metavar;
+    }
+
+    public final boolean hasMetavar() {
+        return (metavar != null) && !(metavar.equals(Strings.EMPTY));
+    }
+
+    public final Set<String> getChoices() {
+        return Collections.unmodifiableSet(choices);
+    }
+
+    public final boolean hasChoices() {
+        return (choices != null) && !(choices.isEmpty());
+    }
+
     public String getCanonicalName() {
         return (names.isEmpty()) ? null : names.toArray(new String[0])[0];
     }
 
     public final String getDescription() {
-        return desc;
+        return description;
     }
 
     public final boolean hasDescription() {
-        return (desc != null) && !(desc.equals(Strings.EMPTY));
+        return (description != null) && !(description.equals(Strings.EMPTY));
     }
 
     public final Class<?> getType() {
@@ -185,9 +234,11 @@ public abstract class Argument implements Comparable<Argument> {
         Argument argument = (Argument) o;
         return Objects.equals(argument.index, this.index) &&
                 Objects.equals(argument.names, this.names) &&
-                Objects.equals(argument.desc, this.desc) &&
+                Objects.equals(argument.description, this.description) &&
+                Objects.equals(argument.metavar, this.metavar) &&
+                Objects.equals(argument.choices, this.choices) &&
                 Objects.equals(argument.type, this.type) &&
-                Objects.equals(argument.typeConverter, this.typeConverter) &&
+                Objects.equals(argument.typeAdapter, this.typeAdapter) &&
                 Objects.equals(argument.regex, this.regex) &&
                 Objects.equals(argument.initializer, this.initializer) &&
                 Objects.equals(argument.getClass(), this.getClass()) &&
@@ -200,9 +251,11 @@ public abstract class Argument implements Comparable<Argument> {
         return result +
                 12 +
                 Objects.hashCode(names) +
-                Objects.hashCode(desc) +
+                Objects.hashCode(description) +
+                Objects.hashCode(metavar) +
+                Objects.hashCode(choices) +
                 Objects.hashCode(type) +
-                Objects.hashCode(typeConverter) +
+                Objects.hashCode(typeAdapter) +
                 Objects.hashCode(initializer) +
                 Objects.hashCode(regex) +
                 Objects.hashCode(index) +

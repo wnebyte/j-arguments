@@ -1,7 +1,8 @@
 package com.github.wnebyte.jarguments;
 
 import java.util.*;
-import com.github.wnebyte.jarguments.convert.TypeConverter;
+
+import com.github.wnebyte.jarguments.adapter.TypeAdapter;
 import com.github.wnebyte.jarguments.exception.ParseException;
 
 /**
@@ -25,24 +26,28 @@ public class Positional extends Required {
 
     public Positional(
             final String description,
+            final String metavar,
+            final Set<String> choices,
             final int index,
             final Class<?> type,
-            final TypeConverter<?> typeConverter,
+            final TypeAdapter<?> typeAdapter,
             final int position
     ) {
-        super(Collections.singleton("*"), description, index, type, typeConverter);
+        super(null, description, metavar, choices, index, type, typeAdapter);
         this.position = position;
     }
 
     public <T> Positional(
             final String description,
+            final String metavar,
+            final Set<String> choices,
             final int index,
             final Class<T> type,
-            final TypeConverter<T> typeConverter,
+            final TypeAdapter<T> typeAdapter,
             final Collection<Constraint<T>> constraints,
             final int position
     ) {
-        super(Collections.singleton("*"), description, index, type, typeConverter, constraints);
+        super(null, description, metavar, choices, index, type, typeAdapter, constraints);
         this.position = position;
     }
 
@@ -66,17 +71,6 @@ public class Positional extends Required {
         return initializer.apply(val);
     }
 
-    /*
-    @Override
-    protected Object initialize(final String value) throws ParseException {
-        String val = new Splitter()
-                .setValue(value)
-                .normalize(isArray())
-                .get();
-        return initializer.apply(value);
-    }
-     */
-
     public final int getPosition() {
         return position;
     }
@@ -85,8 +79,9 @@ public class Positional extends Required {
     public int compareTo(Argument o) {
         if (o instanceof Positional) {
             return position - ((Positional) o).position;
+        } else {
+            return index - o.getIndex();
         }
-        return -1;
     }
 
     @Override

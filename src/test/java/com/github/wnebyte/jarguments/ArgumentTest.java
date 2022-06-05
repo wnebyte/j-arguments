@@ -4,8 +4,9 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.regex.Pattern;
+
+import com.github.wnebyte.jarguments.adapter.TypeAdapterRegistry;
 import org.junit.Test;
-import com.github.wnebyte.jarguments.convert.TypeConverterMap;
 import com.github.wnebyte.jarguments.exception.ConstraintException;
 import com.github.wnebyte.jarguments.exception.ParseException;
 import com.github.wnebyte.jarguments.factory.ArgumentFactory;
@@ -62,6 +63,7 @@ public class ArgumentTest {
         }
     }
 
+    /*
     @Test
     public void test02() {
         Flag flag = new Flag(
@@ -69,11 +71,12 @@ public class ArgumentTest {
                 "",
                 0,
                 boolean.class,
-                TypeConverterMap.getInstance().BOOLEAN_TYPE_CONVERTER,
+                TypeAdapterRegistry.getInstance().BOOLEAN_TYPE_CONVERTER,
                 "true",
                 "false"
         );
     }
+     */
 
     @Test
     public void test03() {

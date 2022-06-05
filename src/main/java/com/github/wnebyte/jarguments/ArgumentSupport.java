@@ -55,23 +55,23 @@ public class ArgumentSupport {
                 .collect(Collectors.toList());
     }
 
-    public static <T extends Argument> List<T> getArguments(Collection<Argument> c, Class<T> cls) {
-        List<T> arguments = new ArrayList<>();
+    public static <T extends Argument> Collection<T> getArguments(Collection<Argument> c, Class<T> cls) {
+        Collection<T> cNew = new ArrayList<>();
         if (isNullOrEmpty(c) || cls == null) {
-            return arguments;
+            return cNew;
         }
         for (Argument argument : c) {
             if (cls.isAssignableFrom(argument.getClass())) {
                 T obj = cls.cast(argument);
-                arguments.add(obj);
+                cNew.add(obj);
             }
         }
 
-        return arguments;
+        return cNew;
     }
 
     public static <T extends Argument> boolean containsArgument(Collection<Argument> c, Class<T> cls) {
-        if ((isNullOrEmpty(c)) || (cls == null)) {
+        if (isNullOrEmpty(c) || cls == null) {
             return false;
         }
         return c.stream().anyMatch(arg -> arg.getClass().equals(cls));

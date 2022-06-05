@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Collection;
 import com.github.wnebyte.jarguments.Argument;
 import com.github.wnebyte.jarguments.Constraint;
-import com.github.wnebyte.jarguments.convert.TypeConverter;
+import com.github.wnebyte.jarguments.adapter.TypeAdapter;
 
 public abstract class AbstractArgumentFactory {
 
@@ -20,7 +20,7 @@ public abstract class AbstractArgumentFactory {
 
     public abstract AbstractArgumentFactory setType(Class<?> type);
 
-    public abstract AbstractArgumentFactory setTypeConverter(TypeConverter<?> typeConverter);
+    public abstract AbstractArgumentFactory setTypeAdapter(TypeAdapter<?> typeAdapter);
 
     public abstract <T extends Argument> AbstractArgumentFactory setClass(Class<T> cls);
 
@@ -48,11 +48,11 @@ public abstract class AbstractArgumentFactory {
 
     public abstract <T> AbstractArgumentFactory append(Class<T> type);
 
-    public abstract <T> AbstractArgumentFactory append(Class<T> type, TypeConverter<T> typeConverter);
+    public abstract <T> AbstractArgumentFactory append(Class<T> type, TypeAdapter<T> typeAdapter);
 
     public abstract <T> AbstractArgumentFactory append(Class<T> type, Collection<Constraint<T>> constraints);
 
     public abstract <T> AbstractArgumentFactory append(
-            Class<T> type, TypeConverter<T> typeConverter, Collection<Constraint<T>> constraints
+            Class<T> type, TypeAdapter<T> typeAdapter, Collection<Constraint<T>> constraints
     );
 }

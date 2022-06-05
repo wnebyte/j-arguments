@@ -2,10 +2,11 @@ package com.github.wnebyte.jarguments.factory;
 
 import java.util.List;
 import java.util.UUID;
+
+import com.github.wnebyte.jarguments.adapter.TypeAdapterRegistry;
 import org.junit.Test;
 import org.junit.Assert;
 import com.github.wnebyte.jarguments.*;
-import com.github.wnebyte.jarguments.convert.TypeConverterMap;
 import com.github.wnebyte.jarguments.exception.ParseException;
 import static com.github.wnebyte.jarguments.ArgumentSupport.*;
 
@@ -32,7 +33,7 @@ public class ArgumentFactoryTest {
     @Test(expected = IllegalArgumentException.class)
     public void testAppend() {
         List<Argument> arguments = new ArgumentFactoryBuilder()
-                .useTypeConverterMap(TypeConverterMap.getInstance())
+                .useTypeConverterMap(TypeAdapterRegistry.getInstance())
                 .build()
                 .isPositional()
                 .setType(UUID.class) // should throw the expected exception
@@ -108,7 +109,7 @@ public class ArgumentFactoryTest {
                 .isOptional()
                 .setDefaultValue("hello")
                 .setType(int.class)
-                .setTypeConverter(TypeConverterMap.getInstance().INTEGER_TYPE_CONVERTER)
+                .setTypeAdapter(TypeAdapterRegistry.getInstance().INTEGER_TYPE_ADAPTER)
                 .append()
                 .get();
     }
@@ -121,7 +122,7 @@ public class ArgumentFactoryTest {
                 .setDefaultValue("test")
                 .setFlagValue("10")
                 .setType(int.class)
-                .setTypeConverter(TypeConverterMap.getInstance().INTEGER_TYPE_CONVERTER)
+                .setTypeAdapter(TypeAdapterRegistry.getInstance().INTEGER_TYPE_ADAPTER)
                 .append()
                 .get();
     }
@@ -134,7 +135,7 @@ public class ArgumentFactoryTest {
                 .setDefaultValue("10")
                 .setFlagValue("test")
                 .setType(int.class)
-                .setTypeConverter(TypeConverterMap.getInstance().INTEGER_TYPE_CONVERTER)
+                .setTypeAdapter(TypeAdapterRegistry.getInstance().INTEGER_TYPE_ADAPTER)
                 .append()
                 .get();
     }

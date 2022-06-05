@@ -1,5 +1,6 @@
 package com.github.wnebyte.jarguments;
 
+import java.util.Collection;
 import java.util.List;
 import org.junit.Test;
 import org.junit.Assert;
@@ -27,11 +28,11 @@ public class ArgumentSupportTest {
                 .get();
 
         Assert.assertEquals(3, c.size());
-        List<Positional> positionalList = ArgumentSupport.getArguments(c, Positional.class);
+        Collection<Positional> positionalList = ArgumentSupport.getArguments(c, Positional.class);
         Assert.assertEquals(1, positionalList.size());
-        List<Required> requiredList = ArgumentSupport.getArguments(c, Required.class);
+        Collection<Required> requiredList = ArgumentSupport.getArguments(c, Required.class);
         Assert.assertEquals(3, requiredList.size());
-        List<Optional> optionalList = ArgumentSupport.getArguments(c, Optional.class);
+        Collection<Optional> optionalList = ArgumentSupport.getArguments(c, Optional.class);
         Assert.assertTrue(optionalList.isEmpty());
     }
 
@@ -51,9 +52,9 @@ public class ArgumentSupportTest {
                 .append(boolean.class)
                 .get();
 
-        List<Optional> c1 = getArguments(c, Optional.class);
+        Collection<Optional> c1 = getArguments(c, Optional.class);
         Assert.assertEquals(3, c1.size());
-        List<Flag> c2 = getArguments(c, Flag.class);
+        Collection<Flag> c2 = getArguments(c, Flag.class);
         Assert.assertEquals(2, c2.size());
     }
 }

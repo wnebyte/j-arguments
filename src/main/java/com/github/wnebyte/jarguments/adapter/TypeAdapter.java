@@ -1,4 +1,4 @@
-package com.github.wnebyte.jarguments.convert;
+package com.github.wnebyte.jarguments.adapter;
 
 import com.github.wnebyte.jarguments.exception.ParseException;
 
@@ -6,7 +6,7 @@ import com.github.wnebyte.jarguments.exception.ParseException;
  * This interface declares methods for converting a <code>String</code> into an arbitrary <code>Type</code>.
  * @param <T> the target <code>Type</code>.
  */
-public interface TypeConverter<T> {
+public interface TypeAdapter<T> {
 
     /**
      * Converts the specified <code>String</code> into a new instance of the target <code>Type</code>.
