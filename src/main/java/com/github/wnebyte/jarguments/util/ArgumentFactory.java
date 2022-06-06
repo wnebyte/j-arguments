@@ -80,16 +80,13 @@ public class ArgumentFactory implements AbstractArgumentFactory {
             n = Strings.removeAll(n, excludeCharacters);
             if (n.equals(Strings.EMPTY)) {
                 throw new IllegalArgumentException(
-                        String.format(
-                                "An Argument's name is not allowed to be empty after normalization. " +
-                                        "Are removed: %s", Arrays.toString(excludeCharacters.toArray())
-                        )
+                        "An empty Argument name is not allowed."
                 );
             }
             if (excludeNames.contains(n)) {
                 throw new IllegalArgumentException(
                         String.format(
-                                "An Argument's name is not allowed to be: '%s' .", n
+                                "Argument name: '%s' is not allowed.", n
                         )
                 );
             }
@@ -158,7 +155,7 @@ public class ArgumentFactory implements AbstractArgumentFactory {
 
             if (typeAdapter == null) {
                 throw new IllegalArgumentException(
-                        "No mapping exists for type: '" + type + "'."
+                        "No adapter is registered for type: '" + type + "'."
                 );
             }
         }
@@ -166,28 +163,28 @@ public class ArgumentFactory implements AbstractArgumentFactory {
         if (required) {
             if (name == null) {
                 // pos
-                argument = new Positional(
-                        description,
-                        metavar,
-                        Sets.of(choices),
-                        index++,
-                        type,
-                        typeAdapter,
-                        constraints,
-                        position++
-                );
+                argument = new PositionalBuilder<T>()
+                        .setDescription(description)
+                        .setMetavar(metavar)
+                        .setChoices(Sets.of(choices))
+                        .setIndex(index++)
+                        .setType(type)
+                        .setTypeAdapter(typeAdapter)
+                        .setConstraints(constraints)
+                        .setPosition(position++)
+                        .build();
             } else {
                 // req
-                argument = new Required(
-                        getNames(name),
-                        description,
-                        metavar,
-                        Sets.of(choices),
-                        index++,
-                        type,
-                        typeAdapter,
-                        constraints
-                );
+                argument = new RequiredBuilder<T>()
+                        .setNames(getNames(name))
+                        .setDescription(description)
+                        .setMetavar(metavar)
+                        .setChoices(Sets.of(choices))
+                        .setIndex(index++)
+                        .setType(type)
+                        .setTypeAdapter(typeAdapter)
+                        .setConstraints(constraints)
+                        .build();
             }
         } else {
             if (name == null) {
@@ -197,30 +194,30 @@ public class ArgumentFactory implements AbstractArgumentFactory {
             }
             if (isBoolean(type)) {
                 // flag
-                argument = new Flag(
-                        getNames(name),
-                        description,
-                        metavar,
-                        index++,
-                        type,
-                        typeAdapter,
-                        constraints,
-                        "true",
-                        defaultValue
-                );
+                argument = new FlagBuilder<T>()
+                        .setNames(getNames(name))
+                        .setDescription(description)
+                        .setMetavar(metavar)
+                        .setIndex(index++)
+                        .setType(type)
+                        .setTypeAdapter(typeAdapter)
+                        .setConstraints(constraints)
+                        .setValue("true")
+                        .setDefaultValue("false")
+                        .build();
             } else {
                 // opt
-                argument = new Optional(
-                        getNames(name),
-                        description,
-                        metavar,
-                        Sets.of(choices),
-                        index++,
-                        type,
-                        typeAdapter,
-                        constraints,
-                        defaultValue
-                );
+                argument = new OptionalBuilder<T>()
+                        .setNames(getNames(name))
+                        .setDescription(description)
+                        .setMetavar(metavar)
+                        .setChoices(Sets.of(choices))
+                        .setIndex(index++)
+                        .setType(type)
+                        .setTypeAdapter(typeAdapter)
+                        .setConstraints(constraints)
+                        .setDefaultValue(defaultValue)
+                        .build();
             }
         }
 

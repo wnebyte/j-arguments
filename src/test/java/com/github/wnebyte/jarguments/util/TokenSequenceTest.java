@@ -1,6 +1,5 @@
-package com.github.wnebyte.jarguments;
+package com.github.wnebyte.jarguments.util;
 
-import com.github.wnebyte.jarguments.util.TokenSequence;
 import org.junit.Test;
 import org.junit.Assert;
 
