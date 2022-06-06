@@ -29,20 +29,6 @@ public class Flag extends Optional {
     ###########################
     */
 
-    public Flag(
-            final Set<String> names,
-            final String description,
-            final String metavar,
-            final int index,
-            final Class<?> type,
-            final TypeAdapter<?> typeAdapter,
-            final String value,
-            final String defaultValue
-    ) {
-        super(names, description, metavar, null, index, type, typeAdapter, defaultValue);
-        this.value = value;
-    }
-
     public <T> Flag(
             final Set<String> name,
             final String description,
@@ -65,8 +51,9 @@ public class Flag extends Optional {
     */
 
     @Override
-    protected String createRegExp(final Set<String> names, final Class<?> type) {
-        return "(\\s" + "(" + String.join("|", names) + ")" + "|)";
+    protected String pattern(final Set<String> names, final Class<?> type) {
+       // return "(\\s" + "(" + String.join("|", names) + ")" + "|)";
+        return "(" + String.join("|", names) + "|)";
     }
 
     @Override
@@ -115,25 +102,6 @@ public class Flag extends Optional {
 
     @Override
     public String toString() {
-        return String.format(
-                "[(%s)]", String.join(" | ", names)
-        );
-    }
-
-    @Override
-    public String toPaddedString() {
-        return String.format(
-                "[( %s )]", String.join(" | ", names)
-        );
-    }
-
-    @Override
-    public String toDescriptiveString() {
-        return toString();
-    }
-
-    @Override
-    public String toPaddedDescriptiveString() {
-        return toPaddedString();
+        return super.toString();
     }
 }

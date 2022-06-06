@@ -1,8 +1,6 @@
 package com.github.wnebyte.jarguments;
 
 import java.util.*;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 import com.github.wnebyte.jarguments.exception.ParseException;
 import static com.github.wnebyte.jarguments.util.Collections.isNullOrEmpty;
 
@@ -10,50 +8,6 @@ import static com.github.wnebyte.jarguments.util.Collections.isNullOrEmpty;
  * Support class for working with instances of {@link Argument}.
  */
 public class ArgumentSupport {
-
-    /**
-     * Returns the regex for each <code>Argument</code>.
-     * @param c the arguments.
-     * @return the result.
-     */
-    public static List<String> regexList(Collection<? extends Argument> c) {
-        if (isNullOrEmpty(c)) {
-            return Collections.emptyList();
-        }
-        return c.stream().map(Argument::getRegex)
-                .collect(Collectors.toList());
-    }
-
-    /**
-     * Returns the regex for each <code>Argument</code> that is of the specified <code>Class</code>.
-     * @param c the arguments.
-     * @param cls the class.
-     * @param <T> the type of the class.
-     * @return the result.
-     */
-    public static <T extends Argument> List<String> regexList(Collection<Argument> c, Class<T> cls) {
-        if ((isNullOrEmpty(c)) || (cls == null)) {
-            return Collections.emptyList();
-        }
-        return c.stream().filter(arg -> arg.getClass().equals(cls))
-                .map(Argument::getRegex)
-                .collect(Collectors.toList());
-    }
-
-    /**
-     * Returns the regex for each <code>Argument</code> that pass the specified predicate.
-     * @param c the arguments.
-     * @param predicate the predicate.
-     * @return the result.
-     */
-    public static List<String> regexList(Collection<Argument> c, Predicate<Argument> predicate) {
-        if (isNullOrEmpty(c)) {
-            return Collections.emptyList();
-        }
-        return c.stream().filter(predicate)
-                .map(Argument::getRegex)
-                .collect(Collectors.toList());
-    }
 
     public static <T extends Argument> Collection<T> getArguments(Collection<Argument> c, Class<T> cls) {
         Collection<T> cNew = new ArrayList<>();
@@ -86,7 +40,7 @@ public class ArgumentSupport {
      * <code>equals</code> the specified <code>index</code> if one exists, otherwise <code>null</code>.
      */
     public static Argument getByIndex(Collection<Argument> c, int index) {
-        if ((isNullOrEmpty(c)) || (index < 0)) {
+        if (isNullOrEmpty(c) || index < 0) {
             return null;
         }
         return c.stream().filter(arg -> arg.getIndex() == index)
@@ -103,10 +57,10 @@ public class ArgumentSupport {
      * <code>contains</code> the specified <code>name</code> if one exists, otherwise <code>null</code>.
      */
     public static Argument getByName(Collection<Argument> c, String name) {
-        if ((isNullOrEmpty(c)) || (name == null)) {
+        if (isNullOrEmpty(c) || name == null) {
             return null;
         }
-        return c.stream().filter(arg -> arg.getNames().contains(name))
+        return c.stream().filter(arg -> arg.hasNames() && arg.getNames().contains(name))
                 .findFirst()
                 .orElse(null);
     }
@@ -120,7 +74,7 @@ public class ArgumentSupport {
      * <code>position</code> if one exists, otherwise <code>null</code>.
      */
     public static Argument getByPosition(Collection<Argument> c, int position) {
-        if ((isNullOrEmpty(c)) || (position < 0)) {
+        if (isNullOrEmpty(c) || position < 0) {
             return null;
         }
         return c.stream().filter(arg -> arg instanceof Positional)
@@ -144,9 +98,5 @@ public class ArgumentSupport {
 
     public static boolean matches(Argument argument, String value) {
         return (argument != null) && (value != null) && (argument.matches(value));
-    }
-
-    public static String getRegex(Argument argument) {
-        return argument.getRegex();
     }
 }

@@ -16,18 +16,6 @@ public class Required extends Argument {
     ###########################
     */
 
-    public Required(
-            final Set<String> name,
-            final String description,
-            final String metavar,
-            final Set<String> choices,
-            final int index,
-            final Class<?> type,
-            final TypeAdapter<?> typeAdapter
-    ) {
-        super(name, description, metavar, choices, index, type, typeAdapter);
-    }
-
     public <T> Required(
             final Set<String> name,
             final String description,
@@ -48,8 +36,8 @@ public class Required extends Argument {
     */
 
     @Override
-    protected String createRegExp(final Set<String> name, final Class<?> type) {
-        return "\\s" + "(" + String.join("|", name) + ")" + "\\s" +
+    protected String pattern(final Set<String> name, final Class<?> type) {
+        return "(" + String.join("|", name) + ")" + "\\s" +
                 (isArray() ? ARRAY_VALUE_PATTERN : DEFAULT_VALUE_PATTERN);
     }
 
@@ -89,29 +77,6 @@ public class Required extends Argument {
 
     @Override
     public String toString() {
-        return String.format(
-                "[%s]", String.join(" | ", names)
-        );
-    }
-
-    @Override
-    public String toPaddedString() {
-        return String.format(
-                "[ %s ]", String.join(" | ", names)
-        );
-    }
-
-    @Override
-    public String toDescriptiveString() {
-        return String.format(
-                "[%s <%s>]", String.join(" | ", names), type.getSimpleName()
-        );
-    }
-
-    @Override
-    public String toPaddedDescriptiveString() {
-        return String.format(
-                "[ %s <%s> ]", String.join(" | ", names), type.getSimpleName()
-        );
+        return super.toString();
     }
 }

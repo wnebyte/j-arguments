@@ -9,11 +9,12 @@ import com.github.wnebyte.jarguments.util.Strings;
 import static com.github.wnebyte.jarguments.ArgumentSupport.matches;
 import static com.github.wnebyte.jarguments.ArgumentSupport.getByName;
 import static com.github.wnebyte.jarguments.ArgumentSupport.getByPosition;
+import static com.github.wnebyte.jarguments.util.Collections.toLinkedList;
 
 /**
  * This class is the default implementation of the <code>AbstractParser</code> class.
  */
-public class Parser extends AbstractParser<TokenSequence, Collection<Argument>> {
+public class Parser implements AbstractParser {
 
     /*
     ###########################
@@ -71,14 +72,17 @@ public class Parser extends AbstractParser<TokenSequence, Collection<Argument>> 
     }
 
     @Override
-    public void parse(TokenSequence tokens, Collection<Argument> arguments) throws ParseException {
+    public void parse(
+            String input,
+            Iterable<String> tokens,
+            Iterable<Argument> arguments) throws ParseException
+    {
         if (tokens == null || arguments == null)
             throw new NullPointerException(
                     "TokenSequence & Arguments must not be null."
             );
         Iterator<String> it = tokens.iterator();
-        Collection<Argument> source = new LinkedList<>(arguments);
-        String input = tokens.join();
+        Collection<Argument> source = toLinkedList(arguments);
         map = new HashMap<>(source.size());
         int pos = 0;
 
@@ -104,17 +108,17 @@ public class Parser extends AbstractParser<TokenSequence, Collection<Argument>> 
                 if (!it.hasNext()) {
                     throw new MissingArgumentException(
                             String.format(
-                                    "Value must be specified for Argument with name: '%s'.", token
+                                    "Value is required for %s.", token
                             ), input, arg
                     );
                 }
                 value = it.next();
                 keyValue = token.concat(Strings.WHITESPACE).concat(value);
             }
-            if (!matches(arg, Strings.WHITESPACE.concat(keyValue))) {
+            if (!matches(arg, keyValue)) {
                 throw new MalformedArgumentException(
                         String.format(
-                                "Argument with name: '%s' is malformed.", token
+                                "%s is malformed.", token
                         ), input, arg
                 );
             }
@@ -126,7 +130,7 @@ public class Parser extends AbstractParser<TokenSequence, Collection<Argument>> 
             if (!(arg instanceof Optional)) {
                 throw new MissingArgumentException(
                         String.format(
-                                "Argument: '%s' must be specified.", arg
+                                "%s is required.", arg.getCanonicalName()
                         ), input, arg
                 );
             }

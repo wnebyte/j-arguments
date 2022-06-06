@@ -26,20 +26,6 @@ public class Optional extends Argument {
     ###########################
     */
 
-    public Optional(
-            final Set<String> name,
-            final String description,
-            final String metavar,
-            final Set<String> choices,
-            final int index,
-            final Class<?> type,
-            final TypeAdapter<?> typeAdapter,
-            final String defaultValue
-    ) {
-        super(name, description, metavar, choices, index, type, typeAdapter);
-        this.defaultValue = defaultValue;
-    }
-
     public <T> Optional(
             final Set<String> name,
             final String description,
@@ -62,8 +48,8 @@ public class Optional extends Argument {
     */
 
     @Override
-    protected String createRegExp(final Set<String> names, final Class<?> type) {
-        return "(\\s" + "(" + String.join("|", names) + ")" +  "\\s" +
+    protected String pattern(final Set<String> names, final Class<?> type) {
+        return "((" + String.join("|", names) + ")" +  "\\s" +
                 (isArray() ? ARRAY_VALUE_PATTERN : DEFAULT_VALUE_PATTERN) + "|)";
     }
 
@@ -93,7 +79,7 @@ public class Optional extends Argument {
     }
 
     public final boolean hasDefaultValue() {
-        return (defaultValue != null) && !(defaultValue.equals(""));
+        return (defaultValue != null) && !(defaultValue.equals(Strings.EMPTY));
     }
 
     @Override
@@ -116,29 +102,6 @@ public class Optional extends Argument {
 
     @Override
     public String toString() {
-        return String.format(
-                "[(%s)]", String.join(" | ", names)
-        );
-    }
-
-    @Override
-    public String toPaddedString() {
-        return String.format(
-                "[( %s )]", String.join(" | ", names)
-        );
-    }
-
-    @Override
-    public String toDescriptiveString() {
-        return "[(" + String.join(" | ", names) +
-                (hasDefaultValue() ? " = ".concat(defaultValue) : "")
-                + " <" + type.getSimpleName() + ">)]";
-    }
-
-    @Override
-    public String toPaddedDescriptiveString() {
-        return "[( " + String.join(" | ", names) +
-                (hasDefaultValue() ? " = ".concat(defaultValue) : "")
-                + " <" + type.getSimpleName() + "> )]";
+        return super.toString();
     }
 }

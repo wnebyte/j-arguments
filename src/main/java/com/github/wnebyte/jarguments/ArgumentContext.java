@@ -1,5 +1,6 @@
 package com.github.wnebyte.jarguments;
 
+import java.util.Collections;
 import java.util.Set;
 import java.util.Iterator;
 
@@ -24,7 +25,7 @@ public class ArgumentContext implements Iterable<Argument> {
     }
 
     public Set<Argument> getArguments() {
-        return arguments;
+        return Collections.unmodifiableSet(arguments);
     }
 
     @Override

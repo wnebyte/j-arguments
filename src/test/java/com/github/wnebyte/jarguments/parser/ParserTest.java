@@ -1,27 +1,24 @@
 package com.github.wnebyte.jarguments.parser;
 
-import java.util.List;
-
-import org.junit.Test;
+import java.util.Set;
 import org.junit.Assert;
-import com.github.wnebyte.jarguments.BaseTestClass;
+import org.junit.Test;
+import com.github.wnebyte.jarguments.BaseTest;
 import com.github.wnebyte.jarguments.Argument;
 import com.github.wnebyte.jarguments.TokenSequence;
+import com.github.wnebyte.jarguments.util.ArgumentFactory;
 import com.github.wnebyte.jarguments.exception.ParseException;
-import com.github.wnebyte.jarguments.factory.ArgumentFactory;
-import com.github.wnebyte.jarguments.factory.ArgumentFactoryBuilder;
 
-public class ParserTest extends BaseTestClass {
+public class ParserTest extends BaseTest {
 
     @Test
-    public void test00() throws ParseException {
-        List<Argument> arguments = new ArgumentFactoryBuilder().build()
-                .setName("-a")
-                .isRequired()
-                .append(int.class)
-                .isPositional()
-                .append(int.class)
-                .get();
+    public void test00() throws ParseException  {
+        ArgumentFactory factory = new ArgumentFactory();
+        factory.create("-a", null, true,
+                null, null, null, int.class);
+        factory.create(null, null, true,
+                null, null, null, int.class);
+        Set<Argument> set = factory.getAll();
         String[] input = {
                 "-a 5 100",
                 "100 -a 5"
@@ -37,7 +34,7 @@ public class ParserTest extends BaseTestClass {
         for (int i = 0; i < input.length; i++) {
             TokenSequence tokens = TokenSequence.tokenize(input[i]);
             Parser parser = new Parser();
-            parser.parse(tokens, arguments);
+            parser.parse("input", tokens, set);
             Object[] args = parser.initialize();
 
             for (int j = 0; j < values[i].length; j++) {
@@ -49,14 +46,12 @@ public class ParserTest extends BaseTestClass {
 
     @Test
     public void test01() throws ParseException {
-        List<Argument> arguments = new ArgumentFactoryBuilder().build()
-                .setName("-a")
-                .isOptional()
-                .append(int.class)
-                .isPositional()
-                .append(int.class)
-                .get();
-        // should succeed
+        ArgumentFactory factory = new ArgumentFactory();
+        factory.create("-a", null, false,
+                null, null, null, int.class);
+        factory.create(null, null, true,
+                null, null, null, int.class);
+        Set<Argument> set = factory.getAll();
         String[] input = {
                 "-a 5 100",
                 "100 -a 5",
@@ -76,28 +71,26 @@ public class ParserTest extends BaseTestClass {
         for (int i = 0; i < input.length; i++) {
             TokenSequence tokens = TokenSequence.tokenize(input[i]);
             Parser parser = new Parser();
-            parser.parse(tokens, arguments);
-            Object[] args = parser.initialize();
+            parser.parse("input", tokens, set);
+            Object[] vals = parser.initialize();
 
             for (int j = 0; j < values[i].length; j++) {
                 int value = values[i][j];
-                Assert.assertEquals(value, args[j]);
+                Assert.assertEquals(value, vals[j]);
             }
         }
     }
 
     @Test
     public void test02() throws ParseException {
-        List<Argument> arguments = new ArgumentFactoryBuilder().build()
-                .setName("-a")
-                .isOptional()
-                .append(int.class)
-                .setName("-b")
-                .isOptional()
-                .append(int.class)
-                .isPositional()
-                .append(int.class)
-                .get();
+        ArgumentFactory factory = new ArgumentFactory();
+        factory.create("-a", null, false,
+                null, null, null, int.class);
+        factory.create("-b", null, false,
+                null, null, null, int.class);
+        factory.create(null, null, true,
+                null, null, null, int.class);
+        Set<Argument> set = factory.getAll();
         String[] input = {
                 "-a 5 -b 10 100",
                 "-b 10 -a 5 100",
@@ -141,7 +134,7 @@ public class ParserTest extends BaseTestClass {
         for (int i = 0; i < input.length; i++) {
             TokenSequence tokens = TokenSequence.tokenize(input[i]);
             Parser parser = new Parser();
-            parser.parse(tokens, arguments);
+            parser.parse("input", tokens, set);
             Object[] args = parser.initialize();
 
             for (int j = 0; j < values[i].length; j++) {
@@ -153,18 +146,16 @@ public class ParserTest extends BaseTestClass {
 
     @Test
     public void test03() throws ParseException {
-        List<Argument> arguments = new ArgumentFactoryBuilder().build()
-                .setName("-a")
-                .isOptional()
-                .append(int.class)
-                .setName("-b")
-                .isFlag()
-                .append(boolean.class)
-                .isPositional()
-                .append(int.class)
-                .isPositional()
-                .append(int.class)
-                .get();
+        ArgumentFactory factory = new ArgumentFactory();
+        factory.create("-a", null, false,
+                null, null, null, int.class);
+        factory.create("-b", null, false,
+                null, null, null, boolean.class);
+        factory.create(null, null, true,
+                null, null, null, int.class);
+        factory.create(null, null, true,
+                null, null, null, int.class);
+        Set<Argument> set = factory.getAll();
         String[] input = {
                 "-a 5 -b 100 50",
                 "-b -a 5 100 50",
@@ -185,7 +176,7 @@ public class ParserTest extends BaseTestClass {
         };
         TokenSequence tokens = TokenSequence.tokenize(input[0]);
         Parser parser = new Parser();
-        parser.parse(tokens, arguments);
+        parser.parse("input", tokens, set);
         Object[] args = parser.initialize();
         Assert.assertEquals(values[0][0], args[0]);
         Assert.assertEquals(values[0][1], args[1]);
@@ -195,18 +186,16 @@ public class ParserTest extends BaseTestClass {
 
     @Test
     public void test04() throws ParseException {
-        List<Argument> arguments = new ArgumentFactoryBuilder().build()
-                .setName("-a")
-                .isOptional()
-                .append(int.class)
-                .setName("-b")
-                .isFlag()
-                .append(boolean.class)
-                .isPositional()
-                .append(int.class)
-                .isPositional()
-                .append(String.class)
-                .get();
+        ArgumentFactory factory = new ArgumentFactory();
+        factory.create("-a", null, false,
+                null, null, null, int.class);
+        factory.create("-b", null, false,
+                null, null, null, boolean.class);
+        factory.create(null, null, true,
+                null, null, null, int.class);
+        factory.create(null, null, true,
+                null, null, null, String.class);
+        Set<Argument> set = factory.getAll();
         String[] input = {
                 "-a 5 -b 100 'hello world'", // 1st
                 "-b -a 5 100 'hello world'",
@@ -254,7 +243,7 @@ public class ParserTest extends BaseTestClass {
         for (int i = 0; i < input.length; i++) {
             TokenSequence tokens = TokenSequence.tokenize(input[i]);
             Parser parser = new Parser();
-            parser.parse(tokens, arguments);
+            parser.parse("input", tokens, set);
             Object[] args = parser.initialize();
 
             for (int j = 0; j < values[i].length; j++) {
@@ -266,40 +255,34 @@ public class ParserTest extends BaseTestClass {
 
     @Test(expected = ParseException.class)
     public void test04ParseException() throws ParseException {
-        List<Argument> arguments = ArgumentFactory.builder().build()
-                .setName("-a")
-                .isOptional()
-                .append(int.class)
-                .setName("-b")
-                .isFlag()
-                .append(boolean.class)
-                .isPositional()
-                .append(int.class)
-                .isPositional()
-                .append(String.class)
-                .get();
+        ArgumentFactory factory = new ArgumentFactory();
+        factory.create("-a", null, false,
+                null, null, null, int.class);
+        factory.create("-b", null, false,
+                null, null, null, boolean.class);
+        factory.create(null, null, true,
+                null, null, null, int.class);
+        factory.create(null, null, true,
+                null, null, null, String.class);
+        Set<Argument> set = factory.getAll();
         String input = "-a 5 -b 'hello world' 100";
         TokenSequence tokens = TokenSequence.tokenize(input);
         Parser parser = new Parser();
-        parser.parse(tokens, arguments);
-        parser.initialize(); // should throw an exception because the positional arguments are swapped.
+        parser.parse("input", tokens, set);
+        parser.initialize();
     }
 
     @Test
     public void test05() throws ParseException {
-        List<Argument> c = ArgumentFactory.builder().build()
-                .setName("name", "-n")
-                .isRequired()
-                .append(String.class)
-                .setName("url", "-u")
-                .isRequired()
-                .append(String.class)
-                .setName("comment", "-c")
-                .isRequired()
-                .append(String.class)
-                .get();
+        ArgumentFactory factory = new ArgumentFactory();
+        factory.create("name, -n", null, true,
+                null, null, null, String.class);
+        factory.create("url, -u", null, true,
+                null, null, null, String.class);
+        factory.create("comment, -c", null, true,
+                null, null, null, String.class);
+        Set<Argument> set = factory.getAll();
         String input = "name 'Lars Petterson' url https://www.google.com -c \"this is a comment\"";
-
         Object[] values = {
                 "Lars Petterson",
                 "https://www.google.com",
@@ -307,28 +290,11 @@ public class ParserTest extends BaseTestClass {
         };
         TokenSequence tokens = TokenSequence.tokenize(input);
         Parser parser = new Parser();
-        parser.parse(tokens, c);
+        parser.parse("input", tokens, set);
         Object[] vals = parser.initialize();
         Assert.assertEquals(vals.length, values.length);
-
         for (int i = 0; i < vals.length; i++) {
             Assert.assertEquals(vals[i], values[i]);
         }
-    }
-
-    @Test
-    public void test06() {
-        List<Argument> c = ArgumentFactory.builder().build()
-                .isPositional()
-                .append(String.class)
-                .setName("--name")
-                .isOptional()
-                .setDefaultValue("default_name")
-                .append(String.class)
-                .setName("--opt")
-                .isOptional()
-                .setDefaultValue("2000")
-                .append(int.class)
-                .get();
     }
 }

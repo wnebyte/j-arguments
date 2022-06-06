@@ -46,8 +46,6 @@ public abstract class Argument implements Comparable<Argument> {
 
     protected final Set<String> choices;
 
-    protected final String regex;
-
     protected final Pattern pattern;
 
     protected final int index;
@@ -58,49 +56,8 @@ public abstract class Argument implements Comparable<Argument> {
 
     protected final Initializer<Object> initializer;
 
-    /*
-    ###########################
-    #       CONSTRUCTORS      #
-    ###########################
-    */
-
     /**
      * Constructs a new instance.
-     */
-    public Argument(
-            final Set<String> names,
-            final String description,
-            final String metavar,
-            final Set<String> choices,
-            final int index,
-            final Class<?> type,
-            final TypeAdapter<?> typeAdapter
-    ) {
-        this.names = names;
-        this.description = description;
-        this.metavar = metavar;
-        this.choices = choices;
-        this.index = index;
-        this.type = type;
-        this.regex = createRegExp(names, type);
-        this.pattern = Pattern.compile(regex);
-        this.typeAdapter = typeAdapter;
-        this.initializer = value -> {
-            if (choices != null) {
-                if (!choices.contains(value)) {
-                    throw new ConstraintException(
-                            String.format(
-                                    "Value: '%s' is not contained within set: '%s'", value, Sets.toString(choices)
-                            )
-                    );
-                }
-            }
-            return typeAdapter.convert(value);
-        };
-    }
-
-    /**
-     * Constructs a new instance with constraints.
      */
     public <T> Argument(
             final Set<String> names,
@@ -118,9 +75,8 @@ public abstract class Argument implements Comparable<Argument> {
         this.choices = choices;
         this.index = index;
         this.type = type;
-        this.regex = createRegExp(names, type);
-        this.pattern = Pattern.compile(regex);
         this.typeAdapter = typeAdapter;
+        this.pattern = Pattern.compile(pattern(names, type));
         this.initializer = value -> {
             if (choices != null) {
                 if (!choices.contains(value)) {
@@ -133,11 +89,9 @@ public abstract class Argument implements Comparable<Argument> {
             }
             T val = typeAdapter.convert(value);
             if (constraints != null) {
-                for (Constraint<T> constraint : constraints) {
-                    if (!constraint.verify(val)) {
-                        throw new ConstraintException(
-                                constraint.errorMessage()
-                        );
+                for (Constraint<T> c : constraints) {
+                    if (!c.test(val)) {
+                        throw new ConstraintException(c.errorMessage());
                     }
                 }
             }
@@ -151,11 +105,9 @@ public abstract class Argument implements Comparable<Argument> {
     ###########################
     */
 
-    protected abstract String createRegExp(final Set<String> names, final Class<?> type);
+    protected abstract String pattern(final Set<String> names, final Class<?> type);
 
-    protected Object initialize(final String value) throws ParseException {
-        return initializer.apply(value);
-    }
+    protected abstract Object initialize(final String value) throws ParseException;
 
     protected final TypeAdapter<?> getTypeAdapter() {
         return typeAdapter;
@@ -165,16 +117,16 @@ public abstract class Argument implements Comparable<Argument> {
         return pattern.matcher(keyValue).matches();
     }
 
-    protected final String getRegex() {
-        return regex;
-    }
-
     protected final Pattern getPattern() {
         return pattern;
     }
 
     public final Set<String> getNames() {
         return Collections.unmodifiableSet(names);
+    }
+
+    public final boolean hasNames() {
+        return (names != null) && !(names.isEmpty());
     }
 
     public final String getMetavar() {
@@ -194,7 +146,7 @@ public abstract class Argument implements Comparable<Argument> {
     }
 
     public String getCanonicalName() {
-        return (names.isEmpty()) ? null : names.toArray(new String[0])[0];
+        return names.isEmpty() ? null : names.toArray(new String[0])[0];
     }
 
     public final String getDescription() {
@@ -239,10 +191,7 @@ public abstract class Argument implements Comparable<Argument> {
                 Objects.equals(argument.choices, this.choices) &&
                 Objects.equals(argument.type, this.type) &&
                 Objects.equals(argument.typeAdapter, this.typeAdapter) &&
-                Objects.equals(argument.regex, this.regex) &&
-                Objects.equals(argument.initializer, this.initializer) &&
-                Objects.equals(argument.getClass(), this.getClass()) &&
-                super.equals(argument);
+                Objects.equals(argument.pattern, this.pattern);
     }
 
     @Override
@@ -256,28 +205,18 @@ public abstract class Argument implements Comparable<Argument> {
                 Objects.hashCode(choices) +
                 Objects.hashCode(type) +
                 Objects.hashCode(typeAdapter) +
-                Objects.hashCode(initializer) +
-                Objects.hashCode(regex) +
-                Objects.hashCode(index) +
-                Objects.hashCode(getClass()) +
-                super.hashCode();
+                Objects.hashCode(pattern) +
+                Objects.hashCode(index);
     }
 
     @Override
     public String toString() {
-        return super.toString();
+        return String.format(
+                "com.github.wnebyte.jarguments.Argument(" +
+                        "names: %s, index: %d, description: %s, metavar: %s, type: %s, " +
+                        "typeAdapter: %s, choices: %s)",
+                Sets.toString(names), index, description, metavar, type,
+                typeAdapter, Sets.toString(choices)
+        );
     }
-
-    public String toPaddedString() {
-        return toString();
-    }
-
-    public String toDescriptiveString() {
-        return toString();
-    }
-
-    public String toPaddedDescriptiveString() {
-        return toDescriptiveString();
-    }
-
 }

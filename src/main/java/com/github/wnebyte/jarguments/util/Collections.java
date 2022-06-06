@@ -1,6 +1,11 @@
 package com.github.wnebyte.jarguments.util;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 /**
  * This class is a utility class for working with instances of {@link Collection}.
@@ -55,5 +60,21 @@ public class Collections {
             }
         }
         return false;
+    }
+
+    public static <T> Collection<T> toCollection(Iterable<T> iterable) {
+        return (iterable == null) ? new ArrayList<T>() :
+                StreamSupport.stream(iterable.spliterator(), false)
+                        .collect(Collectors.toList());
+    }
+
+    public static <T> List<T> toList(Iterable<T> iterable) {
+        return (List<T>)toCollection(iterable);
+    }
+
+    public static <T> LinkedList<T> toLinkedList(Iterable<T> iterable) {
+        return (iterable == null) ? new LinkedList<T>() :
+                StreamSupport.stream(iterable.spliterator(), false)
+                        .collect(Collectors.toCollection(LinkedList::new));
     }
 }

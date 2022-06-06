@@ -11,7 +11,7 @@ public class ConstraintTest {
         Collection<Constraint<Integer>> constraints = new ConstraintCollectionBuilder<Integer>()
                 .addConstraint(new Constraint<Integer>() {
                     @Override
-                    public boolean verify(Integer integer) {
+                    public boolean test(Integer integer) {
                         return false;
                     }
                     @Override
@@ -21,7 +21,7 @@ public class ConstraintTest {
                 })
                 .addConstraint(new Constraint<Integer>() {
                     @Override
-                    public boolean verify(Integer integer) {
+                    public boolean test(Integer integer) {
                         return false;
                     }
                     @Override

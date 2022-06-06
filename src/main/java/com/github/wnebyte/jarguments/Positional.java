@@ -1,7 +1,6 @@
 package com.github.wnebyte.jarguments;
 
 import java.util.*;
-
 import com.github.wnebyte.jarguments.adapter.TypeAdapter;
 import com.github.wnebyte.jarguments.exception.ParseException;
 
@@ -24,19 +23,6 @@ public class Positional extends Required {
     ###########################
     */
 
-    public Positional(
-            final String description,
-            final String metavar,
-            final Set<String> choices,
-            final int index,
-            final Class<?> type,
-            final TypeAdapter<?> typeAdapter,
-            final int position
-    ) {
-        super(null, description, metavar, choices, index, type, typeAdapter);
-        this.position = position;
-    }
-
     public <T> Positional(
             final String description,
             final String metavar,
@@ -58,8 +44,8 @@ public class Positional extends Required {
     */
 
     @Override
-    protected String createRegExp(final Set<String> names, final Class<?> type) {
-        return "\\s" + (isArray() ? ARRAY_VALUE_PATTERN : DEFAULT_VALUE_PATTERN);
+    protected String pattern(final Set<String> names, final Class<?> type) {
+        return isArray() ? ARRAY_VALUE_PATTERN : DEFAULT_VALUE_PATTERN;
     }
 
     @Override
@@ -104,36 +90,6 @@ public class Positional extends Required {
 
     @Override
     public String toString() {
-        return String.format(
-                "[$R%d]", position
-        );
-    }
-
-    @Override
-    public String toPaddedString() {
-        return String.format(
-                "[ $R%d ]", position
-        );
-    }
-
-    @Override
-    public String toDescriptiveString() {
-        return String.format(
-                "[$R%d <%s>]", position, type.getSimpleName()
-        );
-    }
-
-    @Override
-    public String toPaddedDescriptiveString() {
-        return String.format(
-                "[ $R%d <%s> ]", position, type.getSimpleName()
-        );
-    }
-
-    @Override
-    public String getCanonicalName() {
-        return String.format(
-                "$R%d", position
-        );
+        return super.toString();
     }
 }

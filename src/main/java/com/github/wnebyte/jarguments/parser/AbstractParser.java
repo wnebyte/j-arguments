@@ -1,12 +1,13 @@
 package com.github.wnebyte.jarguments.parser;
 
+import com.github.wnebyte.jarguments.Argument;
 import com.github.wnebyte.jarguments.exception.ParseException;
 
-public abstract class AbstractParser<T extends Iterable<String>, R> {
+public interface AbstractParser {
 
-    public abstract Object[] initialize() throws ParseException;
+    Object[] initialize() throws ParseException;
 
-    public abstract void parse(T t, R r) throws ParseException;
+    void parse(String input, Iterable<String> tokens, Iterable<Argument> arguments) throws ParseException;
 
-    public abstract void reset();
+    void reset();
 }

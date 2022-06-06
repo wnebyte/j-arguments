@@ -2,7 +2,7 @@ package com.github.wnebyte.jarguments;
 
 import java.util.regex.Pattern;
 
-public abstract class BaseTestClass {
+public abstract class BaseTest {
 
     protected boolean allMatch(Pattern pattern, String... input) {
         for (String s : input) {

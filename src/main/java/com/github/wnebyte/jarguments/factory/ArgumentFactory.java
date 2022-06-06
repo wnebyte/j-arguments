@@ -309,7 +309,7 @@ public class ArgumentFactory extends AbstractArgumentFactory {
             Collection<Constraint<T>> constraints
 
     ) {
-        final Argument argument;
+        final Argument argument = null;
 
         if (type == null || typeAdapter == null) {
             throw new IllegalArgumentException(
@@ -324,6 +324,7 @@ public class ArgumentFactory extends AbstractArgumentFactory {
                     "At least one name has to be specified for each non-positional Argument."
             );
         }
+        /*
         if (Reflections.isBoolean(type) && cls == Flag.class) {
             argument = new Flag(
                     names,
@@ -397,6 +398,7 @@ public class ArgumentFactory extends AbstractArgumentFactory {
                     )
             );
         }
+         */
 
         dryrun(argument);
         arguments.add(argument);
@@ -408,7 +410,7 @@ public class ArgumentFactory extends AbstractArgumentFactory {
      * Constructs a new <code>Argument</code>.
      */
     public ArgumentFactory append() {
-        final Argument argument;
+        final Argument argument = null;
 
         if (namesIsNull(names, cls)) {
             throw new IllegalArgumentException(
@@ -434,6 +436,7 @@ public class ArgumentFactory extends AbstractArgumentFactory {
         if (cls == null) {
             cls = Reflections.isBoolean(type) ? Flag.class : Required.class;
         }
+        /*
         if (Reflections.isBoolean(type) && cls == Flag.class) {
             argument = new Flag(
                     names,
@@ -504,7 +507,7 @@ public class ArgumentFactory extends AbstractArgumentFactory {
                     )
             );
         }
-
+         */
         dryrun(argument);
         arguments.add(argument);
         reset();
