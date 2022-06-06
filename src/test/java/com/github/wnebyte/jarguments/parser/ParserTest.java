@@ -5,7 +5,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import com.github.wnebyte.jarguments.BaseTest;
 import com.github.wnebyte.jarguments.Argument;
-import com.github.wnebyte.jarguments.TokenSequence;
+import com.github.wnebyte.jarguments.util.TokenSequence;
 import com.github.wnebyte.jarguments.util.ArgumentFactory;
 import com.github.wnebyte.jarguments.exception.ParseException;
 

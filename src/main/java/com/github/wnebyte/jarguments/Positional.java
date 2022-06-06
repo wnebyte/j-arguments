@@ -1,11 +1,14 @@
 package com.github.wnebyte.jarguments;
 
-import java.util.*;
+import java.util.Set;
+import java.util.Objects;
+import java.util.Collection;
 import com.github.wnebyte.jarguments.adapter.TypeAdapter;
 import com.github.wnebyte.jarguments.exception.ParseException;
+import com.github.wnebyte.jarguments.util.Normalizer;
 
 /**
- * This class represents a positional and required <code>Argument</code> that has only a value.
+ * This class represents a positional <code>Argument</code>.
  */
 public class Positional extends Required {
 
@@ -50,10 +53,10 @@ public class Positional extends Required {
 
     @Override
     protected Object initialize(final String value) throws ParseException {
-        String val = new Splitter()
+        String val = new Normalizer()
                 .setValue(value)
-                .normalize(isArray())
-                .get();
+                .isArray(isArray())
+                .apply();
         return initializer.apply(val);
     }
 

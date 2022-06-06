@@ -4,11 +4,12 @@ import java.util.Set;
 import java.util.Collection;
 import com.github.wnebyte.jarguments.adapter.TypeAdapter;
 import com.github.wnebyte.jarguments.exception.ParseException;
+import com.github.wnebyte.jarguments.util.Normalizer;
 import com.github.wnebyte.jarguments.util.Objects;
 import com.github.wnebyte.jarguments.util.Strings;
 
 /**
- * This class represents an optional <code>Argument</code> that has only a name.
+ * This class represents an optional <code>Argument</code>.
  */
 public class Flag extends Optional {
 
@@ -19,7 +20,7 @@ public class Flag extends Optional {
     */
 
     /**
-     * The value to use during initialization when the option has been included.
+     * The value to use during initialization when the option has been selected.
      */
     protected final String value;
 
@@ -60,19 +61,19 @@ public class Flag extends Optional {
     protected Object initialize(final String value) throws ParseException {
         if (value == null || value.equals(Strings.EMPTY)) {
             if (hasDefaultValue()) {
-                String val = new Splitter()
+                String val = new Normalizer()
                         .setValue(defaultValue)
-                        .normalize(isArray())
-                        .get();
+                        .isArray(isArray())
+                        .apply();
                 return typeAdapter.convert(val);
             } else {
                 return typeAdapter.defaultValue();
             }
         } else {
-            String val = new Splitter()
+            String val = new Normalizer()
                     .setValue(this.value)
-                    .normalize(isArray())
-                    .get();
+                    .isArray(isArray())
+                    .apply();
             return typeAdapter.convert(val);
         }
     }

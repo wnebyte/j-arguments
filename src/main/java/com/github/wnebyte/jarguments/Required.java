@@ -4,9 +4,10 @@ import java.util.Set;
 import java.util.Collection;
 import com.github.wnebyte.jarguments.adapter.TypeAdapter;
 import com.github.wnebyte.jarguments.exception.ParseException;
+import com.github.wnebyte.jarguments.util.Normalizer;
 
 /**
- * This class represents a required <code>Argument</code> that has both a name and a value.
+ * This class represents a required <code>Argument</code>.
  */
 public class Required extends Argument {
 
@@ -43,10 +44,10 @@ public class Required extends Argument {
 
     @Override
     protected Object initialize(final String value) throws ParseException {
-        String val = new Splitter()
+        String val = new Normalizer()
                 .setValue(value)
-                .normalize(isArray())
-                .get();
+                .isArray(isArray())
+                .apply();
         return initializer.apply(val);
     }
 

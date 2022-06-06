@@ -4,13 +4,13 @@ import java.util.HashMap;
 
 public abstract class AbstractTypeAdapterRegistry {
 
-    protected HashMap<Class<?>, TypeAdapter<?>> converters;
+    protected HashMap<Class<?>, TypeAdapter<?>> adapters;
 
-    public abstract <T> void register(Class<T> cls, TypeAdapter<T> typeAdapter);
+    public abstract <T> void register(Class<T> type, TypeAdapter<T> typeAdapter);
 
-    public abstract <T> boolean registerIfAbsent(Class<T> cls, TypeAdapter<T> typeAdapter);
+    public abstract <T> boolean registerIfAbsent(Class<T> type, TypeAdapter<T> typeAdapter);
 
-    public abstract <T> TypeAdapter<T> get(Class<T> cls);
+    public abstract <T> TypeAdapter<T> get(Class<T> type);
 
-    public abstract boolean contains(Class<?> cls);
+    public abstract boolean isRegistered(Class<?> type);
 }

@@ -1,11 +1,9 @@
-package com.github.wnebyte.jarguments;
+package com.github.wnebyte.jarguments.util;
 
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
-import com.github.wnebyte.jarguments.util.Chars;
-import com.github.wnebyte.jarguments.util.Strings;
 
 public class TokenSequence implements Iterable<String> {
 

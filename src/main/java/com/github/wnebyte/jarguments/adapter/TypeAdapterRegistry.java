@@ -2,7 +2,7 @@ package com.github.wnebyte.jarguments.adapter;
 
 import java.util.*;
 import java.lang.reflect.Array;
-import com.github.wnebyte.jarguments.Splitter;
+import com.github.wnebyte.jarguments.util.Normalizer;
 import com.github.wnebyte.jarguments.util.Objects;
 import com.github.wnebyte.jarguments.util.Strings;
 import com.github.wnebyte.jarguments.exception.ParseException;
@@ -37,7 +37,7 @@ public class TypeAdapterRegistry extends AbstractTypeAdapterRegistry {
                     T[] array = (T[]) Array.newInstance(componentType, elements.size());
                     int i = 0;
                     for (String element : elements) {
-                        String val = Splitter.normalize(element);
+                        String val = Normalizer.normalize(element);
                         array[i++] = typeAdapter.convert(val);
                     }
                     return array;
@@ -110,7 +110,7 @@ public class TypeAdapterRegistry extends AbstractTypeAdapterRegistry {
     */
 
     public TypeAdapterRegistry() {
-        super.converters = new HashMap<>(9 * 4);
+        super.adapters = new HashMap<>(9 * 4);
         init();
     }
 
@@ -166,39 +166,39 @@ public class TypeAdapterRegistry extends AbstractTypeAdapterRegistry {
     }
 
     @Override
-    public <T> void register(final Class<T> cls, final TypeAdapter<T> typeAdapter) {
-        if (cls == null || typeAdapter == null) {
+    public <T> void register(final Class<T> type, final TypeAdapter<T> typeAdapter) {
+        if (type == null || typeAdapter == null) {
             throw new IllegalArgumentException(
-                    "Class & TypeAdapter must not be null."
+                    "Type & TypeAdapter must not be null."
             );
         }
-        converters.put(cls, typeAdapter);
+        adapters.put(type, typeAdapter);
     }
 
     @Override
-    public <T> boolean registerIfAbsent(final Class<T> cls, final TypeAdapter<T> typeAdapter) {
-        if (cls == null || typeAdapter == null) {
+    public <T> boolean registerIfAbsent(final Class<T> type, final TypeAdapter<T> typeAdapter) {
+        if (type == null || typeAdapter == null) {
             return false;
         }
-        return (converters.putIfAbsent(cls, typeAdapter) == null);
+        return (adapters.putIfAbsent(type, typeAdapter) == null);
     }
 
     @Override
-    public boolean contains(final Class<?> cls) {
-        if (cls == null) {
+    public boolean isRegistered(final Class<?> type) {
+        if (type == null) {
             return false;
         } else {
-            return converters.containsKey(cls);
+            return adapters.containsKey(type);
         }
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T> TypeAdapter<T> get(final Class<T> cls) {
-        if (cls == null) {
+    public <T> TypeAdapter<T> get(final Class<T> type) {
+        if (type == null) {
             return null;
         }
-        TypeAdapter<?> typeAdapter = converters.get(cls);
+        TypeAdapter<?> typeAdapter = adapters.get(type);
         if (typeAdapter != null) {
             return (TypeAdapter<T>) typeAdapter;
         } else {
@@ -237,7 +237,7 @@ public class TypeAdapterRegistry extends AbstractTypeAdapterRegistry {
                 boolean[] array = new boolean[elements.size()];
                 int i = 0;
                 for (String element : elements) {
-                    String val = Splitter.normalize(element);
+                    String val = Normalizer.normalize(element);
                     array[i++] = BOOLEAN_TYPE_ADAPTER.convert(val);
                 }
                 return array;
@@ -278,7 +278,7 @@ public class TypeAdapterRegistry extends AbstractTypeAdapterRegistry {
                 byte[] array = new byte[elements.size()];
                 int i = 0;
                 for (String element : elements) {
-                    String val = Splitter.normalize(element);
+                    String val = Normalizer.normalize(element);
                     array[i++] = BYTE_TYPE_ADAPTER.convert(val);
                 }
                 return array;
@@ -319,7 +319,7 @@ public class TypeAdapterRegistry extends AbstractTypeAdapterRegistry {
                 char[] array = new char[elements.size()];
                 int i = 0;
                 for (String element : elements) {
-                    String val = Splitter.normalize(element);
+                    String val = Normalizer.normalize(element);
                     array[i++] = CHARACTER_TYPE_ADAPTER.convert(val);
                 }
                 return array;
@@ -360,7 +360,7 @@ public class TypeAdapterRegistry extends AbstractTypeAdapterRegistry {
                 double[] array = new double[elements.size()];
                 int i = 0;
                 for (String element : elements) {
-                    String val = Splitter.normalize(element);
+                    String val = Normalizer.normalize(element);
                     array[i++] = DOUBLE_TYPE_ADAPTER.convert(val);
                 }
                 return array;
@@ -401,7 +401,7 @@ public class TypeAdapterRegistry extends AbstractTypeAdapterRegistry {
                 float[] array = new float[elements.size()];
                 int i = 0;
                 for (String element : elements) {
-                    String val = Splitter.normalize(element);
+                    String val = Normalizer.normalize(element);
                     array[i++] = FLOAT_TYPE_ADAPTER.convert(val);
                 }
                 return array;
@@ -442,7 +442,7 @@ public class TypeAdapterRegistry extends AbstractTypeAdapterRegistry {
                 int[] array = new int[elements.size()];
                 int i = 0;
                 for (String element : elements) {
-                    String val = Splitter.normalize(element);
+                    String val = Normalizer.normalize(element);
                     array[i++] = INTEGER_TYPE_ADAPTER.convert(val);
                 }
                 return array;
@@ -483,7 +483,7 @@ public class TypeAdapterRegistry extends AbstractTypeAdapterRegistry {
                 long[] array = new long[elements.size()];
                 int i = 0;
                 for (String element : elements) {
-                    String val = Splitter.normalize(element);
+                    String val = Normalizer.normalize(element);
                     array[i++] = LONG_TYPE_ADAPTER.convert(val);
                 }
                 return array;
@@ -524,7 +524,7 @@ public class TypeAdapterRegistry extends AbstractTypeAdapterRegistry {
                 short[] array = new short[elements.size()];
                 int i = 0;
                 for (String element : elements) {
-                    String val = Splitter.normalize(element);
+                    String val = Normalizer.normalize(element);
                     array[i++] = SHORT_TYPE_ADAPTER.convert(val);
                 }
                 return array;
@@ -557,7 +557,7 @@ public class TypeAdapterRegistry extends AbstractTypeAdapterRegistry {
         if (o == this) { return true; }
         if (!(o instanceof TypeAdapterRegistry)) { return false; }
         TypeAdapterRegistry typeConverters = (TypeAdapterRegistry) o;
-        return Objects.equals(typeConverters.converters, this.converters) &&
+        return Objects.equals(typeConverters.adapters, this.adapters) &&
                 super.equals(typeConverters);
     }
 
@@ -565,12 +565,12 @@ public class TypeAdapterRegistry extends AbstractTypeAdapterRegistry {
     public int hashCode() {
         int result = 55;
         return result +
-                Objects.hashCode(this.converters) +
+                Objects.hashCode(this.adapters) +
                 super.hashCode();
     }
 
     @Override
     public String toString() {
-        return String.format("com.github.wnebyte.jarguments.adapter.TypeAdapterRegistry(converters=%s)", converters);
+        return String.format("com.github.wnebyte.jarguments.adapter.TypeAdapterRegistry(converters=%s)", adapters);
     }
 }
