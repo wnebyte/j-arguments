@@ -7,7 +7,6 @@ import com.github.wnebyte.jarguments.adapter.TypeAdapter;
 import com.github.wnebyte.jarguments.adapter.TypeAdapterRegistry;
 import com.github.wnebyte.jarguments.adapter.AbstractTypeAdapterRegistry;
 import com.github.wnebyte.jarguments.exception.ParseException;
-
 import static com.github.wnebyte.jarguments.util.Reflections.isBoolean;
 
 public class ArgumentFactory implements AbstractArgumentFactory {
@@ -50,57 +49,15 @@ public class ArgumentFactory implements AbstractArgumentFactory {
     private final Comparator<? super Argument> comparator = Argument::compareTo;
 
     public ArgumentFactory() {
-        this(null, null, null);
+        this(null);
     }
 
-    public ArgumentFactory(
-            AbstractTypeAdapterRegistry typeAdapters,
-            Collection<Character> excludeCharacters,
-            Collection<String> excludeNames
-    ) {
-        this.typeAdapters = (typeAdapters == null) ? TypeAdapterRegistry.getInstance() : typeAdapters;
-        if (excludeCharacters != null) {
-            this.excludeCharacters.addAll(excludeCharacters);
+    public ArgumentFactory(AbstractTypeAdapterRegistry adapters) {
+        if (adapters == null) {
+            this.typeAdapters = TypeAdapterRegistry.getInstance();
+        } else {
+            this.typeAdapters = adapters;
         }
-        if (excludeNames != null) {
-            this.excludeNames.addAll(excludeNames);
-        }
-    }
-
-    private Set<String> getNames(String name) {
-        // check input
-        if (name == null || name.length() == 0) {
-            throw new IllegalArgumentException(
-                    "Name must not be null or empty."
-            );
-        }
-        String[] tmp = name.split(",");
-        Set<String> names = new LinkedHashSet<>(tmp.length);
-        for (String n : tmp) {
-            n = Strings.removeAll(n, excludeCharacters);
-            if (n.equals(Strings.EMPTY)) {
-                throw new IllegalArgumentException(
-                        "An empty Argument name is not allowed."
-                );
-            }
-            if (excludeNames.contains(n)) {
-                throw new IllegalArgumentException(
-                        String.format(
-                                "Argument name: '%s' is not allowed.", n
-                        )
-                );
-            }
-            boolean distinct = names.add(n) & allNames.add(n);
-            if (!distinct) {
-                throw new IllegalArgumentException(
-                        String.format(
-                                "An Argument with name: '%s' has already been created by this factory instance.", n
-                        )
-                );
-            }
-        }
-
-        return names;
     }
 
     @Override
@@ -230,6 +187,42 @@ public class ArgumentFactory implements AbstractArgumentFactory {
     public Set<Argument> getAll() {
         c.sort(comparator);
         return new LinkedHashSet<>(c);
+    }
+
+    private Set<String> getNames(String name) {
+        // check input
+        if (name == null || name.length() == 0) {
+            throw new IllegalArgumentException(
+                    "Name must not be null or empty."
+            );
+        }
+        String[] tmp = name.split(",");
+        Set<String> names = new LinkedHashSet<>(tmp.length);
+        for (String n : tmp) {
+            n = Strings.removeAll(n, excludeCharacters);
+            if (n.equals(Strings.EMPTY)) {
+                throw new IllegalArgumentException(
+                        "An empty Argument name is not allowed."
+                );
+            }
+            if (excludeNames.contains(n)) {
+                throw new IllegalArgumentException(
+                        String.format(
+                                "Argument name: '%s' is not allowed.", n
+                        )
+                );
+            }
+            boolean distinct = names.add(n) & allNames.add(n);
+            if (!distinct) {
+                throw new IllegalArgumentException(
+                        String.format(
+                                "An Argument with name: '%s' has already been created by this factory instance.", n
+                        )
+                );
+            }
+        }
+
+        return names;
     }
 
     private void initialize(Argument argument) {

@@ -1,18 +1,38 @@
 package com.github.wnebyte.jarguments.util;
 
-import java.util.Set;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
+import java.util.*;
 
 public class Sets {
 
-    public static <T> Set<T> of(T[] array) {
-        return (array == null) ? null : new HashSet<T>(Arrays.asList(array));
+    public static <T> Set<T> newSet() {
+        return new HashSet<T>();
     }
 
-    public static <T> Set<T> ofLinkedHashSet(T[] array) {
-        return (array == null) ? null : new LinkedHashSet<>(Arrays.asList(array));
+    public static <T> LinkedHashSet<T> newLinkedHashSet() {
+        return new LinkedHashSet<T>();
+    }
+
+    public static <T extends Comparable<? super T>> TreeSet<T> newTreeSet() {
+        return new TreeSet<T>();
+    }
+
+    public static <T extends Comparable<? super T>> TreeSet<T> newTreeSet(Comparator<? super T> comparator) {
+        return new TreeSet<T>(comparator);
+    }
+
+    @SafeVarargs
+    public static <T> Set<T> of(T... e) {
+        return (e == null) ? null : new HashSet<T>(Arrays.asList(e));
+    }
+
+    @SafeVarargs
+    public static <T> LinkedHashSet<T> ofLinkedHashSet(T... e) {
+        return (e == null) ? null : new LinkedHashSet<T>(Arrays.asList(e));
+    }
+
+    @SafeVarargs
+    public static <T extends Comparable<? super T>> TreeSet<T> ofTreeSet(T... e) {
+        return (e == null) ? null : new TreeSet<T>(Arrays.asList(e));
     }
 
     public static String toString(Set<?> set) {

@@ -52,7 +52,7 @@ public class HelpFormatter implements Formatter<Set<Argument>> {
     ###########################
     */
 
-    protected final Formatter<Required> REQUIRED_USAGE_FORMATTER
+    protected Formatter<Required> REQUIRED_USAGE_FORMATTER
             = new Formatter<Required>() {
         @Override
         public String apply(Required argument) {
@@ -74,7 +74,7 @@ public class HelpFormatter implements Formatter<Set<Argument>> {
         }
     };
 
-    protected final Formatter<Required> REQUIRED_DETAILS_FORMATTER
+    protected Formatter<Required> REQUIRED_DETAILS_FORMATTER
             = new Formatter<Required>() {
         @Override
         public String apply(Required argument) {
@@ -82,7 +82,7 @@ public class HelpFormatter implements Formatter<Set<Argument>> {
         }
     };
 
-    protected final Formatter<Positional> POSITIONAL_USAGE_FORMATTER
+    protected Formatter<Positional> POSITIONAL_USAGE_FORMATTER
             = new Formatter<Positional>() {
         @Override
         public String apply(Positional argument) {
@@ -98,7 +98,7 @@ public class HelpFormatter implements Formatter<Set<Argument>> {
         }
     };
 
-    protected final Formatter<Positional> POSITIONAL_DETAILS_FORMATTER
+    protected Formatter<Positional> POSITIONAL_DETAILS_FORMATTER
             = new Formatter<Positional>() {
         @Override
         public String apply(Positional argument) {
@@ -111,7 +111,7 @@ public class HelpFormatter implements Formatter<Set<Argument>> {
         }
     };
 
-    protected final Formatter<Optional> OPTIONAL_USAGE_FORMATTER
+    protected Formatter<Optional> OPTIONAL_USAGE_FORMATTER
             = new Formatter<Optional>() {
         @Override
         public String apply(Optional argument) {
@@ -138,7 +138,7 @@ public class HelpFormatter implements Formatter<Set<Argument>> {
         }
     };
 
-    protected final Formatter<Optional> OPTIONAL_DETAILS_FORMATTER
+    protected Formatter<Optional> OPTIONAL_DETAILS_FORMATTER
             = new Formatter<Optional>() {
         @Override
         public String apply(Optional argument) {
@@ -146,7 +146,7 @@ public class HelpFormatter implements Formatter<Set<Argument>> {
         }
     };
 
-    protected final Formatter<Flag> FLAG_USAGE_FORMATTER
+    protected Formatter<Flag> FLAG_USAGE_FORMATTER
             = new Formatter<Flag>() {
         @Override
         public String apply(Flag argument) {
@@ -154,7 +154,7 @@ public class HelpFormatter implements Formatter<Set<Argument>> {
         }
     };
 
-    protected final Formatter<Flag> FLAG_DETAILS_FORMATTER
+    protected Formatter<Flag> FLAG_DETAILS_FORMATTER
             = new Formatter<Flag>() {
         @Override
         public String apply(Flag argument) {
@@ -162,7 +162,7 @@ public class HelpFormatter implements Formatter<Set<Argument>> {
         }
     };
 
-    protected final Formatter<Argument> ARGUMENT_USAGE_FORMATTER
+    protected Formatter<Argument> ARGUMENT_USAGE_FORMATTER
             = new Formatter<Argument>() {
         @Override
         public String apply(Argument argument) {
@@ -185,7 +185,7 @@ public class HelpFormatter implements Formatter<Set<Argument>> {
         }
     };
 
-    protected final Formatter<Argument> ARGUMENT_DETAILS_FORMATTER
+    protected Formatter<Argument> ARGUMENT_DETAILS_FORMATTER
             = new Formatter<Argument>() {
         @Override
         public String apply(Argument argument) {
@@ -208,7 +208,7 @@ public class HelpFormatter implements Formatter<Set<Argument>> {
         }
     };
 
-    protected final Formatter<Collection<Argument>> SET_USAGE_FORMATTER
+    protected Formatter<Collection<Argument>> COLLECTION_USAGE_FORMATTER
             = new Formatter<Collection<Argument>>() {
         @Override
         public String apply(Collection<Argument> c) {
@@ -227,7 +227,7 @@ public class HelpFormatter implements Formatter<Set<Argument>> {
     public String apply(Set<Argument> c) {
         int maxLength = maxLength(c, ARGUMENT_DETAILS_FORMATTER);
         StringBuilder out = new StringBuilder();
-        out.append("Usage: ").append(SET_USAGE_FORMATTER.apply(c))
+        out.append("Usage: ").append(COLLECTION_USAGE_FORMATTER.apply(c))
                 .append("\n\n");
 
         Collection<Required> req = getArguments(c, Required.class);

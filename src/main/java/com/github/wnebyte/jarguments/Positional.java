@@ -69,7 +69,7 @@ public class Positional extends Required {
         if (o instanceof Positional) {
             return position - ((Positional) o).position;
         } else {
-            return index - o.getIndex();
+            return +1;
         }
     }
 

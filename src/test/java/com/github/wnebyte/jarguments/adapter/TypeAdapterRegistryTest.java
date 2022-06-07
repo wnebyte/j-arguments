@@ -5,7 +5,7 @@ import java.util.UUID;
 import org.junit.Test;
 import org.junit.Assert;
 
-public class TypeConverterMapTest {
+public class TypeAdapterRegistryTest {
 
     @Test
     public void testGet00() {

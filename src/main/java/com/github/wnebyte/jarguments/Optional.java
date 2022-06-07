@@ -87,6 +87,15 @@ public class Optional extends Argument {
     }
 
     @Override
+    public int compareTo(Argument o) {
+        if (o instanceof Optional) {
+            return index - o.index;
+        } else {
+            return -1;
+        }
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (o == null) { return false; }
         if (o == this) { return true; }

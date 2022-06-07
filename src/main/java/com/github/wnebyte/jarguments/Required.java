@@ -55,8 +55,11 @@ public class Required extends Argument {
     public int compareTo(Argument o) {
         if (o instanceof Positional) {
             return -1;
-        } else {
-            return index - o.getIndex();
+        } else if (o instanceof Required) {
+            return index - o.index;
+        }
+        else {
+            return +1;
         }
     }
 

@@ -24,7 +24,7 @@ public abstract class Argument implements Comparable<Argument> {
     ###########################
     */
 
-    private static final String VALUE_PATTERN = "[^\\s\"']*|\"[^\"]*\"|'[^']*'";
+    protected static final String VALUE_PATTERN = "[^\\s\"']*|\"[^\"]*\"|'[^']*'";
 
     protected static final String DEFAULT_VALUE_PATTERN = "(" + VALUE_PATTERN + ")";
 

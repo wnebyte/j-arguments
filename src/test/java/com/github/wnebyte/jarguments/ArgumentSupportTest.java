@@ -1,60 +1,78 @@
 package com.github.wnebyte.jarguments;
 
+import java.util.Set;
 import java.util.Collection;
-import java.util.List;
 import org.junit.Test;
 import org.junit.Assert;
-import com.github.wnebyte.jarguments.factory.ArgumentFactory;
-import com.github.wnebyte.jarguments.factory.ArgumentFactoryBuilder;
+import com.github.wnebyte.jarguments.adapter.TypeAdapterRegistry;
+import com.github.wnebyte.jarguments.util.*;
 import static com.github.wnebyte.jarguments.ArgumentSupport.getArguments;
 
 public class ArgumentSupportTest {
 
-    @Test
-    public void testGetArguments00() {
-        ArgumentFactory factory = new ArgumentFactoryBuilder().build();
-        // 1 positional
-        // 2 required
-        List<Argument> c = factory
-                .setName("-h", "--h")
-                .isPositional()
-                .append(int.class)
-                .setName("-a", "--a")
-                .isRequired()
-                .append(int.class)
-                .setName("-b", "--b")
-                .isRequired()
-                .append(int.class)
-                .get();
+    private final TypeAdapterRegistry adapters
+            = TypeAdapterRegistry.getInstance();
 
-        Assert.assertEquals(3, c.size());
-        Collection<Positional> positionalList = ArgumentSupport.getArguments(c, Positional.class);
-        Assert.assertEquals(1, positionalList.size());
-        Collection<Required> requiredList = ArgumentSupport.getArguments(c, Required.class);
-        Assert.assertEquals(3, requiredList.size());
-        Collection<Optional> optionalList = ArgumentSupport.getArguments(c, Optional.class);
-        Assert.assertTrue(optionalList.isEmpty());
+    @Test
+    public void getArgumentsTest00() {
+        Set<Argument> set = Sets.newSet();
+        set.add(new PositionalBuilder<Integer>()
+                .setIndex(0)
+                .setPosition(0)
+                .setType(Integer.class)
+                .setTypeAdapter(adapters.INTEGER_TYPE_ADAPTER)
+                .build());
+        set.add(new RequiredBuilder<Integer>()
+                .setIndex(1)
+                .setNames(Sets.of("-a", "--a"))
+                .setType(Integer.class)
+                .setTypeAdapter(adapters.INTEGER_TYPE_ADAPTER)
+                .build());
+        set.add(new RequiredBuilder<Integer>()
+                .setIndex(2)
+                .setNames(Sets.of("-b", "--b"))
+                .setType(Integer.class)
+                .setTypeAdapter(adapters.INTEGER_TYPE_ADAPTER)
+                .build());
+
+        Assert.assertEquals(3, set.size());
+        Collection<Positional> pos = ArgumentSupport.getArguments(set, Positional.class);
+        Assert.assertEquals(1, pos.size());
+        Collection<Required> req = ArgumentSupport.getArguments(set, Required.class);
+        Assert.assertEquals(3, req.size());
+        Collection<Optional> opt = ArgumentSupport.getArguments(set, Optional.class);
+        Assert.assertTrue(opt.isEmpty());
     }
 
     @Test
-    public void testGetArguments01() {
-        // 2 optional
-        // 1 flag
-        List<Argument> c = new ArgumentFactory()
-                .setName("-a")
-                .isOptional()
-                .append(int.class)
-                .setName("-b")
-                .isFlag()
-                .append(boolean.class)
-                .setName("-c")
-                .isFlag()
-                .append(boolean.class)
-                .get();
+    public void getArgumentsTest01() {
+        Set<Argument> set = Sets.newSet();
+        set.add(new OptionalBuilder<Integer>()
+                .setIndex(0)
+                .setNames(Sets.of("-a"))
+                .setType(Integer.class)
+                .setTypeAdapter(adapters.INTEGER_TYPE_ADAPTER)
+                .build());
+        set.add(new FlagBuilder<Boolean>()
+                .setIndex(1)
+                .setNames(Sets.of("-b"))
+                .setType(Boolean.class)
+                .setTypeAdapter(adapters.BOOLEAN_TYPE_ADAPTER)
+                .setValue("true")
+                .setDefaultValue("false")
+                .build());
+        set.add(new FlagBuilder<Boolean>()
+                .setIndex(2)
+                .setNames(Sets.of("-c"))
+                .setType(Boolean.class)
+                .setTypeAdapter(adapters.BOOLEAN_TYPE_ADAPTER)
+                .setValue("true")
+                .setDefaultValue("false")
+                .build());
 
-        Collection<Optional> c1 = getArguments(c, Optional.class);
-        Assert.assertEquals(3, c1.size());
-        Collection<Flag> c2 = getArguments(c, Flag.class);
-        Assert.assertEquals(2, c2.size());
+        Collection<Optional> opt = getArguments(set, Optional.class);
+        Assert.assertEquals(3, opt.size());
+        Collection<Flag> flag = getArguments(set, Flag.class);
+        Assert.assertEquals(2, flag.size());
     }
 }
