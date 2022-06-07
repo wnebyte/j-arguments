@@ -11,6 +11,25 @@ version '0.0.2'
 sourceCompatibility = "1.8";
 targetCompatibility = "1.8";
 
+sourceSets {
+    test {
+        java {
+            srcDirs = ["src/test/java"]
+        }
+        resources {
+            srcDirs = ["src/test/resources"]
+        }
+    }
+    sample {
+        java {
+            srcDirs = ["src/sample/java"]
+        }
+        resources {
+            srcDirs = ["src/sample/resources"]
+        }
+    }
+}
+
 javadoc {
     sourceSets.main.allJava
 }
