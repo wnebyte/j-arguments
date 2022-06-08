@@ -3,12 +3,11 @@ package com.github.wnebyte.jarguments.parser;
 import java.util.Set;
 import org.junit.Assert;
 import org.junit.Test;
-import com.github.wnebyte.jarguments.BaseTest;
 import com.github.wnebyte.jarguments.Argument;
 import com.github.wnebyte.jarguments.exception.ParseException;
 import com.github.wnebyte.jarguments.util.*;
 
-public class ParserTest extends BaseTest {
+public class ParserTest {
 
     @Test
     public void test00() throws ParseException  {

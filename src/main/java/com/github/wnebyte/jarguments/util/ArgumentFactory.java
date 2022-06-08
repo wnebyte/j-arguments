@@ -227,6 +227,11 @@ public class ArgumentFactory implements AbstractArgumentFactory {
 
     private void initialize(Argument argument) {
         try {
+            if (argument.hasChoices()) {
+                for (String choice : argument.getChoices()) {
+                    ArgumentSupport.initialize(argument, choice);
+                }
+            }
             if (argument instanceof Flag) {
                 ArgumentSupport.initialize(argument, argument.getCanonicalName());
             } else if (argument instanceof Optional) {

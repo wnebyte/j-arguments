@@ -72,7 +72,7 @@ public class ArgumentFactoryTest {
     }
 
     @Test
-    public void subClassConstructionTest00() {
+    public void classInstantiationTest00() {
         ArgumentFactory factory = new ArgumentFactory();
         Argument a = factory.create("-a", null, false,
                 null, null, null, boolean.class);
@@ -86,5 +86,33 @@ public class ArgumentFactoryTest {
         Assert.assertSame(b.getClass(), Positional.class);
         Assert.assertSame(c.getClass(), Optional.class);
         Assert.assertSame(d.getClass(), Required.class);
+    }
+
+    @Test
+    public void choicesTest00() {
+        ArgumentFactory factory = new ArgumentFactory();
+        factory.create("-a, --a", null, false,
+                new String[]{ "1", "2" }, null, null, int.class);
+    }
+
+    @Test
+    public void choicesTest01() {
+        ArgumentFactory factory = new ArgumentFactory();
+        factory.create("-a, --a", null, false,
+                new String[]{ "1", "2", "3" }, null, "5", int.class);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void choicesConversionExceptionTest00() {
+        ArgumentFactory factory = new ArgumentFactory();
+        factory.create("-a, --a", null, false,
+                new String[]{ "1", "2", "hello" }, null, null, int.class);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void defaultValueConversionExceptionTest00() {
+        ArgumentFactory factory = new ArgumentFactory();
+        factory.create("-a, --a", null, false,
+                new String[]{ "1", "2", "3" }, null, "hello", int.class);
     }
 }
