@@ -206,6 +206,17 @@ public class TypeAdapterRegistry extends AbstractTypeAdapterRegistry {
         }
     }
 
+    public <T> TypeAdapter<? extends Collection<T>> get(
+            final Class<? extends Collection> type,
+            final Class<T> componentType
+    ) {
+        if (type == List.class) {
+            return listTypeAdapterOf(componentType);
+        }
+
+        return null;
+    }
+
     /*
     ###########################
     #         ADAPTERS        #

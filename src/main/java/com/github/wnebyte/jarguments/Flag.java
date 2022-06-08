@@ -9,7 +9,8 @@ import com.github.wnebyte.jarguments.util.Objects;
 import com.github.wnebyte.jarguments.util.Strings;
 
 /**
- * This class represents an optional <code>Argument</code>.
+ * This class represents an initialize able optional Argument that can be initialized into
+ * one of two specifiable values.
  */
 public class Flag extends Optional {
 
@@ -20,7 +21,7 @@ public class Flag extends Optional {
     */
 
     /**
-     * The value to use during initialization when the option has been selected.
+     * Value to be used during initialization when the option has been selected.
      */
     protected final String value;
 
@@ -98,7 +99,9 @@ public class Flag extends Optional {
     @Override
     public int hashCode() {
         int result = 12;
-        return 4 * result + Objects.hashCode(value) + super.hashCode();
+        return 4 * result +
+                Objects.hashCode(value) +
+                super.hashCode();
     }
 
     @Override

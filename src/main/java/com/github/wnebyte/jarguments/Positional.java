@@ -8,7 +8,7 @@ import com.github.wnebyte.jarguments.exception.ParseException;
 import com.github.wnebyte.jarguments.util.Normalizer;
 
 /**
- * This class represents a positional <code>Argument</code>.
+ * This class represents an initialize able positional Argument.
  */
 public class Positional extends Required {
 

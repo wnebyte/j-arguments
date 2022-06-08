@@ -9,7 +9,7 @@ import com.github.wnebyte.jarguments.util.Objects;
 import com.github.wnebyte.jarguments.util.Strings;
 
 /**
- * This class represents an optional <code>Argument</code>.
+ * This class represents an initialize able optional Argument.
  */
 public class Optional extends Argument {
 

@@ -1,6 +1,8 @@
 package com.github.wnebyte.jarguments.util;
 
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 public class Sets {
 
@@ -23,6 +25,12 @@ public class Sets {
     @SafeVarargs
     public static <T> Set<T> of(T... e) {
         return (e == null) ? null : new HashSet<T>(Arrays.asList(e));
+    }
+
+    public static <T> Set<T> toSet(Iterable<T> iterable) {
+        return (iterable == null) ? newSet() :
+                StreamSupport.stream(iterable.spliterator(), false)
+                        .collect(Collectors.toSet());
     }
 
     @SafeVarargs

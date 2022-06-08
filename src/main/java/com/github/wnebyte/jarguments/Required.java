@@ -7,7 +7,7 @@ import com.github.wnebyte.jarguments.exception.ParseException;
 import com.github.wnebyte.jarguments.util.Normalizer;
 
 /**
- * This class represents a required <code>Argument</code>.
+ * This class represents an initialize able required Argument.
  */
 public class Required extends Argument {
 

@@ -9,8 +9,19 @@ import static com.github.wnebyte.jarguments.util.Collections.isNullOrEmpty;
  */
 public class ArgumentSupport {
 
+    /**
+     * Returns a new <code>Collection</code> of Arguments populated with the elements from the
+     * specified <code>Collection</code> whose <code>Class</code> is equal to or is a subclass of the specified
+     * <code>Class</code>.
+     * @param c a Collection.
+     * @param cls a Class.
+     * @param <T> the type of Argument.
+     * @return a new Collection containing the elements from the specified Collection whose Class is equal to
+     * or is a subclass of the specified Class,
+     * or an empty Collection if either the specified Collection or Class is <code>null</code>.
+     */
     public static <T extends Argument> Collection<T> getArguments(Collection<Argument> c, Class<T> cls) {
-        Collection<T> cNew = new ArrayList<>();
+        Collection<T> cNew = new ArrayList<T>();
         if (isNullOrEmpty(c) || cls == null) {
             return cNew;
         }
@@ -24,7 +35,17 @@ public class ArgumentSupport {
         return cNew;
     }
 
-    public static <T extends Argument> boolean containsArgument(Collection<Argument> c, Class<T> cls) {
+    /**
+     * Determines whether the specified <code>Collection</code> contains any Arguments
+     * of the specified <code>Class</code>.
+     * @param c the elements.
+     * @param cls the class.
+     * @param <T> the type of Argument.
+     * @return <code>true</code> if the specified Collection contains any Arguments of
+     * the specified Class,
+     * otherwise <code>false</code>.
+     */
+    public static <T extends Argument> boolean containsAny(Collection<Argument> c, Class<T> cls) {
         if (isNullOrEmpty(c) || cls == null) {
             return false;
         }
@@ -77,25 +98,32 @@ public class ArgumentSupport {
         if (isNullOrEmpty(c) || position < 0) {
             return null;
         }
-        return c.stream().filter(arg -> arg instanceof Positional)
-                .map(arg -> (Positional) arg)
-                .filter(arg -> arg.getPosition() == position)
+        return c.stream().filter(arg -> arg instanceof Positional &&
+                ((Positional) arg).getPosition() == position)
                 .findFirst()
                 .orElse(null);
-
     }
 
     /**
      * Initializes the specified <code>Argument</code> with the specified <code>value</code>.
-     * @param argument to be initialized.
-     * @param value to initialize with.
-     * @return the result.
+     * @param argument an Argument to be initialized.
+     * @param value a value to initialize the Argument with.
+     * @return the initialized Argument.
      * @throws ParseException if the initialization fails.
      */
     public static Object initialize(Argument argument, String value) throws ParseException {
         return argument.initialize(value);
     }
 
+    /**
+     * Returns whether the pattern of the specified <code>Argument</code> matches that of the
+     * specified <code>value</code>.
+     * @param argument an Argument.
+     * @param value a value.
+     * @return <code>true</code> if the pattern of the specified Argument matches that of the
+     * specified value,
+     * otherwise <code>false</code>.
+     */
     public static boolean matches(Argument argument, String value) {
         return (argument != null) && (value != null) && (argument.matches(value));
     }

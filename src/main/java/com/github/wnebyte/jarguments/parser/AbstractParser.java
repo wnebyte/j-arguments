@@ -7,7 +7,7 @@ public interface AbstractParser {
 
     Object[] initialize() throws ParseException;
 
-    void parse(String input, Iterable<String> tokens, Iterable<Argument> arguments) throws ParseException;
+    boolean parse(String input, Iterable<String> tokens, Iterable<Argument> arguments) throws ParseException;
 
-    void reset();
+    void clear();
 }

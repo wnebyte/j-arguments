@@ -14,7 +14,7 @@ import com.github.wnebyte.jarguments.util.Sets;
 import com.github.wnebyte.jarguments.util.Strings;
 
 /**
- * This class represents an abstract Argument.
+ * This class represents an abstract initialize able Argument.
  */
 public abstract class Argument implements Comparable<Argument> {
 
@@ -24,9 +24,9 @@ public abstract class Argument implements Comparable<Argument> {
     ###########################
     */
 
-    protected static final String VALUE_PATTERN = "[^\\s\"']*|\"[^\"]*\"|'[^']*'";
+    protected static final String BASE_VALUE_PATTERN = "[^\\s\"']*|\"[^\"]*\"|'[^']*'";
 
-    protected static final String DEFAULT_VALUE_PATTERN = "(" + VALUE_PATTERN + ")";
+    protected static final String DEFAULT_VALUE_PATTERN = "(" + BASE_VALUE_PATTERN + ")";
 
     protected static final String ARRAY_VALUE_PATTERN = "\\[" + DEFAULT_VALUE_PATTERN + "*\\]";
 
@@ -39,6 +39,8 @@ public abstract class Argument implements Comparable<Argument> {
     */
 
     protected final Set<String> names;
+
+    protected final String canonicalName;
 
     protected final String description;
 
@@ -70,6 +72,7 @@ public abstract class Argument implements Comparable<Argument> {
             final Collection<Constraint<T>> constraints
     ) {
         this.names = names;
+        this.canonicalName = (names == null || names.isEmpty()) ? null : names.toArray(new String[0])[0];
         this.description = description;
         this.metavar = metavar;
         this.choices = choices;
@@ -82,7 +85,7 @@ public abstract class Argument implements Comparable<Argument> {
                 if (!choices.contains(value)) {
                     throw new ConstraintException(
                             String.format(
-                                    "Value: '%s' is not contained within set: '%s'.",  value, Sets.toString(choices)
+                                    "'%s' is not contained within choices: %s.",  value, Sets.toString(choices)
                             )
                     );
                 }
@@ -146,7 +149,11 @@ public abstract class Argument implements Comparable<Argument> {
     }
 
     public String getCanonicalName() {
-        return names.isEmpty() ? null : names.toArray(new String[0])[0];
+        return canonicalName;
+    }
+
+    public boolean hasCanonicalName() {
+        return (canonicalName != null);
     }
 
     public final String getDescription() {
