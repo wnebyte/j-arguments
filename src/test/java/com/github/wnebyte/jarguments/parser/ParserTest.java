@@ -16,7 +16,7 @@ public class ParserTest {
                 null, null, null, int.class);
         factory.create(null, null, true,
                 null, null, null, int.class);
-        Set<Argument> set = factory.getAll();
+        Set<Argument> arguments = factory.getAll();
         String[] input = {
                 "-a 5 100",
                 "100 -a 5"
@@ -32,12 +32,11 @@ public class ParserTest {
         for (int i = 0; i < input.length; i++) {
             TokenSequence tokens = TokenSequence.tokenize(input[i]);
             Parser parser = new Parser();
-            parser.parse("input", tokens, set);
-            Object[] args = parser.initialize();
+            Object[] vals = parser.parse("input", tokens, arguments);
 
             for (int j = 0; j < values[i].length; j++) {
                 int value = values[i][j];
-                Assert.assertEquals(value, args[j]);
+                Assert.assertEquals(value, vals[j]);
             }
         }
     }
@@ -49,7 +48,7 @@ public class ParserTest {
                 null, null, null, int.class);
         factory.create(null, null, true,
                 null, null, null, int.class);
-        Set<Argument> set = factory.getAll();
+        Set<Argument> arguments = factory.getAll();
         String[] input = {
                 "-a 5 100",
                 "100 -a 5",
@@ -69,8 +68,7 @@ public class ParserTest {
         for (int i = 0; i < input.length; i++) {
             TokenSequence tokens = TokenSequence.tokenize(input[i]);
             Parser parser = new Parser();
-            parser.parse("input", tokens, set);
-            Object[] vals = parser.initialize();
+            Object[] vals = parser.parse("input", tokens, arguments);
 
             for (int j = 0; j < values[i].length; j++) {
                 int value = values[i][j];
@@ -88,7 +86,7 @@ public class ParserTest {
                 null, null, null, int.class);
         factory.create(null, null, true,
                 null, null, null, int.class);
-        Set<Argument> set = factory.getAll();
+        Set<Argument> arguments = factory.getAll();
         String[] input = {
                 "-a 5 -b 10 100",
                 "-b 10 -a 5 100",
@@ -132,12 +130,11 @@ public class ParserTest {
         for (int i = 0; i < input.length; i++) {
             TokenSequence tokens = TokenSequence.tokenize(input[i]);
             Parser parser = new Parser();
-            parser.parse("input", tokens, set);
-            Object[] args = parser.initialize();
+            Object[] vals = parser.parse("input", tokens, arguments);
 
             for (int j = 0; j < values[i].length; j++) {
                 int value = values[i][j];
-                Assert.assertEquals(value, args[j]);
+                Assert.assertEquals(value, vals[j]);
             }
         }
     }
@@ -153,7 +150,7 @@ public class ParserTest {
                 null, null, null, int.class);
         factory.create(null, null, true,
                 null, null, null, int.class);
-        Set<Argument> set = factory.getAll();
+        Set<Argument> arguments = factory.getAll();
         String[] input = {
                 "-a 5 -b 100 50",
                 "-b -a 5 100 50",
@@ -174,12 +171,11 @@ public class ParserTest {
         };
         TokenSequence tokens = TokenSequence.tokenize(input[0]);
         Parser parser = new Parser();
-        parser.parse("input", tokens, set);
-        Object[] args = parser.initialize();
-        Assert.assertEquals(values[0][0], args[0]);
-        Assert.assertEquals(values[0][1], args[1]);
-        Assert.assertEquals(values[0][2], args[2]);
-        Assert.assertEquals(values[0][3], args[3]);
+        Object[] vals = parser.parse("input", tokens, arguments);
+        Assert.assertEquals(values[0][0], vals[0]);
+        Assert.assertEquals(values[0][1], vals[1]);
+        Assert.assertEquals(values[0][2], vals[2]);
+        Assert.assertEquals(values[0][3], vals[3]);
     }
 
     @Test
@@ -193,7 +189,7 @@ public class ParserTest {
                 null, null, null, int.class);
         factory.create(null, null, true,
                 null, null, null, String.class);
-        Set<Argument> set = factory.getAll();
+        Set<Argument> arguments = factory.getAll();
         String[] input = {
                 "-a 5 -b 100 'hello world'", // 1st
                 "-b -a 5 100 'hello world'",
@@ -241,12 +237,11 @@ public class ParserTest {
         for (int i = 0; i < input.length; i++) {
             TokenSequence tokens = TokenSequence.tokenize(input[i]);
             Parser parser = new Parser();
-            parser.parse("input", tokens, set);
-            Object[] args = parser.initialize();
+            Object[] vals = parser.parse("input", tokens, arguments);
 
             for (int j = 0; j < values[i].length; j++) {
                 Object value = values[i][j];
-                Assert.assertEquals(value, args[j]);
+                Assert.assertEquals(value, vals[j]);
             }
         }
     }
@@ -262,12 +257,11 @@ public class ParserTest {
                 null, null, null, int.class);
         factory.create(null, null, true,
                 null, null, null, String.class);
-        Set<Argument> set = factory.getAll();
+        Set<Argument> arguments = factory.getAll();
         String input = "-a 5 -b 'hello world' 100";
         TokenSequence tokens = TokenSequence.tokenize(input);
         Parser parser = new Parser();
-        parser.parse("input", tokens, set);
-        parser.initialize();
+        Object[] vals = parser.parse("input", tokens, arguments);
     }
 
     @Test
@@ -279,7 +273,7 @@ public class ParserTest {
                 null, null, null, String.class);
         factory.create("comment, -c", null, true,
                 null, null, null, String.class);
-        Set<Argument> set = factory.getAll();
+        Set<Argument> arguments = factory.getAll();
         String input = "name 'Lars Petterson' url https://www.google.com -c \"this is a comment\"";
         Object[] values = {
                 "Lars Petterson",
@@ -288,8 +282,7 @@ public class ParserTest {
         };
         TokenSequence tokens = TokenSequence.tokenize(input);
         Parser parser = new Parser();
-        parser.parse("input", tokens, set);
-        Object[] vals = parser.initialize();
+        Object[] vals = parser.parse("input", tokens, arguments);
         Assert.assertEquals(vals.length, values.length);
         for (int i = 0; i < vals.length; i++) {
             Assert.assertEquals(vals[i], values[i]);

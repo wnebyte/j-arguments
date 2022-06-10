@@ -5,9 +5,5 @@ import com.github.wnebyte.jarguments.exception.ParseException;
 
 public interface AbstractParser {
 
-    Object[] initialize() throws ParseException;
-
-    boolean parse(String input, Iterable<String> tokens, Iterable<Argument> arguments) throws ParseException;
-
-    void clear();
+    Object[] parse(String input, Iterable<String> tokens, Iterable<Argument> arguments) throws ParseException;
 }

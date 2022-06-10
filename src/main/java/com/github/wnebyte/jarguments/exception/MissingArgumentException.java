@@ -4,27 +4,29 @@ import com.github.wnebyte.jarguments.Argument;
 
 public class MissingArgumentException extends ParseException {
 
-    private final String input;
-
-    private final Argument argument;
-
-    public MissingArgumentException(String message, String input, Argument argument) {
+    public MissingArgumentException(String message) {
         super(message);
-        this.input = input;
-        this.argument = argument;
     }
 
-    public MissingArgumentException(Throwable cause, String input, Argument argument) {
+    public MissingArgumentException(
+            String message,
+            Argument argument,
+            String token,
+            String input
+    ) {
+        super(message, argument, token, input);
+    }
+
+    public MissingArgumentException(Throwable cause) {
         super(cause);
-        this.input = input;
-        this.argument = argument;
     }
 
-    public Argument getArgument() {
-        return argument;
-    }
-
-    public String getInput() {
-        return input;
+    public MissingArgumentException(
+            Throwable cause,
+            Argument argument,
+            String token,
+            String input)
+    {
+        super(cause, argument, token, input);
     }
 }

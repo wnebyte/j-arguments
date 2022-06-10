@@ -2,10 +2,10 @@ package com.github.wnebyte.jarguments.adapter;
 
 import java.util.*;
 import java.lang.reflect.Array;
-import com.github.wnebyte.jarguments.util.Normalizer;
 import com.github.wnebyte.jarguments.util.Objects;
 import com.github.wnebyte.jarguments.util.Strings;
-import com.github.wnebyte.jarguments.exception.ParseException;
+import com.github.wnebyte.jarguments.util.Normalizer;
+import com.github.wnebyte.jarguments.exception.TypeConversionException;
 
 public class TypeAdapterRegistry extends AbstractTypeAdapterRegistry {
 
@@ -30,7 +30,7 @@ public class TypeAdapterRegistry extends AbstractTypeAdapterRegistry {
         }
         return new TypeAdapter<T[]>() {
             @Override
-            public T[] convert(final String value) throws ParseException {
+            public T[] convert(final String value) throws TypeConversionException {
                 try {
                     List<String> elements = Strings.splitByComma(value);
                     @SuppressWarnings("unchecked")
@@ -42,7 +42,7 @@ public class TypeAdapterRegistry extends AbstractTypeAdapterRegistry {
                     }
                     return array;
                 } catch (Exception e) {
-                    throw new ParseException(
+                    throw new TypeConversionException(
                             e.getMessage()
                     );
                 }
@@ -64,7 +64,7 @@ public class TypeAdapterRegistry extends AbstractTypeAdapterRegistry {
 
         return new TypeAdapter<List<T>>() {
             @Override
-            public List<T> convert(String value) throws ParseException {
+            public List<T> convert(String value) throws TypeConversionException {
                 T[] array = arrayTypeAdapter.convert(value);
                 return Arrays.asList(array);
             }
@@ -85,7 +85,7 @@ public class TypeAdapterRegistry extends AbstractTypeAdapterRegistry {
 
         return new TypeAdapter<Collection<T>>() {
             @Override
-            public Collection<T> convert(String value) throws ParseException {
+            public Collection<T> convert(String value) throws TypeConversionException {
                 return listTypeAdapter.convert(value);
             }
             @Override
@@ -225,11 +225,11 @@ public class TypeAdapterRegistry extends AbstractTypeAdapterRegistry {
 
     public final TypeAdapter<Boolean> BOOLEAN_TYPE_ADAPTER = new TypeAdapter<Boolean>() {
         @Override
-        public Boolean convert(final String value) throws ParseException {
+        public Boolean convert(final String value) throws TypeConversionException {
             try {
                 return Boolean.parseBoolean(value);
             } catch (Exception e) {
-                throw new ParseException(
+                throw new TypeConversionException(
                         e.getMessage()
                 );
             }
@@ -242,7 +242,7 @@ public class TypeAdapterRegistry extends AbstractTypeAdapterRegistry {
 
     public final TypeAdapter<boolean[]> BOOLEAN_ARRAY_TYPE_ADAPTER = new TypeAdapter<boolean[]>() {
         @Override
-        public boolean[] convert(final String value) throws ParseException {
+        public boolean[] convert(final String value) throws TypeConversionException {
             try {
                 List<String> elements = Strings.splitByComma(value);
                 boolean[] array = new boolean[elements.size()];
@@ -253,7 +253,7 @@ public class TypeAdapterRegistry extends AbstractTypeAdapterRegistry {
                 }
                 return array;
             } catch (Exception e) {
-                throw new ParseException(
+                throw new TypeConversionException(
                         e.getMessage()
                 );
             }
@@ -266,11 +266,11 @@ public class TypeAdapterRegistry extends AbstractTypeAdapterRegistry {
 
     public final TypeAdapter<Byte> BYTE_TYPE_ADAPTER = new TypeAdapter<Byte>() {
         @Override
-        public Byte convert(final String value) throws ParseException {
+        public Byte convert(final String value) throws TypeConversionException {
             try {
                 return Byte.parseByte(value);
             } catch (Exception e) {
-                throw new ParseException(
+                throw new TypeConversionException(
                         e.getMessage()
                 );
             }
@@ -283,7 +283,7 @@ public class TypeAdapterRegistry extends AbstractTypeAdapterRegistry {
 
     public final TypeAdapter<byte[]> BYTE_ARRAY_TYPE_ADAPTER = new TypeAdapter<byte[]>() {
         @Override
-        public byte[] convert(final String value) throws ParseException {
+        public byte[] convert(final String value) throws TypeConversionException {
             try {
                 List<String> elements = Strings.splitByComma(value);
                 byte[] array = new byte[elements.size()];
@@ -294,7 +294,7 @@ public class TypeAdapterRegistry extends AbstractTypeAdapterRegistry {
                 }
                 return array;
             } catch (Exception e) {
-                throw new ParseException(
+                throw new TypeConversionException(
                         e.getMessage()
                 );
             }
@@ -307,11 +307,11 @@ public class TypeAdapterRegistry extends AbstractTypeAdapterRegistry {
 
     public final TypeAdapter<Character> CHARACTER_TYPE_ADAPTER = new TypeAdapter<Character>() {
         @Override
-        public Character convert(final String value) throws ParseException {
+        public Character convert(final String value) throws TypeConversionException {
             try {
                 return value.charAt(0);
             } catch (Exception e) {
-                throw new ParseException(
+                throw new TypeConversionException(
                         e.getMessage()
                 );
             }
@@ -324,7 +324,7 @@ public class TypeAdapterRegistry extends AbstractTypeAdapterRegistry {
 
     public final TypeAdapter<char[]> CHAR_ARRAY_TYPE_ADAPTER = new TypeAdapter<char[]>() {
         @Override
-        public char[] convert(final String value) throws ParseException {
+        public char[] convert(final String value) throws TypeConversionException {
             try {
                 List<String> elements = Strings.splitByComma(value);
                 char[] array = new char[elements.size()];
@@ -335,7 +335,7 @@ public class TypeAdapterRegistry extends AbstractTypeAdapterRegistry {
                 }
                 return array;
             } catch (Exception e) {
-                throw new ParseException(
+                throw new TypeConversionException(
                         e.getMessage()
                 );
             }
@@ -348,11 +348,11 @@ public class TypeAdapterRegistry extends AbstractTypeAdapterRegistry {
 
     public final TypeAdapter<Double> DOUBLE_TYPE_ADAPTER = new TypeAdapter<Double>() {
         @Override
-        public Double convert(final String value) throws ParseException {
+        public Double convert(final String value) throws TypeConversionException {
             try {
                 return Double.parseDouble(value);
             } catch (Exception e) {
-                throw new ParseException(
+                throw new TypeConversionException(
                         e.getMessage()
                 );
             }
@@ -365,7 +365,7 @@ public class TypeAdapterRegistry extends AbstractTypeAdapterRegistry {
 
     public final TypeAdapter<double[]> DOUBLE_ARRAY_TYPE_ADAPTER = new TypeAdapter<double[]>() {
         @Override
-        public double[] convert(final String value) throws ParseException {
+        public double[] convert(final String value) throws TypeConversionException {
             try {
                 List<String> elements = Strings.splitByComma(value);
                 double[] array = new double[elements.size()];
@@ -376,7 +376,7 @@ public class TypeAdapterRegistry extends AbstractTypeAdapterRegistry {
                 }
                 return array;
             } catch (Exception e) {
-                throw new ParseException(
+                throw new TypeConversionException(
                         e.getMessage()
                 );
             }
@@ -389,11 +389,11 @@ public class TypeAdapterRegistry extends AbstractTypeAdapterRegistry {
 
     public final TypeAdapter<Float> FLOAT_TYPE_ADAPTER = new TypeAdapter<Float>() {
         @Override
-        public Float convert(final String value) throws ParseException {
+        public Float convert(final String value) throws TypeConversionException {
             try {
                 return Float.parseFloat(value);
             } catch (Exception e) {
-                throw new ParseException(
+                throw new TypeConversionException(
                         e.getMessage()
                 );
             }
@@ -406,7 +406,7 @@ public class TypeAdapterRegistry extends AbstractTypeAdapterRegistry {
 
     public final TypeAdapter<float[]> FLOAT_ARRAY_TYPE_ADAPTER = new TypeAdapter<float[]>() {
         @Override
-        public float[] convert(final String value) throws ParseException {
+        public float[] convert(final String value) throws TypeConversionException {
             try {
                 List<String> elements = Strings.splitByComma(value);
                 float[] array = new float[elements.size()];
@@ -417,7 +417,7 @@ public class TypeAdapterRegistry extends AbstractTypeAdapterRegistry {
                 }
                 return array;
             } catch (Exception e) {
-                throw new ParseException(
+                throw new TypeConversionException(
                         e.getMessage()
                 );
             }
@@ -430,11 +430,11 @@ public class TypeAdapterRegistry extends AbstractTypeAdapterRegistry {
 
     public final TypeAdapter<Integer> INTEGER_TYPE_ADAPTER = new TypeAdapter<Integer>() {
         @Override
-        public Integer convert(final String value) throws ParseException {
+        public Integer convert(final String value) throws TypeConversionException {
             try {
                 return Integer.parseInt(value);
             } catch (Exception e) {
-                throw new ParseException(
+                throw new TypeConversionException(
                         e.getMessage()
                 );
             }
@@ -447,7 +447,7 @@ public class TypeAdapterRegistry extends AbstractTypeAdapterRegistry {
 
     public final TypeAdapter<int[]> INT_ARRAY_TYPE_ADAPTER = new TypeAdapter<int[]>() {
         @Override
-        public int[] convert(final String value) throws ParseException {
+        public int[] convert(final String value) throws TypeConversionException {
             try {
                 List<String> elements = Strings.splitByComma(value);
                 int[] array = new int[elements.size()];
@@ -458,7 +458,7 @@ public class TypeAdapterRegistry extends AbstractTypeAdapterRegistry {
                 }
                 return array;
             } catch (Exception e) {
-                throw new ParseException(
+                throw new TypeConversionException(
                         e.getMessage()
                 );
             }
@@ -471,11 +471,11 @@ public class TypeAdapterRegistry extends AbstractTypeAdapterRegistry {
 
     public final TypeAdapter<Long> LONG_TYPE_ADAPTER = new TypeAdapter<Long>() {
         @Override
-        public Long convert(final String value) throws ParseException {
+        public Long convert(final String value) throws TypeConversionException {
             try {
                 return Long.parseLong(value);
             } catch (Exception e) {
-                throw new ParseException(
+                throw new TypeConversionException(
                         e.getMessage()
                 );
             }
@@ -488,7 +488,7 @@ public class TypeAdapterRegistry extends AbstractTypeAdapterRegistry {
 
     public final TypeAdapter<long[]> LONG_ARRAY_TYPE_ADAPTER = new TypeAdapter<long[]>() {
         @Override
-        public long[] convert(final String value) throws ParseException {
+        public long[] convert(final String value) throws TypeConversionException {
             try {
                 List<String> elements = Strings.splitByComma(value);
                 long[] array = new long[elements.size()];
@@ -499,7 +499,7 @@ public class TypeAdapterRegistry extends AbstractTypeAdapterRegistry {
                 }
                 return array;
             } catch (Exception e) {
-                throw new ParseException(
+                throw new TypeConversionException(
                         e.getMessage()
                 );
             }
@@ -512,11 +512,11 @@ public class TypeAdapterRegistry extends AbstractTypeAdapterRegistry {
 
     public final TypeAdapter<Short> SHORT_TYPE_ADAPTER = new TypeAdapter<Short>() {
         @Override
-        public Short convert(final String value) throws ParseException {
+        public Short convert(final String value) throws TypeConversionException {
             try {
                 return Short.parseShort(value);
             } catch (Exception e) {
-                throw new ParseException(
+                throw new TypeConversionException(
                         e.getMessage()
                 );
             }
@@ -529,7 +529,7 @@ public class TypeAdapterRegistry extends AbstractTypeAdapterRegistry {
 
     public final TypeAdapter<short[]> SHORT_ARRAY_TYPE_ADAPTER = new TypeAdapter<short[]>() {
         @Override
-        public short[] convert(String value) throws ParseException {
+        public short[] convert(String value) throws TypeConversionException {
             try {
                 List<String> elements = Strings.splitByComma(value);
                 short[] array = new short[elements.size()];
@@ -540,7 +540,7 @@ public class TypeAdapterRegistry extends AbstractTypeAdapterRegistry {
                 }
                 return array;
             } catch (Exception e) {
-                throw new ParseException(
+                throw new TypeConversionException(
                         e.getMessage()
                 );
             }

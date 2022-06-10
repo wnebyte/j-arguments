@@ -1,6 +1,8 @@
 package com.github.wnebyte.jarguments.conf;
 
 import java.util.Set;
+import java.util.Map;
+import java.util.HashMap;
 import java.io.PrintStream;
 import com.github.wnebyte.jarguments.Argument;
 import com.github.wnebyte.jarguments.exception.*;
@@ -11,7 +13,7 @@ import com.github.wnebyte.jarguments.formatter.HelpFormatter;
 /**
  * This class represents a configuration.
  */
-public class Configuration extends BaseConfiguration {
+public class Configuration {
 
     /*
     ###########################
@@ -57,14 +59,17 @@ public class Configuration extends BaseConfiguration {
     ###########################
     */
 
-    private PrintStream out
+    protected PrintStream out
             = System.out;
 
-    private PrintStream err
+    protected PrintStream err
             = System.err;
 
-    private Formatter<Set<Argument>> helpFormatter
+    protected Formatter<Set<Argument>> helpFormatter
             = DEFAULT_HELP_FORMATTER;
+
+    private final Map<Class<? extends ParseException>, Formatter<? extends ParseException>> formatters
+            = new HashMap<>();
 
     /*
     ###########################
@@ -100,6 +105,28 @@ public class Configuration extends BaseConfiguration {
 
     public Formatter<Set<Argument>> getHelpFormatter() {
         return helpFormatter;
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T extends ParseException> Formatter<T> getFormatter(Class<T> cls) {
+        if (cls != null) {
+            if (formatters.containsKey(cls)) {
+                Formatter<?> formatter = formatters.get(cls);
+                return (Formatter<T>) formatter;
+            }
+        }
+        return null;
+    }
+
+    public boolean hasFormatter(Class<?> cls) {
+        return formatters.containsKey(cls);
+    }
+
+    public <T extends ParseException> Configuration setFormatter(Class<T> cls, Formatter<T> formatter) {
+        if (cls != null && formatter != null) {
+            formatters.put(cls, formatter);
+        }
+        return this;
     }
 
     public Configuration setOut(PrintStream out) {

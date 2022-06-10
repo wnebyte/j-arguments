@@ -4,27 +4,29 @@ import com.github.wnebyte.jarguments.Argument;
 
 public class MalformedArgumentException extends ParseException {
 
-    private final String input;
-
-    private final Argument arg;
-
-    public MalformedArgumentException(String message, String input, Argument arg) {
+    public MalformedArgumentException(String message) {
         super(message);
-        this.input = input;
-        this.arg = arg;
     }
 
-    public MalformedArgumentException(Throwable cause, String input, Argument arg) {
+    public MalformedArgumentException(
+            String message,
+            Argument argument,
+            String token,
+            String input
+    ) {
+        super(message, argument, token, input);
+    }
+
+    public MalformedArgumentException(Throwable cause) {
         super(cause);
-        this.input = input;
-        this.arg = arg;
     }
 
-    public String getInput() {
-        return input;
-    }
-
-    public Argument getArgument() {
-        return arg;
+    public MalformedArgumentException(
+            Throwable cause,
+            Argument argument,
+            String token,
+            String input
+    ) {
+        super(cause, argument, token, input);
     }
 }

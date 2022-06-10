@@ -1,28 +1,32 @@
 package com.github.wnebyte.jarguments.exception;
 
+import com.github.wnebyte.jarguments.Argument;
+
 public class NoSuchArgumentException extends ParseException {
 
-    private final String input;
-
-    private final String token;
-
-    public NoSuchArgumentException(String message, String input, String token) {
+    public NoSuchArgumentException(String message) {
         super(message);
-        this.input = input;
-        this.token = token;
     }
 
-    public NoSuchArgumentException(Throwable cause, String input, String token) {
+    public NoSuchArgumentException(
+            String message,
+            Argument argument,
+            String token,
+            String input
+    ) {
+        super(message, argument, token, input);
+    }
+
+    public NoSuchArgumentException(Throwable cause) {
         super(cause);
-        this.input = input;
-        this.token = token;
     }
 
-    public String getInput() {
-        return input;
-    }
-
-    public String getToken() {
-        return token;
+    public NoSuchArgumentException(
+            Throwable cause,
+            Argument argument,
+            String token,
+            String input
+    ) {
+        super(cause, argument, token, input);
     }
 }

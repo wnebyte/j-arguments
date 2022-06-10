@@ -13,7 +13,8 @@ import static com.github.wnebyte.jarguments.ArgumentSupport.getByPosition;
 
 /**
  * This class is the default implementation of the <code>AbstractParser</code> interface.
- * Can be used to parse and initialize common subtypes of {@link Argument}.
+ * It can be used to parse and initialize the sub-types of {@link Argument} found
+ * in the {@link com.github.wnebyte.jarguments} package.
  */
 public class Parser implements AbstractParser {
 
@@ -23,25 +24,22 @@ public class Parser implements AbstractParser {
     ###########################
     */
 
-    // Todo: fix catch block
     /**
      * Attempts to initialize the specified <code>Argument</code> using the specified <code>token</code>.
      * @param argument an Argument to be initialized.
      * @param token a value to initialize the Argument with.
      * @param input the initial input string, is used to format any exceptions.
-     * @return the initialized Argument.
+     * @return the initialized Argument value.
      * @throws ParseException if initialization fails.
      */
     protected static Object initialize(Argument argument, String token, String input) throws ParseException {
         try {
             return ArgumentSupport.initialize(argument, token);
         } catch (ParseException e) {
-            throw new TypeConversionException(
-                    e,
-                    argument,
-                    token,
-                    input
-            );
+            e.setArgument(argument);
+            e.setToken(token);
+            e.setInput(input);
+            throw e;
         }
     }
 
@@ -62,17 +60,6 @@ public class Parser implements AbstractParser {
 
     /*
     ###########################
-    #          FIELDS         #
-    ###########################
-    */
-
-    /**
-     * Stores the most recently parsed Arguments.
-     */
-    private final Map<Argument, Pair<String, String>> batch;
-
-    /*
-    ###########################
     #       CONSTRUCTORS      #
     ###########################
     */
@@ -80,9 +67,7 @@ public class Parser implements AbstractParser {
     /**
      * Constructs a new instance.
      */
-    public Parser() {
-        this.batch = new HashMap<>();
-    }
+    public Parser() { }
 
     /*
     ###########################
@@ -91,13 +76,12 @@ public class Parser implements AbstractParser {
     */
 
     /**
-     * Attempts to initialize the batch of Arguments that were most recently parsed.
+     * Attempts to initialize the specified <code>batch</code>.
      * @return an array of initialized Argument values.
      * @throws ParseException if initialization fails.
      */
-    @Override
-    public Object[] initialize() throws ParseException {
-        if (batch.size() == 0) {
+    private Object[] initialize(Map<Argument, Pair<String, String>> batch) throws ParseException {
+        if (batch == null || batch.size() == 0) {
             return new Object[0];
         }
         Object[] values = new Object[batch.size()];
@@ -110,16 +94,15 @@ public class Parser implements AbstractParser {
     }
 
     /**
-     * Attempts to parse the specified <code>tokens</code> and <code>arguments</code>.
+     * Attempts to parse and initialize the specified <code>tokens</code>, <code>arguments</code>.
      * @param input initial src of the tokens, is used to format any exceptions.
      * @param tokens to be parsed.
      * @param arguments to be parsed.
-     * @return <code>true</code> if the specified tokens and arguments were successfully parsed,
-     * otherwise <code>false</code>.
+     * @return an array of initialized arguments.
      * @throws ParseException if parsing fails.
      */
     @Override
-    public boolean parse(
+    public Object[] parse(
             String input,
             Iterable<String> tokens,
             Iterable<Argument> arguments) throws ParseException
@@ -130,7 +113,7 @@ public class Parser implements AbstractParser {
             );
         Iterator<String> it = tokens.iterator();
         Set<Argument> src = Sets.toSet(arguments);
-        batch.clear();
+        Map<Argument, Pair<String, String>> batch = new HashMap<>(src.size());
         int pos = 0;
 
         // iterate each token
@@ -143,8 +126,8 @@ public class Parser implements AbstractParser {
             if (arg == null) {
                 throw new NoSuchArgumentException(
                         String.format(
-                                "Argument: '%s' does not exists.", token
-                        ), input, token
+                                "Argument with name: '%s' does not exists.", token
+                        ), arg, token, input
                 );
             }
             else if (arg instanceof Flag || arg instanceof Positional) {
@@ -156,7 +139,7 @@ public class Parser implements AbstractParser {
                     throw new MissingArgumentException(
                             String.format(
                                     "Argument: '%s' requires a value.", token
-                            ), input, arg
+                            ), arg, token, input
                     );
                 }
                 value = it.next();
@@ -166,7 +149,7 @@ public class Parser implements AbstractParser {
                 throw new MalformedArgumentException(
                         String.format(
                                 "Argument: '%s' is malformed.", token
-                        ), input, arg
+                        ), arg, token, input
                 );
             }
             src.remove(arg);
@@ -178,20 +161,12 @@ public class Parser implements AbstractParser {
             if (!(arg instanceof Optional)) {
                 throw new MissingArgumentException(
                         "Arguments that are required have to be specified.",
-                        input, arg
+                        arg, null, input
                 );
             }
             batch.put(arg, new Pair<>(Strings.EMPTY, input));
         }
 
-        return true;
-    }
-
-    /**
-     * Clears the batch of most recently parsed Arguments.
-     */
-    @Override
-    public void clear() {
-        batch.clear();
+        return initialize(batch);
     }
 }
