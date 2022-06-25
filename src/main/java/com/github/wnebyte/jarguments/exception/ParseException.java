@@ -46,7 +46,7 @@ public class ParseException extends Exception {
         return argument;
     }
 
-    public void setArgument(Argument argument) {
+    public void initArgument(Argument argument) {
         this.argument = argument;
     }
 
@@ -54,7 +54,7 @@ public class ParseException extends Exception {
         return input;
     }
 
-    public void setInput(String input) {
+    public void initInput(String input) {
         this.input = input;
     }
 
@@ -62,7 +62,7 @@ public class ParseException extends Exception {
         return token;
     }
 
-    public void setToken(String token) {
+    public void initToken(String token) {
         this.token = token;
     }
 }

@@ -106,13 +106,13 @@ public class ArgumentSupport {
 
     /**
      * Initializes the specified <code>Argument</code> with the specified <code>value</code>.
-     * @param argument an Argument to be initialized.
-     * @param value a value to initialize the Argument with.
+     * @param argument an Argument.
+     * @param value a value the Argument should be initialized with.
      * @return the initialized Argument.
      * @throws ParseException if the initialization fails.
      */
     public static Object initialize(Argument argument, String value) throws ParseException {
-        return argument.initialize(value);
+        return (argument == null) ? null : argument.initialize(value);
     }
 
     /**

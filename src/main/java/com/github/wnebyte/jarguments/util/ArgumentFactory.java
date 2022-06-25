@@ -13,11 +13,12 @@ public class ArgumentFactory implements AbstractArgumentFactory {
 
     /*
     ###########################
-    #          FIELDS         #
+    #      STATIC FIELDS      #
     ###########################
     */
 
-    private final Collection<Character> excludeCharacters = new ArrayList<Character>() {{
+    private static final Collection<Character> DEFAULT_EXCLUDE_CHARACTERS
+            = new ArrayList<Character>() {{
         add(' ');
         add('"');
         add('\'');
@@ -31,33 +32,53 @@ public class ArgumentFactory implements AbstractArgumentFactory {
         add('}');
     }};
 
-    private final Collection<String> excludeNames = new ArrayList<String>() {{
-        add("-h");
-        add("--help");
+    private static final Collection<String> DEFAULT_EXCLUDE_NAMES
+            = new ArrayList<String>() {{
+                add("-h");
+                add("--help");
     }};
 
-    private final AbstractTypeAdapterRegistry typeAdapters;
+    /*
+    ###########################
+    #          FIELDS         #
+    ###########################
+    */
+
+    private final Collection<Character> excludeCharacters;
+
+    private final Collection<String> excludeNames;
+
+    private final AbstractTypeAdapterRegistry adapters;
 
     private final Set<String> allNames = new HashSet<>();
-
-    private int index = 0;
-
-    private int position = 0;
 
     private final List<Argument> c = new ArrayList<>();
 
     private final Comparator<? super Argument> comparator = Argument::compareTo;
 
+    private int index = 0;
+
+    private int position = 0;
+
     public ArgumentFactory() {
-        this(null);
+        this(null, null, null);
     }
 
     public ArgumentFactory(AbstractTypeAdapterRegistry adapters) {
-        if (adapters == null) {
-            this.typeAdapters = TypeAdapterRegistry.getInstance();
-        } else {
-            this.typeAdapters = adapters;
+        this(adapters, null, null);
+    }
+
+    public ArgumentFactory(
+            AbstractTypeAdapterRegistry adapters,
+            Collection<Character> excludeCharacters,
+            Collection<String> excludeNames
+    ) {
+        this.adapters = (adapters == null) ? TypeAdapterRegistry.getInstance() : adapters;
+        this.excludeCharacters = new ArrayList<>(DEFAULT_EXCLUDE_CHARACTERS);
+        if (excludeCharacters != null) {
+            this.excludeCharacters.addAll(excludeCharacters);
         }
+        this.excludeNames = (excludeNames == null) ? new ArrayList<>(DEFAULT_EXCLUDE_NAMES) : excludeNames;
     }
 
     @Override
@@ -108,7 +129,7 @@ public class ArgumentFactory implements AbstractArgumentFactory {
             );
         }
         if (typeAdapter == null) {
-            typeAdapter = typeAdapters.get(type);
+            typeAdapter = adapters.get(type);
 
             if (typeAdapter == null) {
                 throw new IllegalArgumentException(

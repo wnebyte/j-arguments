@@ -1,15 +1,16 @@
 # j-arguments
 
-java-library
-
+java-core-library
+            
 ## About
 
-This library declares an abstract <code>Argument</code> class, 
-alongside a number of subclasses used for representing 
-optional, required and positional arguments.<br>
-Builders, Factories, Parsers, Formatters and Utilities are also provided.
+This module contains classes for representing, building, creating, parsing and formatting 
+"high-level" options/arguments.<br>
             
-### Documentation
+## Documentation
+
+This section provides documentation for 
+the com.github.wnebyte.jarguments.util.ArgumentFactory class.
 
 - [name](#name)
 - [description](#description)
@@ -21,7 +22,7 @@ Builders, Factories, Parsers, Formatters and Utilities are also provided.
 - [typeAdapter](#typeadapter)
 - [constraints](#constraints)
 
-#### name
+### name
 
 If name is set to <code>null</code> and [required](#required) is set to <code>true</code> a positional argument will be created.<br>
 If name is not <code>null</code> then <code>required</code> will determine whether an optional or 
@@ -50,7 +51,7 @@ Create a flag argument:
     factory.create("-f, --foo", null, false,
             null, null, null, boolean.class);
 
-#### description
+### description
 
 The description value is a string containing a brief description of the given argument. When 
 a user requests help (), these descriptions will be displayed with each argument.
@@ -58,7 +59,7 @@ a user requests help (), these descriptions will be displayed with each argument
     factory.create("-f, --foo", "this is a brief description", false,
             null, null, null, String.class);
 
-#### required
+### required
 
 Required arguments have to be included at the command line. Optional arguments on the other hand 
 can be omitted.
@@ -66,7 +67,7 @@ can be omitted.
     factory.create("-f, --foo", null, true,
             null, null, null, String.class);
 
-#### choices
+### choices
 
 Is used to constrain the value of an argument to a set of string values. Will not be applied on 
 default values or on flag arguments.
@@ -74,25 +75,25 @@ default values or on flag arguments.
     factory.create(null, null, true,
             String[]{"rock", "paper", "scissors"}, null, null, String.class);
 
-#### metavar
+### metavar
 
 Is used by the help message formatter when referencing the given argument.
 
     factory.create(null, null, true,
             null, null, "FOO", String.class);
 
-#### defaultValue
+### defaultValue
 
 All optional arguments may be omitted at the command line. 
 If omitted the argument will be initialized using a default value.<br>
 If this flag is not set; 
 a default value returned by [typeAdapter](#typeadapter) will be used instead.
 
-#### type
+### type
 
 The type of the argument.
 
-#### typeAdapter
+### typeAdapter
 
 Is an interface used to convert a string value into an instance of [type](#type).
 The <code>ArgumentFactory</code> class's default <code>AbstractTypeAdapterRegistry</code> has 
@@ -105,7 +106,7 @@ implementations for and can convert the following types: <br>
     <li>arrays where the component type is a wrapper class</li>
 </ul>
 
-#### constraints
+### constraints
 
 Is used to apply arbitrary constraints on a value. Will not be applied on default values 
 or on flag arguments.

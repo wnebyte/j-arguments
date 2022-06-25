@@ -1,10 +1,9 @@
-package com.github.wnebyte.jarguments.conf;
+package com.github.wnebyte.jarguments;
 
 import java.util.Set;
 import java.util.Map;
 import java.util.HashMap;
 import java.io.PrintStream;
-import com.github.wnebyte.jarguments.Argument;
 import com.github.wnebyte.jarguments.exception.*;
 import com.github.wnebyte.jarguments.util.IConsole;
 import com.github.wnebyte.jarguments.formatter.Formatter;
@@ -81,7 +80,6 @@ public class Configuration {
      * Constructs a new instance.
      */
     public Configuration() {
-        super();
         setFormatter(NoSuchArgumentException.class, DEFAULT_NO_SUCH_ARGUMENT_FORMATTER);
         setFormatter(MissingArgumentException.class, DEFAULT_MISSING_ARGUMENT_FORMATTER);
         setFormatter(MalformedArgumentException.class, DEFAULT_MALFORMED_ARGUMENT_FORMATTER);

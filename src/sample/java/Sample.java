@@ -1,6 +1,6 @@
 import java.util.Set;
 import com.github.wnebyte.jarguments.Argument;
-import com.github.wnebyte.jarguments.conf.Configuration;
+import com.github.wnebyte.jarguments.Configuration;
 import com.github.wnebyte.jarguments.exception.*;
 import com.github.wnebyte.jarguments.formatter.Formatter;
 import com.github.wnebyte.jarguments.parser.AbstractParser;
@@ -34,8 +34,8 @@ public class Sample {
             );
         }
         try {
-            boolean success = parser.parse(input, TokenSequence.tokenize(input), arguments);
-            return parser.initialize();
+            Object[] vals = parser.parse(input, TokenSequence.tokenize(input), arguments);
+            return vals;
         }
         catch (NoSuchArgumentException e) {
             Formatter<NoSuchArgumentException> formatter

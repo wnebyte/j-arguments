@@ -13,7 +13,7 @@ import static com.github.wnebyte.jarguments.ArgumentSupport.getByPosition;
 
 /**
  * This class is the default implementation of the <code>AbstractParser</code> interface.
- * It can be used to parse and initialize the sub-types of {@link Argument} found
+ * It can be used to parse and initialize any subclasses of {@link Argument} declared
  * in the {@link com.github.wnebyte.jarguments} package.
  */
 public class Parser implements AbstractParser {
@@ -36,9 +36,9 @@ public class Parser implements AbstractParser {
         try {
             return ArgumentSupport.initialize(argument, token);
         } catch (ParseException e) {
-            e.setArgument(argument);
-            e.setToken(token);
-            e.setInput(input);
+            e.initArgument(argument);
+            e.initToken(token);
+            e.initInput(input);
             throw e;
         }
     }
@@ -116,7 +116,6 @@ public class Parser implements AbstractParser {
         Map<Argument, Pair<String, String>> batch = new HashMap<>(src.size());
         int pos = 0;
 
-        // iterate each token
         while (it.hasNext()) {
             final String token = it.next();
             String value, keyValue;
@@ -156,7 +155,6 @@ public class Parser implements AbstractParser {
             batch.put(arg, new Pair<>(value, input));
         }
 
-        // iterate each remaining argument
         for (Argument arg : src) {
             if (!(arg instanceof Optional)) {
                 throw new MissingArgumentException(
