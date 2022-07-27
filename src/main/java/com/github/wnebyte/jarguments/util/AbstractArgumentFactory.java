@@ -4,6 +4,7 @@ import java.util.Set;
 import java.util.Collection;
 import com.github.wnebyte.jarguments.Argument;
 import com.github.wnebyte.jarguments.Constraint;
+import com.github.wnebyte.jarguments.adapter.AbstractTypeAdapterRegistry;
 import com.github.wnebyte.jarguments.adapter.TypeAdapter;
 
 public interface AbstractArgumentFactory {
@@ -42,4 +43,10 @@ public interface AbstractArgumentFactory {
     );
 
     Set<Argument> getAll();
+
+    AbstractTypeAdapterRegistry getTypeAdapters();
+
+    Collection<Character> getExcludeCharacters();
+
+    Collection<String> getExcludeNames();
 }

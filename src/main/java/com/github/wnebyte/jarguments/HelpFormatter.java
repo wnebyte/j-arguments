@@ -1,16 +1,14 @@
-package com.github.wnebyte.jarguments.formatter;
+package com.github.wnebyte.jarguments;
 
 import java.util.*;
 import java.util.stream.Collectors;
-import com.github.wnebyte.jarguments.*;
-import com.github.wnebyte.jarguments.Optional;
 import com.github.wnebyte.jarguments.util.Chars;
 import com.github.wnebyte.jarguments.util.Sets;
 import com.github.wnebyte.jarguments.util.Strings;
 import static com.github.wnebyte.jarguments.ArgumentSupport.getArguments;
 import static com.github.wnebyte.jarguments.util.Objects.requireNonNullElseGet;
 
-public class HelpFormatter implements Formatter<Set<Argument>> {
+public class HelpFormatter implements Formatter<ContextView> {
 
     /*
     ###########################
@@ -224,13 +222,20 @@ public class HelpFormatter implements Formatter<Set<Argument>> {
     */
 
     @Override
-    public String apply(Set<Argument> c) {
-        int maxLength = maxLength(c, ARGUMENT_DETAILS_FORMATTER);
+    public String apply(ContextView context) {
+        int maxLength = maxLength(context.getArguments(), ARGUMENT_DETAILS_FORMATTER);
         StringBuilder out = new StringBuilder();
-        out.append("Usage: ").append(COLLECTION_USAGE_FORMATTER.apply(c))
+        out.append("Usage: ");
+        if (context.hasName()) {
+            out.append(context.getName()).append(Strings.WHITESPACE);
+        }
+        out.append(COLLECTION_USAGE_FORMATTER.apply(context.getArguments()))
                 .append("\n\n");
+        if (context.hasDescription()) {
+            out.append(context.getDescription()).append("\n\n");
+        }
 
-        Collection<Required> req = getArguments(c, Required.class);
+        Collection<Required> req = getArguments(context.getArguments(), Required.class);
         if (!req.isEmpty()) {
             out.append("Required Arguments: ")
                     .append("\n");
@@ -241,7 +246,7 @@ public class HelpFormatter implements Formatter<Set<Argument>> {
             }
         }
 
-        Collection<Optional> opt = getArguments(c, Optional.class);
+        Collection<Optional> opt = getArguments(context.getArguments(), Optional.class);
         if (!opt.isEmpty()) {
             if (!req.isEmpty()) {
                 out.append("\n");

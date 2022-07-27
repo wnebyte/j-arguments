@@ -81,7 +81,7 @@ public abstract class Argument implements Comparable<Argument> {
         this.typeAdapter = typeAdapter;
         this.pattern = Pattern.compile(pattern(names, type));
         this.initializer = value -> {
-            if (choices != null) {
+            if (hasChoices()) {
                 if (!choices.contains(value)) {
                     throw new ConstraintException(
                             String.format(
@@ -219,7 +219,7 @@ public abstract class Argument implements Comparable<Argument> {
     @Override
     public String toString() {
         return String.format(
-                "com.github.wnebyte.jarguments.Argument(" +
+                "Argument(" +
                         "names: %s, index: %d, description: %s, metavar: %s, type: %s, " +
                         "typeAdapter: %s, choices: %s)",
                 Sets.toString(names), index, description, metavar, type,

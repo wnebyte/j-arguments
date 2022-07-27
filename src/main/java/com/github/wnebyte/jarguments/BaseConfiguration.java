@@ -1,18 +1,15 @@
 package com.github.wnebyte.jarguments;
 
-import java.util.Set;
 import java.util.Map;
 import java.util.HashMap;
 import java.io.PrintStream;
 import com.github.wnebyte.jarguments.exception.*;
 import com.github.wnebyte.jarguments.util.IConsole;
-import com.github.wnebyte.jarguments.formatter.Formatter;
-import com.github.wnebyte.jarguments.formatter.HelpFormatter;
 
 /**
  * This class represents a configuration.
  */
-public class Configuration {
+public class BaseConfiguration {
 
     /*
     ###########################
@@ -21,11 +18,11 @@ public class Configuration {
     */
 
     /**
-     * Constructs and returns a new <code>Configuration</code> instance.
+     * Constructs and returns a new <code>BaseConfiguration</code> instance.
      * @return a new instance.
      */
-    public static Configuration newInstance() {
-        return new Configuration();
+    public static BaseConfiguration newInstance() {
+        return new BaseConfiguration();
     }
 
     /*
@@ -34,7 +31,7 @@ public class Configuration {
     ###########################
     */
 
-    public static final Formatter<Set<Argument>> DEFAULT_HELP_FORMATTER
+    public static final Formatter<ContextView> DEFAULT_HELP_FORMATTER
             = HelpFormatter.get();
 
     public static final Formatter<TypeConversionException> DEFAULT_TYPE_CONVERSION_FORMATTER
@@ -64,7 +61,7 @@ public class Configuration {
     protected PrintStream err
             = System.err;
 
-    protected Formatter<Set<Argument>> helpFormatter
+    protected Formatter<ContextView> helpFormatter
             = DEFAULT_HELP_FORMATTER;
 
     private final Map<Class<? extends ParseException>, Formatter<? extends ParseException>> formatters
@@ -79,7 +76,7 @@ public class Configuration {
     /**
      * Constructs a new instance.
      */
-    public Configuration() {
+    public BaseConfiguration() {
         setFormatter(NoSuchArgumentException.class, DEFAULT_NO_SUCH_ARGUMENT_FORMATTER);
         setFormatter(MissingArgumentException.class, DEFAULT_MISSING_ARGUMENT_FORMATTER);
         setFormatter(MalformedArgumentException.class, DEFAULT_MALFORMED_ARGUMENT_FORMATTER);
@@ -101,7 +98,7 @@ public class Configuration {
         return err;
     }
 
-    public Formatter<Set<Argument>> getHelpFormatter() {
+    public Formatter<ContextView> getHelpFormatter() {
         return helpFormatter;
     }
 
@@ -120,28 +117,28 @@ public class Configuration {
         return formatters.containsKey(cls);
     }
 
-    public <T extends ParseException> Configuration setFormatter(Class<T> cls, Formatter<T> formatter) {
+    public <T extends ParseException> BaseConfiguration setFormatter(Class<T> cls, Formatter<T> formatter) {
         if (cls != null && formatter != null) {
             formatters.put(cls, formatter);
         }
         return this;
     }
 
-    public Configuration setOut(PrintStream out) {
+    public BaseConfiguration setOut(PrintStream out) {
         if (out != null) {
             this.out = out;
         }
         return this;
     }
 
-    public Configuration setErr(PrintStream err) {
+    public BaseConfiguration setErr(PrintStream err) {
         if (err != null) {
             this.err = err;
         }
         return this;
     }
 
-    public Configuration setConsole(IConsole console) {
+    public BaseConfiguration setConsole(IConsole console) {
         if (console != null) {
             setOut(console.out());
             setErr(console.err());
@@ -149,7 +146,7 @@ public class Configuration {
         return this;
     }
 
-    public Configuration setHelpFormatter(Formatter<Set<Argument>> formatter) {
+    public BaseConfiguration setHelpFormatter(Formatter<ContextView> formatter) {
         if (formatter != null) {
             this.helpFormatter = formatter;
         }

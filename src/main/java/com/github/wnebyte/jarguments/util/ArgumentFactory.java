@@ -78,7 +78,10 @@ public class ArgumentFactory implements AbstractArgumentFactory {
         if (excludeCharacters != null) {
             this.excludeCharacters.addAll(excludeCharacters);
         }
-        this.excludeNames = (excludeNames == null) ? new ArrayList<>(DEFAULT_EXCLUDE_NAMES) : excludeNames;
+        this.excludeNames = new ArrayList<>(DEFAULT_EXCLUDE_NAMES);
+        if (excludeNames != null) {
+            this.excludeNames.addAll(excludeNames);
+        }
     }
 
     @Override
@@ -91,7 +94,8 @@ public class ArgumentFactory implements AbstractArgumentFactory {
             String defaultValue,
             Class<?> type
     ) {
-        return create(name, description, required, choices, metavar, defaultValue, type, null, null);
+        return create(
+                name, description, required, choices, metavar, defaultValue, type, null, null);
     }
 
     @Override
@@ -208,6 +212,21 @@ public class ArgumentFactory implements AbstractArgumentFactory {
     public Set<Argument> getAll() {
         c.sort(comparator);
         return new LinkedHashSet<>(c);
+    }
+
+    @Override
+    public AbstractTypeAdapterRegistry getTypeAdapters() {
+        return adapters;
+    }
+
+    @Override
+    public Collection<Character> getExcludeCharacters() {
+        return excludeCharacters;
+    }
+
+    @Override
+    public Collection<String> getExcludeNames() {
+        return excludeNames;
     }
 
     private Set<String> getNames(String name) {

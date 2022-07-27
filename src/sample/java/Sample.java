@@ -1,8 +1,9 @@
 import java.util.Set;
 import com.github.wnebyte.jarguments.Argument;
-import com.github.wnebyte.jarguments.Configuration;
+import com.github.wnebyte.jarguments.BaseConfiguration;
+import com.github.wnebyte.jarguments.ContextView;
 import com.github.wnebyte.jarguments.exception.*;
-import com.github.wnebyte.jarguments.formatter.Formatter;
+import com.github.wnebyte.jarguments.Formatter;
 import com.github.wnebyte.jarguments.parser.AbstractParser;
 import com.github.wnebyte.jarguments.parser.Parser;
 import com.github.wnebyte.jarguments.util.ArgumentFactory;
@@ -18,12 +19,12 @@ public class Sample {
         sample.parse(input, arguments);
     }
 
-    private final Configuration conf;
+    private final BaseConfiguration conf;
 
     private final AbstractParser parser;
 
-    public Sample(Configuration conf) {
-        this.conf = Objects.requireNonNullElseGet(conf, Configuration::new);
+    public Sample(BaseConfiguration conf) {
+        this.conf = Objects.requireNonNullElseGet(conf, BaseConfiguration::new);
         this.parser = new Parser();
     }
 
@@ -64,8 +65,8 @@ public class Sample {
         }
         catch (Exception ignored) { }
 
-        Formatter<Set<Argument>> formatter = conf.getHelpFormatter();
-        conf.out().println(formatter.apply(arguments));
+        Formatter<ContextView> formatter = conf.getHelpFormatter();
+        conf.out().println(formatter.apply(ContextView.of(arguments)));
 
         return null;
     }

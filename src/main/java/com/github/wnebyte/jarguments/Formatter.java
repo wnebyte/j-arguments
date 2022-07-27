@@ -1,4 +1,4 @@
-package com.github.wnebyte.jarguments.formatter;
+package com.github.wnebyte.jarguments;
 
 import java.util.function.Function;
 
