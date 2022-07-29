@@ -48,7 +48,7 @@ public class ContextView {
     }
 
     public Set<Argument> getArguments() {
-        return Collections.unmodifiableSet(arguments);
+        return (arguments == null) ? null : Collections.unmodifiableSet(arguments);
     }
 
     @Override

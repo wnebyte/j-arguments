@@ -230,9 +230,12 @@ public class HelpFormatter implements Formatter<ContextView> {
             out.append(context.getName()).append(Strings.WHITESPACE);
         }
         out.append(COLLECTION_USAGE_FORMATTER.apply(context.getArguments()))
-                .append("\n\n");
+                .append("\n");
         if (context.hasDescription()) {
-            out.append(context.getDescription()).append("\n\n");
+            out.append("\n").append(context.getDescription()).append("\n");
+            if (!context.getArguments().isEmpty()) {
+                out.append("\n");
+            }
         }
 
         Collection<Required> req = getArguments(context.getArguments(), Required.class);
