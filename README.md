@@ -108,11 +108,12 @@ implementations for and can convert the following types: <br>
 
 ### constraints
 
-Is used to apply arbitrary constraints on a value. Will not be applied on default values 
+The <code>Constraint</code> interface can be used to apply arbitrary constraints on an initialized argument. 
+Will not be applied on default values 
 or on flag arguments.
 
     factory.create("-f, --foo", null, true,
-            null, null, null, String.class, new ConstrintCollectionBuilder<String>()
+            null, null, null, String.class, new ConstraintCollectionBuilder<String>()
                 .addConstraint(new Constraint<String>() {
                     @Override
                     public boolean test(String s) {
@@ -120,7 +121,7 @@ or on flag arguments.
                     }
                     @Override
                     public String errorMessage() {
-                        return "values length is not equal to 3."
+                        return "length is not equal to 3."
                     }
                 })
                 .build());
