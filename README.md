@@ -5,12 +5,13 @@ java-core-library
 ## About
 
 This module contains classes for representing, building, creating, parsing and formatting 
-"high-level" options/arguments.<br>
+options and arguments.<br>
             
 ## Documentation
 
 This section provides documentation for 
 the com.github.wnebyte.jarguments.util.ArgumentFactory class.
+<h5>create parameters</h5>
 
 - [name](#name)
 - [description](#description)
